@@ -7,8 +7,9 @@
   "scripts": {
     "clean": "rm -r dist/*",
     "build": "npm run clean; rollup -c; npm run copy",
-    "copy": "npm run copy:settings; npm run copy:docs; npm run copy:declaration",
+    "copy": "npm run copy:settings; npm run copy:docs; npm run copy:declaration; npm run copy:license",
     "copy:settings": "cp package.json dist/",
+    "copy:license": "cp LICENSE dist/",
     "copy:docs": "cp README.md dist/; cp CHANGELOG.md dist/",
     "copy:declaration": "cp -r src/declaration/ dist/",
     "release": "npm run build; npm publish dist/ --access public"
