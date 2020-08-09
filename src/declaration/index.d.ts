@@ -1,4 +1,4 @@
-declare module "@fp/core" {
+declare module "@fluss/core" {
   export interface Applicative<T> extends Functor<T> {
     /** Maps value by using value of `other` monad. Value of other monad must be a **function type**. */
     apply<R>(other: Applicative<(value: T) => R>): Applicative<R>;

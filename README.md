@@ -1,6 +1,6 @@
-# @fp/core
+# @fluss/core
 
-`@fp/core` - small library that contains couple functions for easy functional coding.
+`@fluss/core` - small library that contains couple functions for easy functional coding.
 
 ## Example use
 
@@ -11,7 +11,7 @@ const result2 = curry((left: string, right: string) => left + right, [
 ]); // TypeScript infer result2 variable as (b: string) => string
 ```
 
-## @fp/core's advantages
+## @fluss/core's advantages
 
 - TypeScript included
 
@@ -22,7 +22,7 @@ TypeScript definitions are included in the library.
 # Install
 
 ```sh
-npm i @fp/core
+npm i @fluss/core
 ```
 
 ## API

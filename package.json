@@ -1,5 +1,5 @@
 {
-  "name": "@fp/core",
+  "name": "@fluss/core",
   "version": "0.1.0",
   "description": "Core functions and structures for functional programming.",
   "main": "index.js",
