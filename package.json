@@ -11,7 +11,7 @@
     "copy:settings": "cp package.json dist/",
     "copy:docs": "cp README.md dist/; cp CHANGELOG.md dist/",
     "copy:declaration": "cp -r src/declaration/ dist/",
-    "release": "npm run build; cd dist/; npm publish --access public"
+    "release": "npm run build; npm publish dist/ --access public"
   },
   "author": "Kapelianovych Yevhen",
   "license": "MIT",
