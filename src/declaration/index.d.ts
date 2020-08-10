@@ -245,8 +245,9 @@ declare module '@fluss/core' {
    * Lets invoke independent functions with the same value in order that they are declared.
    */
   export function sequence<V>(
+    value: V,
     ...fns: ReadonlyArray<(value: V) => any>
-  ): (value: V) => void;
+  ): void;
 
   /**
    * Performs side-effect on `value` by `fn` and returns the same value.
@@ -254,18 +255,18 @@ declare module '@fluss/core' {
    * - Function `fn` may return any value - it will be discarded.
    * - Function `fn` must not mutate `value`.
    */
-  export function tap<T>(fn: (value: Readonly<T>) => any): (a: T) => T;
+  export function tap<T>(value: T, fn: (value: Readonly<T>) => any): T;
 
   /**
    * Wraps code into `try/catch` and returns `Either` monad with result.
    * If `catchFn` is not `undefined`, then `Either` with result will
    * be returned, otherwise - `Either` with error.
    */
-  export function tryCatch<T, R, L extends Error>(
+  export function tryCatch<T, L extends Error, R>(
     tryFn: (input: T) => R,
     catchFn?: (error: L) => R
   ): (input: T) => Either<L, R>;
-  export function tryCatch<T, R, L extends Error>(
+  export function tryCatch<T, L extends Error, R>(
     tryFn: (input: T) => Promise<R>,
     catchFn?: (error: L) => Promise<R>
   ): (input: T) => Promise<Either<L, R>>;

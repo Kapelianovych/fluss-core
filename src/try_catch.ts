@@ -1,14 +1,14 @@
-import { eitherOf, Either } from "./either";
+import { eitherOf, Either } from './either';
 
-export function tryCatch<T, R, L extends Error>(
+export function tryCatch<T, L extends Error, R>(
   tryFn: (input: T) => R,
   catchFn?: (error: L) => R
 ): (input: T) => Either<L, R>;
-export function tryCatch<T, R, L extends Error>(
+export function tryCatch<T, L extends Error, R>(
   tryFn: (input: T) => Promise<R>,
   catchFn?: (error: L) => Promise<R>
 ): (input: T) => Promise<Either<L, R>>;
-export function tryCatch<T, R, L extends Error>(
+export function tryCatch<T, L extends Error, R>(
   tryFn: (input: T) => R | Promise<R>,
   catchFn?: (error: L) => R | Promise<R>
 ): (input: T) => Either<L, R> | Promise<Either<L, R>> {

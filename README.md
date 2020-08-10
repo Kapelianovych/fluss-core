@@ -27,7 +27,7 @@ npm i @fluss/core
 
 ## API
 
-> In JavaScript examples is used [Flow](https://flow.org)'s comment notation.
+> In typescript examples is used [Flow](https://flow.org)'s comment notation.
 
 > **Each function must have no more than 3 arguments.**
 > Using functions with long arguments list is not comfortable and convenient.
@@ -40,14 +40,14 @@ function identity<T>(value: T): T;
 
 Just return the same value.
 
-```javascript
+```typescript
 const same /*: 6 */ = identity(6);
 ```
 
 ### tap
 
 ```typescript
-function tap<T>(fn: (value: Readonly<T>) => any): (value: T) => T;
+function tap<T>(value: T, fn: (value: Readonly<T>) => any): T;
 ```
 
 Performs side-effect on `value` by `fn` and returns the same value.
@@ -55,9 +55,9 @@ Performs side-effect on `value` by `fn` and returns the same value.
 - Function `fn` may return any value - it will be discarded.
 - Function `fn` must not mutate `value`.
 
-```javascript
+```typescript
 // All numbers will logs to console. Useful for assertions.
-const bridge /*: (value: number) => number */ = tap < number > console.log;
+const bridge /*: 8 */ = tap(8, console.log);
 ```
 
 ### compose
@@ -72,7 +72,7 @@ function compose<A, R1, R2>(
 
 Compose functions from right to left.
 
-```javascript
+```typescript
 const fn /*: (str: string) => string */ = compose(
   (str) => str + 3,
   (str) => str + 2
@@ -84,22 +84,22 @@ const result /*: '123' */ = fn('1');
 
 ```typescript
 function curry<A1, A2, R>(
-    fn: (a1: A1, a2: A2) => R,
-    defaultArgs: [A1, A2]
-  ): () => R;
-  curry<A1, A2, R>(
-    fn: (a1: A1, a2: A2) => R,
-    defaultArgs: [A1]
-  ): (a2: A2) => R;
-  curry<A1, A2, R>(
-    fn: (a1: A1, a2: A2) => R,
-    defaultArgs?: [A1, A2]
-  ): (a1: A1) => (a2: A2) => R;
+  fn: (a1: A1, a2: A2) => R,
+  defaultArgs: [A1, A2]
+): () => R;
+function curry<A1, A2, R>(
+  fn: (a1: A1, a2: A2) => R,
+  defaultArgs: [A1]
+): (a2: A2) => R;
+function curry<A1, A2, R>(
+  fn: (a1: A1, a2: A2) => R,
+  defaultArgs?: [A1, A2]
+): (a1: A1) => (a2: A2) => R;
 ```
 
 Create curried version of function with optional partial application.
 
-```javascript
+```typescript
 const fn /*: (str1: string) => (str2: string) => string */ = curry(
   (str1, str2) => str1 + str2 + 3
 );
@@ -122,7 +122,7 @@ function fork<T, R, R1, R2>(
 
 Allow join output of two functions that get the same input and process it in a different way.
 
-```javascript
+```typescript
 // Compute average.
 const y /*: (a: Array<number>) => number */ = fork(
   (sum: number, count: string) => sum / coung,
@@ -141,7 +141,7 @@ Lets accomplish condition logic depending of function application.
 If function returns `NaN`, `null` or `undefined`, then result of next function is checked.
 If no function return non-empty value, then result of last function is returned.
 
-```javascript
+```typescript
 const y /*: (a: Array<number>) => number */ = alternation(
   (sum: number) => sum - 3,
   (sum: number) => sum // As default value if first function returns NaN
@@ -151,15 +151,14 @@ const y /*: (a: Array<number>) => number */ = alternation(
 ### sequence
 
 ```typescript
-function sequence<V>(
-  ...fns: ReadonlyArray<(value: V) => any>
-): (value: V) => void;
+function sequence<V>(value: V, ...fns: ReadonlyArray<(value: V) => any>): void;
 ```
 
 Lets invoke independent functions with the same value in order that they are declared.
 
-```javascript
-const y /*: (e: SomeError) => void */ = sequence(
+```typescript
+sequence(
+  someError, // Error instance
   console.log, // 1
   logIntoFile, // 2
   sendOverNetwork // 3
@@ -174,7 +173,7 @@ function isNothing<T>(value: T | null | undefined): value is undefined | null;
 
 Checks if value is `null` or `undefined`.
 
-```javascript
+```typescript
 const y /*: true */ = isNothing(null);
 const y1 /*: false */ = isNothing(false);
 const y1 /*: false */ = isNothing(0);
@@ -183,7 +182,7 @@ const y1 /*: false */ = isNothing(0);
 ### tryCatch
 
 ```typescript
-function tryCatch<T, R, L extends Error>(
+function tryCatch<T, L extends Error, R>(
   tryFn: (input: T) => R,
   catchFn?: (error: L) => R
 ): (input: T) => Either<L, R>;
@@ -191,7 +190,7 @@ function tryCatch<T, R, L extends Error>(
 
 Wraps code into `try/catch` and returns `Either` monad with result. If `catchFn` is not `undefined`, then `Either` with result will be returned, otherwise - `Either` with error. Asyncronous version is also existed.
 
-```javascript
+```typescript
 const getUser /*: (id: string) => Either<NoUserError, User> */ = tryCatch(
   (id: string) => getUserFromDbById(id),
   (error: NoUserError) => createUser()
@@ -206,7 +205,7 @@ function wrap<T>(value: T): Wrapper<T>;
 
 Wraps value in `Wrapper` monad and allow perform on it operations in chainable way.
 
-```javascript
+```typescript
 wrap(1)
   .map((num) => num + '0')
   .chain((str) => wrap(parseInt(str)))
@@ -236,7 +235,7 @@ function isMaybe<T>(value: any): value is Maybe<T>;
 
 Checks if value is instance of `Maybe` monad.
 
-```javascript
+```typescript
 isMaybe(8); // false
 isMaybe(maybeOf(8)); // true
 ```
@@ -249,7 +248,7 @@ function maybeOf<T>(value: T): Maybe<T>;
 
 Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself.
 
-```javascript
+```typescript
 maybeOf(8); // Maybe<number>
 ```
 
@@ -261,7 +260,7 @@ function just<T>(value: T): Maybe<T>;
 
 Wraps value with `Maybe` monad with **Just** state.
 
-```javascript
+```typescript
 // We are sure that 8 is not "nothing" value.
 just(8); // Maybe<number>
 ```
@@ -274,7 +273,7 @@ function nothing<T>(): Maybe<T>;
 
 Creates `Maybe` monad instance with **Nothing** state.
 
-```javascript
+```typescript
 nothing<number>(); // Maybe<number>
 ```
 
@@ -299,7 +298,7 @@ function isEither<L extends Error, R>(value: any): value is isEither<L, R>;
 
 Checks if value is instance of `Either` monad.
 
-```javascript
+```typescript
 isEither(8); // false
 isEither(eitherOf(8)); // true
 ```
@@ -312,7 +311,7 @@ function eitherOf<L extends Error, R>(value: R | L): Either<L, R>;
 
 Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself.
 
-```javascript
+```typescript
 eitherOf(8); // Either<Error, number>
 ```
 
@@ -324,7 +323,7 @@ function right<L extends Error, R>(value: R): Either<L, R>;
 
 Wraps value with `Either` monad with **Right** state.
 
-```javascript
+```typescript
 // We are sure that 8 is not "left" value.
 right(8); // Either<Error, number>
 ```

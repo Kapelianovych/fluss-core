@@ -1,5 +1,12 @@
 # [0.1.2] - 2020-08-10
 ### Fixed
+- Replace generic argments in `tryCatch` function.
+
+### Changed
+- `tap` and `sequence` function's first parameter is value now. They no more return function.
+
+## [0.1.2] - 2020-08-10
+### Fixed
 - Fix losing state of `Maybe` monad in methods.
 - Fix losing state of `Either` monad in methods.
 
