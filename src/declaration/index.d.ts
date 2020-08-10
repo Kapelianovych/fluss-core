@@ -293,11 +293,22 @@ declare module '@fluss/core' {
 
   class MaybeConstructor<V, T extends MaybeType = MaybeType>
     implements Comonad, Monad<V> {
+    private readonly type: T;
+    private readonly value: T extends MaybeType.Just ? V : null | undefined;
+
+    private constructor();
+
     static just<T>(value: T): MaybeConstructor<T, MaybeType.Just>;
 
     static nothing<T>(): MaybeConstructor<T, MaybeType.Nothing>;
 
-    static maybeOf<T>(value: T | null | undefined): Maybe<T>;
+    static maybeOf<T>(
+      value: T
+    ): T extends null
+      ? MaybeConstructor<T, MaybeType.Nothing>
+      : T extends undefined
+      ? MaybeConstructor<T, MaybeType.Nothing>
+      : MaybeConstructor<T, MaybeType.Just>;
 
     isJust(): this is MaybeConstructor<V, MaybeType.Just>;
 
