@@ -1,9 +1,9 @@
-import { Monad } from "./interfaces/monad";
-import { Comonad } from "./interfaces/comonad";
+import { Monad } from './interfaces/monad';
+import { Comonad } from './interfaces/comonad';
 
 const enum EitherType {
-  Left = "Left",
-  Right = "Right",
+  Left = 'Left',
+  Right = 'Right',
 }
 
 class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>

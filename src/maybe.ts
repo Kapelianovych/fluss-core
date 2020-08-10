@@ -1,10 +1,10 @@
-import { Monad } from "./interfaces/monad";
-import { Comonad } from "./interfaces/comonad";
-import { isNothing } from "./is_nothing";
+import { Monad } from './interfaces/monad';
+import { Comonad } from './interfaces/comonad';
+import { isNothing } from './is_nothing';
 
 const enum MaybeType {
-  Just = "Just",
-  Nothing = "Nothing",
+  Just = 'Just',
+  Nothing = 'Nothing',
 }
 
 class MaybeConstructor<V, T extends MaybeType = MaybeType>
@@ -22,7 +22,14 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
     return new MaybeConstructor<T, MaybeType.Nothing>(null, MaybeType.Nothing);
   }
 
-  static maybeOf<T>(value: T | null | undefined): Maybe<T> {
+  static maybeOf<T>(
+    value: T
+  ): T extends null
+    ? MaybeConstructor<T, MaybeType.Nothing>
+    : T extends undefined
+    ? MaybeConstructor<T, MaybeType.Nothing>
+    : MaybeConstructor<T, MaybeType.Just> {
+    // @ts-ignore
     return isNothing(value)
       ? MaybeConstructor.nothing<T>()
       : MaybeConstructor.just(value);

@@ -1,4 +1,4 @@
-declare module "@fluss/core" {
+declare module '@fluss/core' {
   export interface Applicative<T> extends Functor<T> {
     /** Maps value by using value of `other` monad. Value of other monad must be a **function type**. */
     apply<R>(other: Applicative<(value: T) => R>): Applicative<R>;
@@ -287,8 +287,8 @@ declare module "@fluss/core" {
   export function wrap<T>(value: T): Wrapper<T>;
 
   export const enum MaybeType {
-    Just = "Just",
-    Nothing = "Nothing",
+    Just = 'Just',
+    Nothing = 'Nothing',
   }
 
   class MaybeConstructor<V, T extends MaybeType = MaybeType>
@@ -321,17 +321,23 @@ declare module "@fluss/core" {
     | MaybeConstructor<V, MaybeType.Nothing>;
 
   /** Wraps value with `Maybe` monad with **Just** state. */
-  export function just<T>(value: T): Maybe<T>;
+  export function just<T>(value: T): MaybeConstructor<T, MaybeType.Just>;
   /** Creates `Maybe` monad instance with **Nothing** state. */
-  export function nothing<T>(): Maybe<T>;
+  export function nothing<T>(): MaybeConstructor<T, MaybeType.Nothing>;
   /** Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself. */
-  export function maybeOf<T>(value: T | null | undefined): Maybe<T>;
+  export function maybeOf<T>(
+    value: T
+  ): T extends null
+    ? MaybeConstructor<T, MaybeType.Nothing>
+    : T extends undefined
+    ? MaybeConstructor<T, MaybeType.Nothing>
+    : MaybeConstructor<T, MaybeType.Just>;
   /** Checks if value is instance of `Maybe` monad. */
   export function isMaybe<T>(value: any): value is Maybe<T>;
 
   const enum EitherType {
-    Left = "Left",
-    Right = "Right",
+    Left = 'Left',
+    Right = 'Right',
   }
 
   class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
