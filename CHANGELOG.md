@@ -1,4 +1,8 @@
-# [0.1.3] - 2020-08-10
+# [0.2.0] - 2020-08-10
+### Added
+- `isPromise` function.
+
+## [0.1.3] - 2020-08-10
 ### Fixed
 - Replace generic argments in `tryCatch` function.
 

@@ -241,6 +241,9 @@ declare module '@fluss/core' {
     value: T | null | undefined
   ): value is undefined | null;
 
+  /** Checks if value is `Promise`. */
+  export function isPromise<T>(value: any): value is Promise<T>;
+
   /**
    * Lets invoke independent functions with the same value in order that they are declared.
    */

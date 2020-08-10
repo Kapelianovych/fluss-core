@@ -19,18 +19,25 @@ TypeScript definitions are included in the library.
 
 - Small size
 
-# Install
+## Install
 
 ```sh
 npm i @fluss/core
 ```
 
+## Design goals
+
+- Manual annotation should never be required, TypeScript should infer everything by self.
+- The implementation of each function should be as minimal as possible.
+- All functions are immutable, and there are no side-effects.
+- All functions must be safe as possible.
+- Fixed number of arguments (max 3).
+
 ## API
 
-> In typescript examples is used [Flow](https://flow.org)'s comment notation.
+> In TypeScript's examples is used [Flow](https://flow.org)'s comment notation if TypeScript infer type by yourself.
 
 > **Each function must have no more than 3 arguments.**
-> Using functions with long arguments list is not comfortable and convenient.
 
 ### identity
 
@@ -176,7 +183,20 @@ Checks if value is `null` or `undefined`.
 ```typescript
 const y /*: true */ = isNothing(null);
 const y1 /*: false */ = isNothing(false);
-const y1 /*: false */ = isNothing(0);
+const y2 /*: false */ = isNothing(0);
+```
+
+### isPromise
+
+```typescript
+function isPromise<T>(value: any): value is Promise<T>;
+```
+
+Checks if value is `Promise`.
+
+```typescript
+const y /*: false */ = isPromise(false);
+const y1 /*: true */ = isPromise(Promise.resolve(9));
 ```
 
 ### tryCatch

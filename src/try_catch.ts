@@ -1,3 +1,5 @@
+import { isPromise } from './is_promise';
+import { isNothing } from './is_nothing';
 import { eitherOf, Either } from './either';
 
 export function tryCatch<T, L extends Error, R>(
@@ -14,9 +16,9 @@ export function tryCatch<T, L extends Error, R>(
 ): (input: T) => Either<L, R> | Promise<Either<L, R>> {
   return (input: T) => {
     function handleError(error: L): Either<L, R> | Promise<Either<L, R>> {
-      if (catchFn) {
+      if (!isNothing(catchFn)) {
         const fallbackResult = catchFn(error);
-        return fallbackResult instanceof Promise
+        return isPromise(fallbackResult)
           ? fallbackResult
               .then((res) => eitherOf<L, R>(res))
               .catch((error) => eitherOf<L, R>(error))
@@ -28,7 +30,7 @@ export function tryCatch<T, L extends Error, R>(
 
     try {
       const result = tryFn(input);
-      return result instanceof Promise
+      return isPromise(result)
         ? result.then((res) => eitherOf<L, R>(res)).catch(handleError)
         : eitherOf<L, R>(result);
     } catch (error) {

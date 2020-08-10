@@ -1,3 +1,5 @@
+import { isNothing } from "./is_nothing";
+
 export function alternation<R>(fn: () => R, fn1: () => R): () => R;
 export function alternation<T, R>(
   fn: (a: T) => R,
@@ -39,7 +41,7 @@ export function alternation<R>(
       fns.find((fn) => {
         const result = fn(...args);
         return (
-          !Object.is(result, NaN) && result !== null && result !== undefined
+          !Object.is(result, NaN) && !isNothing(result)
         );
       }) || fns[fns.length - 1]
     )(...args);

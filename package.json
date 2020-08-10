@@ -1,6 +1,6 @@
 {
   "name": "@fluss/core",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Core functions and structures for functional programming.",
   "main": "index.js",
   "module": "index.mjs",
