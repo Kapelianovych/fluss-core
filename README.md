@@ -307,54 +307,46 @@ isEither(eitherOf(8)); // true
 ### eitherOf
 
 ```typescript
-function eitherOf<L extends Error, R>(
-  value: R | L
-): typeof value extends Error
-  ? EitherConstructor<L, R, EitherType.Left>
-  : EitherConstructor<L, R, EitherType.Right>;
+function eitherOf<L extends Error, R>(value: R | L): Either<L, R>;
 ```
 
 Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself.
 
 ```javascript
-eitherOf < Error, number > 8; // Either<Error, number>
+eitherOf(8); // Either<Error, number>
 ```
 
 ### right
 
 ```typescript
-function right<L extends Error, R>(
-  value: R
-): EitherConstructor<L, R, EitherType.Right>;
+function right<L extends Error, R>(value: R): Either<L, R>;
 ```
 
 Wraps value with `Either` monad with **Right** state.
 
 ```javascript
 // We are sure that 8 is not "left" value.
-right < Error, number > 8; // Either<Error, number>
+right(8); // Either<Error, number>
 ```
 
 ### left
 
 ```typescript
-function left<L extends Error, R>(
-  value: L
-): EitherConstructor<L, R, EitherType.Left>;
+function left<L extends Error, R>(value: L): Either<L, R>;
 ```
 
 Creates `Either` monad instance with **Left** state.
 
-```javascript
-left < Error, number > new Error('Error is occured!'); // Either<Error, number>
+```typescript
+left<Error, number>(new Error('Error is occured!')); // Either<Error, number>
 ```
 
 #### Either
 
 ```typescript
-type Either<L extends Error, R> =
-  | EitherConstructor<L, R, EitherType.Right>
-  | EitherConstructor<L, R, EitherType.Left>;
+type Either<L extends Error, R> = L | R extends Error
+  ? EitherConstructor<L, R, EitherType.Left>
+  : EitherConstructor<L, R, EitherType.Right>;
 ```
 
 Monad that can contain value or `Error`. Allow handles errors in functional way.

@@ -306,9 +306,7 @@ declare module '@fluss/core' {
 
     static nothing<T>(): Maybe<T>;
 
-    static maybeOf<T>(
-      value: T
-    ): Maybe<T>;
+    static maybeOf<T>(value: T): Maybe<T>;
 
     isJust(): this is MaybeConstructor<V, MaybeType.Just>;
 
@@ -354,19 +352,11 @@ declare module '@fluss/core' {
 
     private constructor();
 
-    static left<L extends Error, R>(
-      value: L
-    ): EitherConstructor<L, R, EitherType.Left>;
+    static left<L extends Error, R>(value: L): Either<L, R>;
 
-    static right<L extends Error, R>(
-      value: R
-    ): EitherConstructor<L, R, EitherType.Right>;
+    static right<L extends Error, R>(value: R): Either<L, R>;
 
-    static eitherOf<A extends Error, B>(
-      value: A | B
-    ): typeof value extends Error
-      ? EitherConstructor<A, B, EitherType.Left>
-      : EitherConstructor<A, B, EitherType.Right>;
+    static eitherOf<A extends Error, B>(value: A | B): Either<A, B>;
 
     isRight(): this is EitherConstructor<L, R, EitherType.Right>;
 
@@ -389,23 +379,15 @@ declare module '@fluss/core' {
   /**
    * Monad that can contain value or `Error`. Allow handles errors in functional way.
    */
-  export type Either<L extends Error, R> =
-    | EitherConstructor<L, R, EitherType.Right>
-    | EitherConstructor<L, R, EitherType.Left>;
-
-  /** Creates `Either` monad instance with **Left** state. */
-  export function left<L extends Error, R>(
-    value: L
-  ): EitherConstructor<L, R, EitherType.Left>;
-  export function right<L extends Error, R>(
-    value: R
-  ): EitherConstructor<L, R, EitherType.Right>;
-  /** Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself. */
-  export function eitherOf<L extends Error, R>(
-    value: R | L
-  ): typeof value extends Error
+  export type Either<L extends Error, R> = L | R extends Error
     ? EitherConstructor<L, R, EitherType.Left>
     : EitherConstructor<L, R, EitherType.Right>;
+
+  /** Creates `Either` monad instance with **Left** state. */
+  export function left<L extends Error, R>(value: L): Either<L, R>;
+  export function right<L extends Error, R>(value: R): Either<L, R>;
+  /** Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself. */
+  export function eitherOf<L extends Error, R>(value: R | L): Either<L, R>;
   /** Checks if value is instance of `Either` monad. */
   export function isEither<L extends Error, R>(
     value: any

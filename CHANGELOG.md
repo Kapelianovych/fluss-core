@@ -1,4 +1,9 @@
-# [0.1.1] - 2020-08-10
+# [0.1.2] - 2020-08-10
+### Fixed
+- Fix losing state of `Maybe` monad in methods.
+- Fix losing state of `Either` monad in methods.
+
+## [0.1.1] - 2020-08-10
 ### Added
 - Add private constructor and fields to `EitherConstructor` in declaration file.
 - Add private constructor and fields to `MaybeConstructor` in declaration file.

@@ -13,27 +13,20 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
     private readonly type: T
   ) {}
 
-  static left<L extends Error, R>(
-    value: L
-  ): EitherConstructor<L, R, EitherType.Left> {
+  static left<L extends Error, R>(value: L): Either<L, R> {
+    // @ts-ignore
     return new EitherConstructor<L, R, EitherType.Left>(value, EitherType.Left);
   }
 
-  static right<L extends Error, R>(
-    value: R
-  ): EitherConstructor<L, R, EitherType.Right> {
+  static right<L extends Error, R>(value: R): Either<L, R> {
+    // @ts-ignore
     return new EitherConstructor<L, R, EitherType.Right>(
       value,
       EitherType.Right
     );
   }
 
-  static eitherOf<A extends Error, B>(
-    value: A | B
-  ): typeof value extends Error
-    ? EitherConstructor<A, B, EitherType.Left>
-    : EitherConstructor<A, B, EitherType.Right> {
-    // @ts-ignore
+  static eitherOf<A extends Error, B>(value: A | B): Either<A, B> {
     return value instanceof Error
       ? EitherConstructor.left<A, B>(value)
       : EitherConstructor.right<A, B>(value);
@@ -68,7 +61,7 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
       return EitherConstructor.left(other.extract());
     }
 
-    return this.mapRight(other.extract());
+    return this.mapRight(other.extract() as (value: R) => U);
   }
 
   chain<U>(fn: (value: R) => Either<L, U>): Either<L, U> {
@@ -82,9 +75,9 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
   }
 }
 
-export type Either<L extends Error, R> =
-  | EitherConstructor<L, R, EitherType.Right>
-  | EitherConstructor<L, R, EitherType.Left>;
+export type Either<L extends Error, R> = L | R extends Error
+  ? EitherConstructor<L, R, EitherType.Left>
+  : EitherConstructor<L, R, EitherType.Right>;
 
 export const { left, right, eitherOf } = EitherConstructor;
 
