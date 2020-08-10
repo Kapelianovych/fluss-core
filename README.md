@@ -244,13 +244,7 @@ isMaybe(maybeOf(8)); // true
 ### maybeOf
 
 ```typescript
-function maybeOf<T>(
-  value: T
-): T extends null
-  ? MaybeConstructor<T, MaybeType.Nothing>
-  : T extends undefined
-  ? MaybeConstructor<T, MaybeType.Nothing>
-  : MaybeConstructor<T, MaybeType.Just>;
+function maybeOf<T>(value: T): Maybe<T>;
 ```
 
 Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself.
@@ -262,7 +256,7 @@ maybeOf(8); // Maybe<number>
 ### just
 
 ```typescript
-function just<T>(value: T): MaybeConstructor<T, MaybeType.Just>;
+function just<T>(value: T): Maybe<T>;
 ```
 
 Wraps value with `Maybe` monad with **Just** state.
@@ -275,7 +269,7 @@ just(8); // Maybe<number>
 ### nothing
 
 ```typescript
-function nothing<T>(): MaybeConstructor<T, MaybeType.Nothing>;
+function nothing<T>(): Maybe<T>;
 ```
 
 Creates `Maybe` monad instance with **Nothing** state.
@@ -287,9 +281,11 @@ nothing<number>(); // Maybe<number>
 #### Maybe
 
 ```typescript
-type Maybe<V> =
-  | MaybeConstructor<V, MaybeType.Just>
-  | MaybeConstructor<V, MaybeType.Nothing>;
+type Maybe<V> = V extends null
+  ? MaybeConstructor<V, MaybeType.Nothing>
+  : V extends undefined
+  ? MaybeConstructor<V, MaybeType.Nothing>
+  : MaybeConstructor<V, MaybeType.Just>;
 ```
 
 Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`). Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.

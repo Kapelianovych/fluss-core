@@ -14,22 +14,17 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
     private readonly type: T
   ) {}
 
-  static just<T>(value: T): MaybeConstructor<T, MaybeType.Just> {
+  static just<T>(value: T): Maybe<T> {
+    //@ts-ignore
     return new MaybeConstructor<T, MaybeType.Just>(value, MaybeType.Just);
   }
 
-  static nothing<T>(): MaybeConstructor<T, MaybeType.Nothing> {
+  static nothing<T>(): Maybe<T> {
+    // @ts-ignore
     return new MaybeConstructor<T, MaybeType.Nothing>(null, MaybeType.Nothing);
   }
 
-  static maybeOf<T>(
-    value: T
-  ): T extends null
-    ? MaybeConstructor<T, MaybeType.Nothing>
-    : T extends undefined
-    ? MaybeConstructor<T, MaybeType.Nothing>
-    : MaybeConstructor<T, MaybeType.Just> {
-    // @ts-ignore
+  static maybeOf<T>(value: T): Maybe<T> {
     return isNothing(value)
       ? MaybeConstructor.nothing<T>()
       : MaybeConstructor.just(value);
@@ -66,9 +61,11 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
   }
 }
 
-export type Maybe<V> =
-  | MaybeConstructor<V, MaybeType.Just>
-  | MaybeConstructor<V, MaybeType.Nothing>;
+export type Maybe<V> = V extends null
+  ? MaybeConstructor<V, MaybeType.Nothing>
+  : V extends undefined
+  ? MaybeConstructor<V, MaybeType.Nothing>
+  : MaybeConstructor<V, MaybeType.Just>;
 
 export const { just, nothing, maybeOf } = MaybeConstructor;
 

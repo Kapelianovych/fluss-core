@@ -302,17 +302,13 @@ declare module '@fluss/core' {
 
     private constructor();
 
-    static just<T>(value: T): MaybeConstructor<T, MaybeType.Just>;
+    static just<T>(value: T): Maybe<T>;
 
-    static nothing<T>(): MaybeConstructor<T, MaybeType.Nothing>;
+    static nothing<T>(): Maybe<T>;
 
     static maybeOf<T>(
       value: T
-    ): T extends null
-      ? MaybeConstructor<T, MaybeType.Nothing>
-      : T extends undefined
-      ? MaybeConstructor<T, MaybeType.Nothing>
-      : MaybeConstructor<T, MaybeType.Just>;
+    ): Maybe<T>;
 
     isJust(): this is MaybeConstructor<V, MaybeType.Just>;
 
@@ -331,22 +327,18 @@ declare module '@fluss/core' {
    * _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`).
    * Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
    */
-  export type Maybe<V> =
-    | MaybeConstructor<V, MaybeType.Just>
-    | MaybeConstructor<V, MaybeType.Nothing>;
+  export type Maybe<V> = V extends null
+    ? MaybeConstructor<V, MaybeType.Nothing>
+    : V extends undefined
+    ? MaybeConstructor<V, MaybeType.Nothing>
+    : MaybeConstructor<V, MaybeType.Just>;
 
   /** Wraps value with `Maybe` monad with **Just** state. */
-  export function just<T>(value: T): MaybeConstructor<T, MaybeType.Just>;
+  export function just<T>(value: T): Maybe<T>;
   /** Creates `Maybe` monad instance with **Nothing** state. */
-  export function nothing<T>(): MaybeConstructor<T, MaybeType.Nothing>;
+  export function nothing<T>(): Maybe<T>;
   /** Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself. */
-  export function maybeOf<T>(
-    value: T
-  ): T extends null
-    ? MaybeConstructor<T, MaybeType.Nothing>
-    : T extends undefined
-    ? MaybeConstructor<T, MaybeType.Nothing>
-    : MaybeConstructor<T, MaybeType.Just>;
+  export function maybeOf<T>(value: T): Maybe<T>;
   /** Checks if value is instance of `Maybe` monad. */
   export function isMaybe<T>(value: any): value is Maybe<T>;
 
