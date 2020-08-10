@@ -7,7 +7,7 @@
 ```typescript
 const result = curry((left: string, right: string) => left + right); // TypeScript infer result variable as (a: string) => (b: string) => string
 const result2 = curry((left: string, right: string) => left + right, [
-  "Left and ",
+  'Left and ',
 ]); // TypeScript infer result2 variable as (b: string) => string
 ```
 
@@ -35,7 +35,7 @@ npm i @fluss/core
 ### identity
 
 ```typescript
-identity<T>(value: T): T;
+function identity<T>(value: T): T;
 ```
 
 Just return the same value.
@@ -47,7 +47,7 @@ const same /*: 6 */ = identity(6);
 ### tap
 
 ```typescript
-  tap<T>(fn: (value: Readonly<T>) => any): (value: T) => T;
+function tap<T>(fn: (value: Readonly<T>) => any): (value: T) => T;
 ```
 
 Performs side-effect on `value` by `fn` and returns the same value.
@@ -63,7 +63,7 @@ const bridge /*: (value: number) => number */ = tap < number > console.log;
 ### compose
 
 ```typescript
-compose<A, R1, R2>(
+function compose<A, R1, R2>(
   // Up to 6 functions
   fn2: (a1: R1) => R2,
   fn1: (a: A) => R1
@@ -77,13 +77,13 @@ const fn /*: (str: string) => string */ = compose(
   (str) => str + 3,
   (str) => str + 2
 );
-const result /*: '123' */ = fn("1");
+const result /*: '123' */ = fn('1');
 ```
 
 ### curry
 
 ```typescript
-  curry<A1, A2, R>(
+function curry<A1, A2, R>(
     fn: (a1: A1, a2: A2) => R,
     defaultArgs: [A1, A2]
   ): () => R;
@@ -106,18 +106,18 @@ const fn /*: (str1: string) => (str2: string) => string */ = curry(
 // TypeScript is smart enough 😜
 const fn1 /*: (str2: string) => string */ = curry(
   (str1, str2) => str1 + str2 + 3,
-  ["1"]
+  ['1']
 );
 ```
 
 ### fork
 
 ```typescript
-  fork<T, R, R1, R2>(
-    join: (f: R1, s: R2) => R,
-    fn1: (a: T) => R1,
-    fn2: (a: T) => R2
-  ): (a: T) => R;
+function fork<T, R, R1, R2>(
+  join: (f: R1, s: R2) => R,
+  fn1: (a: T) => R1,
+  fn2: (a: T) => R2
+): (a: T) => R;
 ```
 
 Allow join output of two functions that get the same input and process it in a different way.
@@ -134,10 +134,7 @@ const y /*: (a: Array<number>) => number */ = fork(
 ### alternation
 
 ```typescript
-  alternation<T, R>(
-    fn: (a: T) => R,
-    fn1: (a: T) => R
-  ): (a: T) => R;
+function alternation<T, R>(fn: (a: T) => R, fn1: (a: T) => R): (a: T) => R;
 ```
 
 Lets accomplish condition logic depending of function application.
@@ -154,7 +151,7 @@ const y /*: (a: Array<number>) => number */ = alternation(
 ### sequence
 
 ```typescript
-  sequence<V>(
+function sequence<V>(
   ...fns: ReadonlyArray<(value: V) => any>
 ): (value: V) => void;
 ```
@@ -172,9 +169,7 @@ const y /*: (e: SomeError) => void */ = sequence(
 ### isNothing
 
 ```typescript
-  isNothing<T>(
-    value: T | null | undefined
-  ): value is undefined | null;
+function isNothing<T>(value: T | null | undefined): value is undefined | null;
 ```
 
 Checks if value is `null` or `undefined`.
@@ -188,10 +183,10 @@ const y1 /*: false */ = isNothing(0);
 ### tryCatch
 
 ```typescript
-  tryCatch<T, R, L extends Error>(
-    tryFn: (input: T) => R,
-    catchFn?: (error: L) => R
-  ): (input: T) => Either<L, R>;
+function tryCatch<T, R, L extends Error>(
+  tryFn: (input: T) => R,
+  catchFn?: (error: L) => R
+): (input: T) => Either<L, R>;
 ```
 
 Wraps code into `try/catch` and returns `Either` monad with result. If `catchFn` is not `undefined`, then `Either` with result will be returned, otherwise - `Either` with error. Asyncronous version is also existed.
@@ -200,20 +195,20 @@ Wraps code into `try/catch` and returns `Either` monad with result. If `catchFn`
 const getUser /*: (id: string) => Either<NoUserError, User> */ = tryCatch(
   (id: string) => getUserFromDbById(id),
   (error: NoUserError) => createUser()
-)
+);
 ```
 
 ### wrap
 
 ```typescript
-  wrap<T>(value: T): Wrapper<T>;
+function wrap<T>(value: T): Wrapper<T>;
 ```
 
 Wraps value in `Wrapper` monad and allow perform on it operations in chainable way.
 
 ```javascript
 wrap(1)
-  .map((num) => num + "0")
+  .map((num) => num + '0')
   .chain((str) => wrap(parseInt(str)))
   .apply(wrap((num) => Math.pow(num, 2)))
   .extract(); // => 100
@@ -236,7 +231,7 @@ Monad that contains value and allow perform operation on it by set of methods.
 ### isMaybe
 
 ```typescript
-  isMaybe<T>(value: any): value is Maybe<T>;
+function isMaybe<T>(value: any): value is Maybe<T>;
 ```
 
 Checks if value is instance of `Maybe` monad.
@@ -249,7 +244,13 @@ isMaybe(maybeOf(8)); // true
 ### maybeOf
 
 ```typescript
-  maybeOf<T>(value: T | null | undefined): Maybe<T>;
+function maybeOf<T>(
+  value: T
+): T extends null
+  ? MaybeConstructor<T, MaybeType.Nothing>
+  : T extends undefined
+  ? MaybeConstructor<T, MaybeType.Nothing>
+  : MaybeConstructor<T, MaybeType.Just>;
 ```
 
 Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself.
@@ -261,7 +262,7 @@ maybeOf(8); // Maybe<number>
 ### just
 
 ```typescript
-  just<T>(value: T): Maybe<T>;
+function just<T>(value: T): MaybeConstructor<T, MaybeType.Just>;
 ```
 
 Wraps value with `Maybe` monad with **Just** state.
@@ -274,7 +275,7 @@ just(8); // Maybe<number>
 ### nothing
 
 ```typescript
-  nothing<T>(): Maybe<T>;
+function nothing<T>(): MaybeConstructor<T, MaybeType.Nothing>;
 ```
 
 Creates `Maybe` monad instance with **Nothing** state.
@@ -285,13 +286,19 @@ nothing<number>(); // Maybe<number>
 
 #### Maybe
 
+```typescript
+type Maybe<V> =
+  | MaybeConstructor<V, MaybeType.Just>
+  | MaybeConstructor<V, MaybeType.Nothing>;
+```
+
 Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`). Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
 Has the same methods as `Wrapper` monad.
 
 ### isEither
 
 ```typescript
-  isEither<L extends Error, R>(value: any): value is isEither<L, R>;
+function isEither<L extends Error, R>(value: any): value is isEither<L, R>;
 ```
 
 Checks if value is instance of `Either` monad.
@@ -304,41 +311,55 @@ isEither(eitherOf(8)); // true
 ### eitherOf
 
 ```typescript
-  eitherOf<L extends Error, R>(value: R | L): Either<L, R>;
+function eitherOf<L extends Error, R>(
+  value: R | L
+): typeof value extends Error
+  ? EitherConstructor<L, R, EitherType.Left>
+  : EitherConstructor<L, R, EitherType.Right>;
 ```
 
 Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself.
 
 ```javascript
-eitherOf<Error, number>(8); // Either<Error, number>
+eitherOf < Error, number > 8; // Either<Error, number>
 ```
 
 ### right
 
 ```typescript
-  right<L extends Error, R>(value: R): Either<L, R>;
+function right<L extends Error, R>(
+  value: R
+): EitherConstructor<L, R, EitherType.Right>;
 ```
 
 Wraps value with `Either` monad with **Right** state.
 
 ```javascript
 // We are sure that 8 is not "left" value.
-right<Error, number>(8); // Either<Error, number>
+right < Error, number > 8; // Either<Error, number>
 ```
 
 ### left
 
 ```typescript
-  left<L extends Error, R>(value: L): Either<L, R>;
+function left<L extends Error, R>(
+  value: L
+): EitherConstructor<L, R, EitherType.Left>;
 ```
 
 Creates `Either` monad instance with **Left** state.
 
 ```javascript
-left<Error, number>(new Error('Error is occured!')); // Either<Error, number>
+left < Error, number > new Error('Error is occured!'); // Either<Error, number>
 ```
 
 #### Either
+
+```typescript
+type Either<L extends Error, R> =
+  | EitherConstructor<L, R, EitherType.Right>
+  | EitherConstructor<L, R, EitherType.Left>;
+```
 
 Monad that can contain value or `Error`. Allow handles errors in functional way.
 Has the same methods as `Wrapper` monad and `mapLeft`, `mapRight`:
