@@ -357,6 +357,11 @@ declare module '@fluss/core' {
 
   class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
     implements Comonad, Monad<R> {
+    private readonly type: T;
+    private readonly value: T extends EitherType.Left ? L : R;
+
+    private constructor();
+
     static left<L extends Error, R>(
       value: L
     ): EitherConstructor<L, R, EitherType.Left>;
@@ -365,7 +370,11 @@ declare module '@fluss/core' {
       value: R
     ): EitherConstructor<L, R, EitherType.Right>;
 
-    static eitherOf<A extends Error, B>(value: A | B): Either<A, B>;
+    static eitherOf<A extends Error, B>(
+      value: A | B
+    ): typeof value extends Error
+      ? EitherConstructor<A, B, EitherType.Left>
+      : EitherConstructor<A, B, EitherType.Right>;
 
     isRight(): this is EitherConstructor<L, R, EitherType.Right>;
 
@@ -393,10 +402,18 @@ declare module '@fluss/core' {
     | EitherConstructor<L, R, EitherType.Left>;
 
   /** Creates `Either` monad instance with **Left** state. */
-  export function left<L extends Error, R>(value: L): Either<L, R>;
-  export function right<L extends Error, R>(value: R): Either<L, R>;
+  export function left<L extends Error, R>(
+    value: L
+  ): EitherConstructor<L, R, EitherType.Left>;
+  export function right<L extends Error, R>(
+    value: R
+  ): EitherConstructor<L, R, EitherType.Right>;
   /** Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself. */
-  export function eitherOf<L extends Error, R>(value: R | L): Either<L, R>;
+  export function eitherOf<L extends Error, R>(
+    value: R | L
+  ): typeof value extends Error
+    ? EitherConstructor<L, R, EitherType.Left>
+    : EitherConstructor<L, R, EitherType.Right>;
   /** Checks if value is instance of `Either` monad. */
   export function isEither<L extends Error, R>(
     value: any

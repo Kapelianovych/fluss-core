@@ -28,7 +28,12 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
     );
   }
 
-  static eitherOf<A extends Error, B>(value: A | B): Either<A, B> {
+  static eitherOf<A extends Error, B>(
+    value: A | B
+  ): typeof value extends Error
+    ? EitherConstructor<A, B, EitherType.Left>
+    : EitherConstructor<A, B, EitherType.Right> {
+    // @ts-ignore
     return value instanceof Error
       ? EitherConstructor.left<A, B>(value)
       : EitherConstructor.right<A, B>(value);
