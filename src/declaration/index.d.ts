@@ -271,6 +271,10 @@ declare module '@fluss/core' {
   ): (input: T) => Promise<Either<L, R>>;
 
   class WrapperConstructor<T> implements Comonad, Monad<T> {
+    private readonly value: T;
+
+    private constructor();
+
     static wrap<U>(value: U): Wrapper<U>;
 
     map<R>(fn: (value: T) => R): Wrapper<R>;
