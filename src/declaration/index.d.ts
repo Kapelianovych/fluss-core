@@ -297,7 +297,7 @@ declare module "@fluss/core" {
 
     static nothing<T>(): MaybeConstructor<T, MaybeType.Nothing>;
 
-    static maybe<T>(value: T | null | undefined): Maybe<T>;
+    static maybeOf<T>(value: T | null | undefined): Maybe<T>;
 
     isJust(): this is MaybeConstructor<V, MaybeType.Just>;
 
@@ -344,7 +344,7 @@ declare module "@fluss/core" {
       value: R
     ): EitherConstructor<L, R, EitherType.Right>;
 
-    static either<A extends Error, B>(value: A | B): Either<A, B>;
+    static eitherOf<A extends Error, B>(value: A | B): Either<A, B>;
 
     isRight(): this is EitherConstructor<L, R, EitherType.Right>;
 
