@@ -276,6 +276,11 @@ declare module '@fluss/core' {
   export function tap<T>(value: T, fn: (value: T) => any): T;
 
   /**
+   * Creates readonly array from set of elements.
+   */
+  export function arrayOf<V>(...args: ReadonlyArray<V>): ReadonlyArray<V>;
+
+  /**
    * Wraps code into `try/catch` and returns `Either` monad with result.
    * If `catchFn` is not `undefined`, then `Either` with result will
    * be returned, otherwise - `Either` with error.

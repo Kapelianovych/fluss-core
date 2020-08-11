@@ -255,6 +255,18 @@ const y /*: Promise<9> */ = promiseOf(9);
 const y1 /*: Promise<never> */ = promiseOf(new Error('Some reason'));
 ```
 
+### arrayOf
+
+```typescript
+function arrayOf<V>(...args: ReadonlyArray<V>): ReadonlyArray<V>;
+```
+
+Creates readonly array from set of elements.
+
+```typescript
+const y /*: ReadonlyArray<number> */ = arrayOf(9, 8, 9, 45, 98);
+```
+
 ### tryCatch
 
 ```typescript

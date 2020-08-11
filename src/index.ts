@@ -3,6 +3,7 @@ export { fork } from './fork';
 export { curry } from './curry';
 export { reject } from './reject';
 export { resolve } from './resolve';
+export { arrayOf } from './array_of';
 export { compose } from './compose';
 export { isArray } from './is_array';
 export { identity } from './identity';
