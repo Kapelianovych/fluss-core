@@ -1,11 +1,14 @@
 export { tap } from './tap';
 export { fork } from './fork';
 export { curry } from './curry';
+export { reject } from './reject';
+export { resolve } from './resolve';
 export { compose } from './compose';
 export { isArray } from './is_array';
 export { identity } from './identity';
 export { tryCatch } from './try_catch';
 export { sequence } from './sequence';
+export { promiseOf } from './promise_of';
 export { isNothing } from './is_nothing';
 export { isPromise } from './is_promise';
 export { alternation } from './alternation';

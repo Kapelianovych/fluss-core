@@ -213,6 +213,48 @@ const y /*: false */ = isPromise(false);
 const y1 /*: true */ = isPromise(Promise.resolve(9));
 ```
 
+### resolve
+
+```typescript
+function resolve(): Promise<void>;
+function resolve<T>(value: T | PromiseLike<T>): Promise<T>;
+```
+
+Creates resolved promise with or without value.
+
+```typescript
+const y /*: Promise<void> */ = resolve();
+const y1 /*: Promise<8> */ = resolve(8);
+```
+
+### reject
+
+```typescript
+function reject(): Promise<never>;
+function reject<E extends Error>(reason: E): Promise<never>;
+```
+
+Creates rejected promise with or without reason.
+
+```typescript
+const y /*: Promise<never> */ = reject();
+const y1 /*: Promise<never> */ = reject(new Error('Some reason'));
+```
+
+### promiseOf
+
+```typescript
+function promiseOf<T extends Error>(value: T): Promise<never>;;
+function promiseOf<T>(value: T): Promise<T>;
+```
+
+Creates new resolved promise if value is not an error, otherwire returns rejected promise.
+
+```typescript
+const y /*: Promise<9> */ = promiseOf(9);
+const y1 /*: Promise<never> */ = promiseOf(new Error('Some reason'));
+```
+
 ### tryCatch
 
 ```typescript

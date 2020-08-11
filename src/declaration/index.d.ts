@@ -247,6 +247,18 @@ declare module '@fluss/core' {
   /** Checks if value is `Array`. */
   export function isArray<T>(value: any): value is Array<T>;
 
+  /** Creates the new resolved promise with value or without it. */
+  export function resolve(): Promise<void>;
+  export function resolve<T>(value: T | PromiseLike<T>): Promise<T>;
+
+  /** Creates the new rejected promise with the reason or without it. */
+  export function reject(): Promise<never>;
+  export function reject<E extends Error>(reason: E): Promise<never>;
+
+  /** Creates new resolved promise if value is not an error, otherwire returns rejected promise. */
+  export function promiseOf<T extends Error>(value: T): Promise<never>;
+  export function promiseOf<T>(value: T): Promise<T>;
+
   /**
    * Lets invoke independent functions with the same value in order that they are declared.
    */

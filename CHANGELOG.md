@@ -1,6 +1,6 @@
 # [0.3.0] - 
 ### Added
-- `isArray` function.
+- `isArray`, `resolve`, `reject`, `promiseOf` functions.
 
 ## [0.2.0] - 2020-08-10
 ### Added
