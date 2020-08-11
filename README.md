@@ -30,7 +30,7 @@ npm i @fluss/core
 - Manual annotation should never be required, TypeScript should infer everything by self.
 - The implementation of each function should be as minimal as possible.
 - All functions are immutable, and there are no side-effects.
-- All functions must be safe as possible.
+- All functions must be safe as much as possible.
 - Fixed number of arguments (max 3).
 
 ## API
@@ -54,7 +54,7 @@ const same /*: 6 */ = identity(6);
 ### tap
 
 ```typescript
-function tap<T>(value: T, fn: (value: Readonly<T>) => any): T;
+function tap<T>(value: T, fn: (value: T) => any): T;
 ```
 
 Performs side-effect on `value` by `fn` and returns the same value.
@@ -231,6 +231,19 @@ wrap(1)
   .chain((str) => wrap(parseInt(str)))
   .apply(wrap((num) => Math.pow(num, 2)))
   .extract(); // => 100
+```
+
+### isWrapper
+
+```typescript
+function isWrapper<T>(value: any): value is Wrapper<T>;
+```
+
+Check if value is instance of Wrapper.
+
+```typescript
+isWrapper(wrap(1)); // true
+isWrapper(1); // false
 ```
 
 #### Wrapper

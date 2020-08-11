@@ -258,7 +258,7 @@ declare module '@fluss/core' {
    * - Function `fn` may return any value - it will be discarded.
    * - Function `fn` must not mutate `value`.
    */
-  export function tap<T>(value: T, fn: (value: Readonly<T>) => any): T;
+  export function tap<T>(value: T, fn: (value: T) => any): T;
 
   /**
    * Wraps code into `try/catch` and returns `Either` monad with result.
@@ -293,6 +293,8 @@ declare module '@fluss/core' {
   export type Wrapper<T> = WrapperConstructor<T>;
   /** Wraps value in `Wrapper` monad and allow perform on it operations in chainable way. */
   export function wrap<T>(value: T): Wrapper<T>;
+  /** Check if value is instance of Wrapper. */
+  export function isWrapper<T>(value: any): value is Wrapper<T>;
 
   export const enum MaybeType {
     Just = 'Just',

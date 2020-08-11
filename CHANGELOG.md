@@ -1,6 +1,10 @@
 # [0.2.0] - 2020-08-10
 ### Added
-- `isPromise` function.
+- `isPromise`, `isWrapper` function.
+- test suites for all functions.
+
+### Changed
+- type of value in `tap`'s function argument.
 
 ## [0.1.3] - 2020-08-10
 ### Fixed

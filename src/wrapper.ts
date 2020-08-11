@@ -1,5 +1,5 @@
-import { Monad } from "./interfaces/monad";
-import { Comonad } from "./interfaces/comonad";
+import { Monad } from './interfaces/monad';
+import { Comonad } from './interfaces/comonad';
 
 class WrapperConstructor<T> implements Comonad, Monad<T> {
   private constructor(private readonly value: T) {}
@@ -28,3 +28,7 @@ class WrapperConstructor<T> implements Comonad, Monad<T> {
 export type Wrapper<T> = WrapperConstructor<T>;
 
 export const { wrap } = WrapperConstructor;
+
+export function isWrapper<T>(value: any): value is Wrapper<T> {
+  return value instanceof WrapperConstructor;
+}
