@@ -2,6 +2,7 @@ export { tap } from './tap';
 export { fork } from './fork';
 export { curry } from './curry';
 export { compose } from './compose';
+export { isArray } from './is_array';
 export { identity } from './identity';
 export { tryCatch } from './try_catch';
 export { sequence } from './sequence';

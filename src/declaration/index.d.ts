@@ -244,6 +244,9 @@ declare module '@fluss/core' {
   /** Checks if value is `Promise`. */
   export function isPromise<T>(value: any): value is Promise<T>;
 
+  /** Checks if value is `Array`. */
+  export function isArray<T>(value: any): value is Array<T>;
+
   /**
    * Lets invoke independent functions with the same value in order that they are declared.
    */

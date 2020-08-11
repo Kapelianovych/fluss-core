@@ -186,6 +186,20 @@ const y1 /*: false */ = isNothing(false);
 const y2 /*: false */ = isNothing(0);
 ```
 
+### isArray
+
+```typescript
+function isArray<T>(value: any): value is Array<T>;
+```
+
+Checks if value is instance of `Array`.
+
+```typescript
+const y /*: true */ = isArray([]);
+const y1 /*: false */ = isArray({});
+const y2 /*: false */ = isArray(0);
+```
+
 ### isPromise
 
 ```typescript

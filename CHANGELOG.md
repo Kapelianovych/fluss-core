@@ -1,4 +1,8 @@
-# [0.2.0] - 2020-08-10
+# [0.3.0] - 
+### Added
+- `isArray` function.
+
+## [0.2.0] - 2020-08-10
 ### Added
 - `isPromise`, `isWrapper` function.
 - test suites for all functions.
