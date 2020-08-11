@@ -280,6 +280,11 @@ declare module '@fluss/core' {
    */
   export function arrayOf<V>(...args: ReadonlyArray<V>): ReadonlyArray<V>;
 
+  /** Creates readonly array from set of ArrayLike or iterable objects. */
+  export function arrayFrom<T>(
+    ...iterables: ReadonlyArray<ArrayLike<T> | Iterable<T>>
+  ): ReadonlyArray<T>;
+
   /**
    * Wraps code into `try/catch` and returns `Either` monad with result.
    * If `catchFn` is not `undefined`, then `Either` with result will

@@ -244,7 +244,7 @@ const y1 /*: Promise<never> */ = reject(new Error('Some reason'));
 ### promiseOf
 
 ```typescript
-function promiseOf<T extends Error>(value: T): Promise<never>;;
+function promiseOf<T extends Error>(value: T): Promise<never>;
 function promiseOf<T>(value: T): Promise<T>;
 ```
 
@@ -265,6 +265,23 @@ Creates readonly array from set of elements.
 
 ```typescript
 const y /*: ReadonlyArray<number> */ = arrayOf(9, 8, 9, 45, 98);
+```
+
+### arrayFrom
+
+```typescript
+function arrayFrom<T>(
+  ...iterables: ReadonlyArray<ArrayLike<T> | Iterable<T>>
+): ReadonlyArray<T>;
+```
+
+Creates readonly array from set of ArrayLike or iterable objects.
+
+```typescript
+const y /*: ReadonlyArray<number> */ = arrayFrom([9], new Set([6]), {
+  0: 6,
+  length: 1,
+});
 ```
 
 ### tryCatch
