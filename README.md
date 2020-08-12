@@ -284,6 +284,18 @@ const y /*: ReadonlyArray<number> */ = arrayFrom([9], new Set([6]), {
 });
 ```
 
+### tupleOf
+
+```typescript
+function tupleOf<V, V1>(v: V, v1: V1): readonly [V, V1];
+```
+
+Creates readonly tuple from set of elements.
+
+```typescript
+const y /*: readonly [number, string] */ = tupleOf(9, 'state');
+```
+
 ### tryCatch
 
 ```typescript

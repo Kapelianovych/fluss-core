@@ -1,7 +1,12 @@
 {
   "name": "@fluss/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Core functions and structures for functional programming.",
+  "keywords": [
+    "functional-programming",
+    "monad",
+    "typescript"
+  ],
   "main": "index.js",
   "module": "index.mjs",
   "scripts": {
@@ -16,6 +21,10 @@
     "release": "npm run build; npm publish dist/ --access public"
   },
   "author": "Kapelianovych Yevhen",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YevhenKap/fluss-core.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-typescript": "^5.0.2",

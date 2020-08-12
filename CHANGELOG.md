@@ -1,6 +1,6 @@
 # [0.3.0] - 
 ### Added
-- `isArray`, `resolve`, `reject`, `promiseOf`, `arrayOf`, `arrayFrom` functions.
+- `isArray`, `resolve`, `reject`, `promiseOf`, `arrayOf`, `arrayFrom`, `tupleOf` functions.
 
 ## [0.2.0] - 2020-08-10
 ### Added
