@@ -1,4 +1,4 @@
-# [0.3.0] - 
+# [0.3.0] - 2020-08-12
 ### Added
 - `isArray`, `resolve`, `reject`, `promiseOf`, `arrayOf`, `arrayFrom`, `tupleOf` functions.
 
