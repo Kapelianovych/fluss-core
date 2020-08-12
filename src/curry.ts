@@ -1,6 +1,6 @@
-export function curry<R>(fn: () => R, defaultArgs?: []): () => R;
+export function curry<R>(fn: () => R): () => R;
 export function curry<A, R>(fn: (a: A) => R, defaultArgs: [A]): () => R;
-export function curry<A, R>(fn: (a: A) => R, defaultArgs?: [A]): (a: A) => R;
+export function curry<A, R>(fn: (a: A) => R): (a: A) => R;
 export function curry<A1, A2, R>(
   fn: (a1: A1, a2: A2) => R,
   defaultArgs: [A1, A2]
@@ -10,9 +10,12 @@ export function curry<A1, A2, R>(
   defaultArgs: [A1]
 ): (a2: A2) => R;
 export function curry<A1, A2, R>(
-  fn: (a1: A1, a2: A2) => R,
-  defaultArgs?: [A1, A2]
+  fn: (a1: A1, a2: A2) => R
 ): (a1: A1) => (a2: A2) => R;
+export function curry<A1, A2, A3, R>(
+  fn: (a1: A1, a2: A2, a3: A3) => R,
+  defaultArgs: [A1, A2, A3]
+): () => R;
 export function curry<A1, A2, A3, R>(
   fn: (a1: A1, a2: A2, a3: A3) => R,
   defaultArgs: [A1, A2]
@@ -22,8 +25,7 @@ export function curry<A1, A2, A3, R>(
   defaultArgs: [A1]
 ): (a2: A2) => (a3: A3) => R;
 export function curry<A1, A2, A3, R>(
-  fn: (a1: A1, a2: A2, a3: A3) => R,
-  defaultArgs?: [A1, A2, A3]
+  fn: (a1: A1, a2: A2, a3: A3) => R
 ): (a1: A1) => (a2: A2) => (a3: A3) => R;
 export function curry<R>(
   fn: (...args: ReadonlyArray<any>) => R,
