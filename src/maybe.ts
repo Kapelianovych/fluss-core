@@ -19,12 +19,12 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
     return new MaybeConstructor<T, MaybeType.Just>(value, MaybeType.Just);
   }
 
-  static nothing<T>(): Maybe<T> {
+  static nothing<T = null>(): Maybe<T> {
     // @ts-ignore
     return new MaybeConstructor<T, MaybeType.Nothing>(null, MaybeType.Nothing);
   }
 
-  static maybeOf<T>(value: T): Maybe<T> {
+  static maybeOf<T>(value: T | null | undefined): Maybe<T> {
     return isNothing(value)
       ? MaybeConstructor.nothing<T>()
       : MaybeConstructor.just(value);

@@ -373,7 +373,7 @@ isMaybe(maybeOf(8)); // true
 ### maybeOf
 
 ```typescript
-function maybeOf<T>(value: T): Maybe<T>;
+function maybeOf<T>(value: T | null | undefined): Maybe<T>;
 ```
 
 Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself.
@@ -398,12 +398,13 @@ just(8); // Maybe<number>
 ### nothing
 
 ```typescript
-function nothing<T>(): Maybe<T>;
+function nothing<T = null>(): Maybe<T>;
 ```
 
 Creates `Maybe` monad instance with **Nothing** state.
 
 ```typescript
+nothing(); // Maybe<null>
 nothing<number>(); // Maybe<number>
 ```
 

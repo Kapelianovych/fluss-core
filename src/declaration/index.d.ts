@@ -359,9 +359,9 @@ declare module '@fluss/core' {
 
     static just<T>(value: T): Maybe<T>;
 
-    static nothing<T>(): Maybe<T>;
+    static nothing<T = null>(): Maybe<T>;
 
-    static maybeOf<T>(value: T): Maybe<T>;
+    static maybeOf<T>(value: T | null | undefined): Maybe<T>;
 
     isJust(): this is MaybeConstructor<V, MaybeType.Just>;
 
@@ -389,9 +389,9 @@ declare module '@fluss/core' {
   /** Wraps value with `Maybe` monad with **Just** state. */
   export function just<T>(value: T): Maybe<T>;
   /** Creates `Maybe` monad instance with **Nothing** state. */
-  export function nothing<T>(): Maybe<T>;
+  export function nothing<T = null>(): Maybe<T>;
   /** Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself. */
-  export function maybeOf<T>(value: T): Maybe<T>;
+  export function maybeOf<T>(value: T | null | undefined): Maybe<T>;
   /** Checks if value is instance of `Maybe` monad. */
   export function isMaybe<T>(value: any): value is Maybe<T>;
 
