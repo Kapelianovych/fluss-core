@@ -190,6 +190,18 @@ forEach(
 );
 ```
 
+### keys
+
+```typescript
+function keys(obj: object): ReadonlyArray<string>;
+```
+
+Gets keys of object.
+
+```typescript
+const keysArray /*: Array<string> */ = keys({ key1: 1, key2: 2 });
+```
+
 ### isNothing
 
 ```typescript

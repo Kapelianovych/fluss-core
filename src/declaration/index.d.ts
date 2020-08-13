@@ -284,6 +284,9 @@ declare module '@fluss/core' {
     fn: (item: U, index: number) => void
   ): void;
 
+  /** Get keys of object. */
+  export function keys(obj: object): ReadonlyArray<string>;
+
   /**
    * Performs side-effect on `value` by `fn` and returns the same value.
    *

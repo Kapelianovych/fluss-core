@@ -1,6 +1,6 @@
 # [0.4.0] - 2020-08-12
 ### Added
-- `reduce`, `concat`, `forEach` function.
+- `reduce`, `concat`, `forEach`, `keys` function.
 
 ## [0.3.1] - 2020-08-12
 ### Fixed

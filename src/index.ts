@@ -1,5 +1,6 @@
 export { tap } from './tap';
 export { fork } from './fork';
+export { keys } from './keys';
 export { curry } from './curry';
 export { reject } from './reject';
 export { reduce } from './reduce';
