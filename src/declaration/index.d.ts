@@ -297,6 +297,14 @@ declare module '@fluss/core' {
     obj: { [key: string]: V } | ArrayLike<V> | Set<V>
   ): ReadonlyArray<[string, V]>;
 
+  /** 
+   * Gets deep value of object based on path of keys.
+   */
+  export function path<R>(
+    keysList: string | Array<string>,
+    obj: { [index: string]: any }
+  ): Maybe<R>;
+
   /**
    * Performs side-effect on `value` by `fn` and returns the same value.
    *

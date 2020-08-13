@@ -1,4 +1,5 @@
 export { tap } from './tap';
+export { path } from './path';
 export { fork } from './fork';
 export { keys } from './keys';
 export { curry } from './curry';

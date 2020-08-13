@@ -233,6 +233,24 @@ const entriesArray /*: Array<[string, number]> */ = entries({
 });
 ```
 
+### path
+
+```typescript
+function path<R>(
+  keysList: string | Array<string>,
+  obj: { [index: string]: any }
+): Maybe<R>;
+```
+
+Gets deep value of object based on path of keys.
+
+```typescript
+// Unfortunately now is hard to tell TypeScript infer nested value :(
+const result /*: Maybe<number> */ = path<number>('a.b', {
+  a: { b: 1 },
+});
+```
+
 ### isNothing
 
 ```typescript
