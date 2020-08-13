@@ -287,6 +287,11 @@ declare module '@fluss/core' {
   /** Get keys of object. */
   export function keys(obj: object): ReadonlyArray<string>;
 
+  /** Gets values of *obj*. */
+  export function values<T>(
+    obj: { [key: string]: T } | ArrayLike<T> | Map<any, T> | Set<T>
+  ): ReadonlyArray<T>;
+
   /**
    * Performs side-effect on `value` by `fn` and returns the same value.
    *

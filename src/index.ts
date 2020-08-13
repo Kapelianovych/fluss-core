@@ -3,6 +3,7 @@ export { fork } from './fork';
 export { keys } from './keys';
 export { curry } from './curry';
 export { reject } from './reject';
+export { values } from './values';
 export { reduce } from './reduce';
 export { concat } from './concat';
 export { tupleOf } from './tuple_of';

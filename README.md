@@ -202,6 +202,20 @@ Gets keys of object.
 const keysArray /*: Array<string> */ = keys({ key1: 1, key2: 2 });
 ```
 
+### values
+
+```typescript
+function values<T>(
+  obj: { [key: string]: T } | ArrayLike<T> | Map<any, T> | Set<T>
+): ReadonlyArray<T>
+```
+
+Gets values of object, array-like object, `Map` or `Set`.
+
+```typescript
+const valuesArray /*: Array<number> */ = values({ key1: 1, key2: 2 });
+```
+
 ### isNothing
 
 ```typescript
