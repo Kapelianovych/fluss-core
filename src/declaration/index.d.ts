@@ -292,6 +292,11 @@ declare module '@fluss/core' {
     obj: { [key: string]: T } | ArrayLike<T> | Map<any, T> | Set<T>
   ): ReadonlyArray<T>;
 
+  /** Gets key-value pair from object, array-like object or Set. */
+  export function entries<V>(
+    obj: { [key: string]: V } | ArrayLike<V> | Set<V>
+  ): ReadonlyArray<[string, V]>;
+
   /**
    * Performs side-effect on `value` by `fn` and returns the same value.
    *

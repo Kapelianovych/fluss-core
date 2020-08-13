@@ -6,6 +6,7 @@ export { reject } from './reject';
 export { values } from './values';
 export { reduce } from './reduce';
 export { concat } from './concat';
+export { entries } from './entries';
 export { tupleOf } from './tuple_of';
 export { resolve } from './resolve';
 export { arrayOf } from './array_of';

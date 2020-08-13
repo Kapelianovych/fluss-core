@@ -199,7 +199,7 @@ function keys(obj: object): ReadonlyArray<string>;
 Gets keys of object.
 
 ```typescript
-const keysArray /*: Array<string> */ = keys({ key1: 1, key2: 2 });
+const keysArray /*: ReadonlyArray<string> */ = keys({ key1: 1, key2: 2 });
 ```
 
 ### values
@@ -207,13 +207,30 @@ const keysArray /*: Array<string> */ = keys({ key1: 1, key2: 2 });
 ```typescript
 function values<T>(
   obj: { [key: string]: T } | ArrayLike<T> | Map<any, T> | Set<T>
-): ReadonlyArray<T>
+): ReadonlyArray<T>;
 ```
 
 Gets values of object, array-like object, `Map` or `Set`.
 
 ```typescript
-const valuesArray /*: Array<number> */ = values({ key1: 1, key2: 2 });
+const valuesArray /*: ReadonlyArray<number> */ = values({ key1: 1, key2: 2 });
+```
+
+### entries
+
+```typescript
+function entries<V>(
+  obj: { [key: string]: V } | ArrayLike<V> | Set<V>
+): ReadonlyArray<[string, V]>;
+```
+
+Gets key-value pair from object, array-like object or Set.
+
+```typescript
+const entriesArray /*: Array<[string, number]> */ = entries({
+  key1: 1,
+  key2: 2,
+});
 ```
 
 ### isNothing
