@@ -261,6 +261,13 @@ declare module '@fluss/core' {
   export function promiseOf<T extends Error>(value: T): Promise<never>;
   export function promiseOf<T>(value: T): Promise<T>;
 
+  /** 
+   * Joins array-like's and iterable's elements and return readonly array of them.
+   */
+  export function concat<T>(
+    ...arraysOrValues: ReadonlyArray<ArrayLike<T> | Iterable<T>>
+  ): ReadonlyArray<T>;
+
   /**
    * Lets invoke independent functions with the same value in order that they are declared.
    */

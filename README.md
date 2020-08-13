@@ -300,9 +300,9 @@ const y /*: readonly [number, string] */ = tupleOf(9, 'state');
 
 ```typescript
 function reduce<U>(
-    iterable: ArrayLike<U> | Iterable<U>,
-    fn: (accumulator: U, item: U, index: number) => U
-  ): U;
+  iterable: ArrayLike<U> | Iterable<U>,
+  fn: (accumulator: U, item: U, index: number) => U
+): U;
 function reduce<T, U>(
   iterable: ArrayLike<U> | Iterable<U>,
   fn: (accumulator: T, item: U, index: number) => T,
@@ -319,6 +319,20 @@ in the next call to the callback function.
 const y /*: number */ = reduce([8, 8, 9, 7], (sum, num) => sum + num);
 // equals to
 const y1 /*: number */ = reduce([8, 8, 9, 7], (sum, num) => sum + num, 0);
+```
+
+### concat
+
+```typescript
+function concat<T>(
+  ...arraysOrValues: ReadonlyArray<ArrayLike<T> | Iterable<T>>
+): ReadonlyArray<T>;
+```
+
+Joins array-like's and iterable's elements and return readonly array of them.
+
+```typescript
+const y /*: ReadonlyArray<number> */ = concat([9, 8], new Set([1, 2]));
 ```
 
 ### tryCatch
