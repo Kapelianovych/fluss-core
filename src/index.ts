@@ -9,6 +9,7 @@ export { resolve } from './resolve';
 export { arrayOf } from './array_of';
 export { compose } from './compose';
 export { isArray } from './is_array';
+export { forEach } from './for_each';
 export { identity } from './identity';
 export { tryCatch } from './try_catch';
 export { sequence } from './sequence';

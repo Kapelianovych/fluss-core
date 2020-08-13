@@ -172,6 +172,24 @@ sequence(
 );
 ```
 
+### forEach
+
+```typescript
+function forEach<U>(
+  iterable: ArrayLike<U> | Iterable<U>,
+  fn: (item: U, index: number) => void
+): void;
+```
+
+Invokes function on every element of iterable or array-like object.
+
+```typescript
+forEach(
+  [1,2,3,4]
+  (num) => changeInnerValueBasedOnNumber(num) // Some useful operation
+);
+```
+
 ### isNothing
 
 ```typescript

@@ -261,7 +261,7 @@ declare module '@fluss/core' {
   export function promiseOf<T extends Error>(value: T): Promise<never>;
   export function promiseOf<T>(value: T): Promise<T>;
 
-  /** 
+  /**
    * Joins array-like's and iterable's elements and return readonly array of them.
    */
   export function concat<T>(
@@ -274,6 +274,14 @@ declare module '@fluss/core' {
   export function sequence<V>(
     value: V,
     ...fns: ReadonlyArray<(value: V) => any>
+  ): void;
+
+  /**
+   * Invokes function on every element of iterable or array-like object.
+   */
+  export function forEach<U>(
+    iterable: ArrayLike<U> | Iterable<U>,
+    fn: (item: U, index: number) => void
   ): void;
 
   /**
