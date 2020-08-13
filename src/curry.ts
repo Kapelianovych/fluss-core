@@ -32,9 +32,10 @@ export function curry<R>(
   defaultArgs: ReadonlyArray<any> = []
 ) {
   return (...args: ReadonlyArray<any>) => {
-    return ((allArgs: ReadonlyArray<any>) => {
-      // @ts-ignore
-      return allArgs.length >= fn.length ? fn(...allArgs) : curry(fn, allArgs);
+    return ((allArgs) => {
+      return allArgs.length >= fn.length
+        ? fn(...allArgs)
+        : curry(fn, allArgs as [any]);
     })([...defaultArgs, ...args]);
   };
 }
