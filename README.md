@@ -296,6 +296,31 @@ Creates readonly tuple from set of elements.
 const y /*: readonly [number, string] */ = tupleOf(9, 'state');
 ```
 
+### reduce
+
+```typescript
+function reduce<U>(
+    iterable: ArrayLike<U> | Iterable<U>,
+    fn: (accumulator: U, item: U, index: number) => U
+  ): U;
+function reduce<T, U>(
+  iterable: ArrayLike<U> | Iterable<U>,
+  fn: (accumulator: T, item: U, index: number) => T,
+  initial: T
+): T;
+```
+
+Calls the specified callback function for all the elements in
+an iterable or array-like object. The return value of the callback
+function is the accumulated result, and is provided as an argument
+in the next call to the callback function.
+
+```typescript
+const y /*: number */ = reduce([8, 8, 9, 7], (sum, num) => sum + num);
+// equals to
+const y1 /*: number */ = reduce([8, 8, 9, 7], (sum, num) => sum + num, 0);
+```
+
 ### tryCatch
 
 ```typescript

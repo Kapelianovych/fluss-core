@@ -310,6 +310,22 @@ declare module '@fluss/core' {
   ): readonly [V, V1, V2, V3, V4];
 
   /**
+   * Calls the specified callback function for all the elements in
+   * an iterable or array-like object. The return value of the callback
+   * function is the accumulated result, and is provided as an argument
+   * in the next call to the callback function.
+   */
+  export function reduce<U>(
+    iterable: ArrayLike<U> | Iterable<U>,
+    fn: (accumulator: U, item: U, index: number) => U
+  ): U;
+  export function reduce<T, U>(
+    iterable: ArrayLike<U> | Iterable<U>,
+    fn: (accumulator: T, item: U, index: number) => T,
+    initial: T
+  ): T;
+
+  /**
    * Wraps code into `try/catch` and returns `Either` monad with result.
    * If `catchFn` is not `undefined`, then `Either` with result will
    * be returned, otherwise - `Either` with error.

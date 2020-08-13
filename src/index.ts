@@ -2,6 +2,7 @@ export { tap } from './tap';
 export { fork } from './fork';
 export { curry } from './curry';
 export { reject } from './reject';
+export { reduce } from './reduce';
 export { tupleOf } from './tuple_of';
 export { resolve } from './resolve';
 export { arrayOf } from './array_of';

@@ -1,4 +1,8 @@
-# [0.3.1] - 2020-08-12
+# [0.4.0] - 2020-08-12
+### Added
+- `reduce` function.
+
+## [0.3.1] - 2020-08-12
 ### Fixed
 - set default type of `nothing` to *null*.
 - type of argument of `maybeOf` function. Now it handles propetly *null* and *undefined*.
