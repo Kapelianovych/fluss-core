@@ -1,4 +1,4 @@
-import { isNothing } from "./is_nothing";
+import { isNothing } from './is_nothing';
 
 export function alternation<R>(fn: () => R, fn1: () => R): () => R;
 export function alternation<T, R>(
@@ -36,13 +36,17 @@ export function alternation<T, T1, T2, R>(
 export function alternation<R>(
   ...fns: ReadonlyArray<(...args: ReadonlyArray<any>) => R>
 ): (...args: ReadonlyArray<any>) => R {
-  return (...args: ReadonlyArray<any>) =>
-    (
-      fns.find((fn) => {
-        const result = fn(...args);
-        return (
-          !Object.is(result, NaN) && !isNothing(result)
-        );
-      }) || fns[fns.length - 1]
-    )(...args);
+  return (...args: ReadonlyArray<any>) => {
+    let result: R = fns[0](...args);
+
+    for (const fn of fns.slice(1)) {
+      if (!Object.is(result, NaN) && !isNothing(result)) {
+        return result;
+      }
+
+      result = fn(...args);
+    }
+
+    return result;
+  };
 }

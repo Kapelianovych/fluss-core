@@ -1,4 +1,10 @@
-# [0.4.0] - 2020-08-12
+# [0.4.1] - 2020-08-15
+
+### Fixed
+
+- Invoking parameter functions of `alternation` twice on checking for its result - now they invokes only once.
+
+## [0.4.0] - 2020-08-12
 
 ### Added
 
