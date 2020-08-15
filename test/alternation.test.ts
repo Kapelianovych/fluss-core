@@ -6,7 +6,7 @@ describe('alternation', () => {
       alternation(
         () => 'g',
         () => 'f'
-      )()
+      )().extract()
     ).toBe('g');
   });
   
@@ -15,7 +15,7 @@ describe('alternation', () => {
       alternation(
         () => null,
         () => 'f'
-      )()
+      )().extract()
     ).toBe('f');
   });
 
@@ -24,7 +24,7 @@ describe('alternation', () => {
       alternation(
         () => null,
         () => null
-      )()
+      )().extract()
     ).toBe(null);
   });
 });

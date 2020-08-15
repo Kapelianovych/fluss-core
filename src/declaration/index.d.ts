@@ -201,39 +201,42 @@ declare module '@fluss/core' {
    * If function returns `NaN`, `null` or `undefined`, then result of next function is checked.
    * If no function return non-empty value, then result of last function is returned.
    */
-  export function alternation<R>(fn: () => R, fn1: () => R): () => R;
-  export function alternation<T, R>(
-    fn: (a: T) => R,
-    fn1: (a: T) => R
-  ): (a: T) => R;
-  export function alternation<T, T1, R>(
-    fn: (a: T, a1: T1) => R,
-    fn1: (a: T, a1: T1) => R
-  ): (a: T, a1: T1) => R;
-  export function alternation<T, T1, T2, R>(
-    fn: (a: T, a1: T1, a2: T2) => R,
-    fn1: (a: T, a1: T1, a2: T2) => R
-  ): (a: T, a1: T1, a2: T2) => R;
   export function alternation<R>(
-    fn: () => R,
-    fn1: () => R,
-    fn2: () => R
-  ): () => R;
+    fn: () => R | null | undefined,
+    fn1: () => R | null | undefined
+  ): () => Maybe<R>;
   export function alternation<T, R>(
-    fn: (a: T) => R,
-    fn1: (a: T) => R,
-    fn2: (a: T) => R
-  ): (a: T) => R;
+    fn: (a: T) => R | null | undefined,
+    fn1: (a: T) => R | null | undefined
+  ): (a: T) => Maybe<R>;
   export function alternation<T, T1, R>(
-    fn: (a: T, a1: T1) => R,
-    fn1: (a: T, a1: T1) => R,
-    fn2: (a: T, a1: T1) => R
-  ): (a: T, a1: T1) => R;
+    fn: (a: T, a1: T1) => R | null | undefined,
+    fn1: (a: T, a1: T1) => R | null | undefined
+  ): (a: T, a1: T1) => Maybe<R>;
   export function alternation<T, T1, T2, R>(
-    fn: (a: T, a1: T1, a2: T2) => R,
-    fn1: (a: T, a1: T1, a2: T2) => R,
-    fn2: (a: T, a1: T1, a2: T2) => R
-  ): (a: T, a1: T1, a2: T2) => R;
+    fn: (a: T, a1: T1, a2: T2) => R | null | undefined,
+    fn1: (a: T, a1: T1, a2: T2) => R | null | undefined
+  ): (a: T, a1: T1, a2: T2) => Maybe<R>;
+  export function alternation<R>(
+    fn: () => R | null | undefined,
+    fn1: () => R | null | undefined,
+    fn2: () => R | null | undefined
+  ): () => Maybe<R>;
+  export function alternation<T, R>(
+    fn: (a: T) => R | null | undefined,
+    fn1: (a: T) => R | null | undefined,
+    fn2: (a: T) => R | null | undefined
+  ): (a: T) => Maybe<R>;
+  export function alternation<T, T1, R>(
+    fn: (a: T, a1: T1) => R | null | undefined,
+    fn1: (a: T, a1: T1) => R | null | undefined,
+    fn2: (a: T, a1: T1) => R | null | undefined
+  ): (a: T, a1: T1) => Maybe<R>;
+  export function alternation<T, T1, T2, R>(
+    fn: (a: T, a1: T1, a2: T2) => R | null | undefined,
+    fn1: (a: T, a1: T1, a2: T2) => R | null | undefined,
+    fn2: (a: T, a1: T1, a2: T2) => R | null | undefined
+  ): (a: T, a1: T1, a2: T2) => Maybe<R>;
 
   /** Just return the same value. */
   export function identity<T>(value: T): T;
@@ -297,7 +300,7 @@ declare module '@fluss/core' {
     obj: { [key: string]: V } | ArrayLike<V> | Set<V>
   ): ReadonlyArray<[string, V]>;
 
-  /** 
+  /**
    * Gets deep value of object based on path of keys.
    */
   export function path<R>(

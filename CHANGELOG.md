@@ -1,5 +1,9 @@
 # [0.4.1] - 2020-08-15
 
+### Changed
+
+- Change return types in parameters of `alternation` function and function itself.
+
 ### Fixed
 
 - Invoking parameter functions of `alternation` twice on checking for its result - now they invokes only once.

@@ -141,7 +141,10 @@ const y /*: (a: Array<number>) => number */ = fork(
 ### alternation
 
 ```typescript
-function alternation<T, R>(fn: (a: T) => R, fn1: (a: T) => R): (a: T) => R;
+function alternation<T, R>(
+  fn: (a: T) => R | null | undefined,
+  fn1: (a: T) => R | null | undefined
+): (a: T) => Maybe<R>;
 ```
 
 Lets accomplish condition logic depending of function application.
@@ -149,7 +152,7 @@ If function returns `NaN`, `null` or `undefined`, then result of next function i
 If no function return non-empty value, then result of last function is returned.
 
 ```typescript
-const y /*: (a: Array<number>) => number */ = alternation(
+const y /*: (a: number) => Maybe<number> */ = alternation(
   (sum: number) => sum - 3,
   (sum: number) => sum // As default value if first function returns NaN
 );
