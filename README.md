@@ -532,9 +532,7 @@ nothing<number>(); // Maybe<number>
 #### Maybe
 
 ```typescript
-type Maybe<V> = V extends null
-  ? MaybeConstructor<V, MaybeType.Nothing>
-  : V extends undefined
+type Maybe<V> = V extends null | undefined
   ? MaybeConstructor<V, MaybeType.Nothing>
   : MaybeConstructor<V, MaybeType.Just>;
 ```

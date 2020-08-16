@@ -61,9 +61,7 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
   }
 }
 
-export type Maybe<V> = V extends null
-  ? MaybeConstructor<V, MaybeType.Nothing>
-  : V extends undefined
+export type Maybe<V> = V extends null | undefined
   ? MaybeConstructor<V, MaybeType.Nothing>
   : MaybeConstructor<V, MaybeType.Just>;
 

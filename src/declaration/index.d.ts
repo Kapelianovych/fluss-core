@@ -435,9 +435,7 @@ declare module '@fluss/core' {
    * _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`).
    * Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
    */
-  export type Maybe<V> = V extends null
-    ? MaybeConstructor<V, MaybeType.Nothing>
-    : V extends undefined
+  export type Maybe<V> = V extends null | undefined
     ? MaybeConstructor<V, MaybeType.Nothing>
     : MaybeConstructor<V, MaybeType.Just>;
 
