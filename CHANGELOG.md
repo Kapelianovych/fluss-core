@@ -1,4 +1,10 @@
-# [0.4.1] - 2020-08-16
+# [0.4.2] - 2020-08-25
+
+### Removed
+
+- Module declaration in `d.ts` file.
+
+## [0.4.1] - 2020-08-16
 
 ### Changed
 
