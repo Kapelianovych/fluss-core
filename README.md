@@ -1,6 +1,6 @@
 # @fluss/core - small library that contains functions for easy functional coding.
 
-There are many libraries for functional programming - [Ramda], [Rambda], [Lodash], [Underscore], [ts-fp] and so on. They all are great libraries and you can use them as well. But if you need some fresh and small functions that just wraps native methods for coding in functional way, you can try _@fluss/core_ :).
+There are many libraries for functional programming - [Ramda](https://ramdajs.com), [Rambda](https://github.com/selfrefactor/rambda), [Lodash](https://lodash.com), [Underscore](https://underscorejs.org), [ts-fp](https://gcanti.github.io/fp-ts/) and so on. They all are great libraries and you can use them as well. But if you need some fresh and small functions that just wraps native methods for coding in functional way, you can try _@fluss/core_ :).
 
 ## Design goals
 
@@ -8,7 +8,7 @@ There are many libraries for functional programming - [Ramda], [Rambda], [Lodash
 - The implementation of each function should be as minimal as possible.
 - All functions are immutable, and there are no side-effects.
 - All functions must be safe as much as possible.
-- Fixed number of arguments (max 3).
+- Fixed number of arguments (preferably 3) whenever possible.
 
 ## Example use
 
@@ -36,8 +36,6 @@ npm i @fluss/core
 ## API
 
 > In TypeScript's examples is used [Flow](https://flow.org)'s comment notation if TypeScript infer type by yourself.
-
-> **Each function must have no more than 3 arguments.**
 
 ### identity
 
