@@ -1,6 +1,6 @@
 # @fluss/core - small library that contains functions for easy functional coding.
 
-There are many libraries for functional programming - [Ramda](https://ramdajs.com), [Rambda](https://github.com/selfrefactor/rambda), [Lodash](https://lodash.com), [Underscore](https://underscorejs.org), [ts-fp](https://gcanti.github.io/fp-ts/) and so on. They all are great libraries and you can use them as well. But if you need some fresh and small functions that just wraps native methods for coding in functional way, you can try _@fluss/core_ :).
+There are many libraries for functional programming - [Ramda](https://ramdajs.com), [Rambda](https://github.com/selfrefactor/rambda), [Lodash](https://lodash.com), [Underscore](https://underscorejs.org), [ts-fp](https://gcanti.github.io/fp-ts/) and so on. They all are great libraries and you can use them as well. But if you need some fresh and small functions that just extend set of native methods and functions for coding in functional way, you can try _@fluss/core_ :).
 
 ## Design goals
 
@@ -9,6 +9,7 @@ There are many libraries for functional programming - [Ramda](https://ramdajs.co
 - All functions are immutable, and there are no side-effects.
 - All functions must be safe as much as possible.
 - Fixed number of arguments (preferably 3) whenever possible.
+- Do not override native methods, if function will make same work and produce result same as native method, then function is useless.
 
 ## Example use
 
@@ -47,22 +48,6 @@ Just return the same value.
 
 ```typescript
 const same /*: 6 */ = identity(6);
-```
-
-### tap
-
-```typescript
-function tap<T>(value: T, fn: (value: T) => any): T;
-```
-
-Performs side-effect on `value` by `fn` and returns the same value.
-
-- Function `fn` may return any value - it will be discarded.
-- Function `fn` must not mutate `value`.
-
-```typescript
-// All numbers will logs to console. Useful for assertions.
-const bridge /*: 8 */ = tap(8, console.log);
 ```
 
 ### compose
@@ -173,67 +158,6 @@ sequence(
 );
 ```
 
-### forEach
-
-```typescript
-function forEach<U>(
-  iterable: ArrayLike<U> | Iterable<U>,
-  fn: (item: U, index: number) => void
-): void;
-```
-
-Invokes function on every element of iterable or array-like object.
-
-```typescript
-forEach(
-  [1,2,3,4]
-  (num) => changeInnerValueBasedOnNumber(num) // Some useful operation
-);
-```
-
-### keys
-
-```typescript
-function keys(obj: object): ReadonlyArray<string>;
-```
-
-Gets keys of object.
-
-```typescript
-const keysArray /*: ReadonlyArray<string> */ = keys({ key1: 1, key2: 2 });
-```
-
-### values
-
-```typescript
-function values<T>(
-  obj: { [key: string]: T } | ArrayLike<T> | Map<any, T> | Set<T>
-): ReadonlyArray<T>;
-```
-
-Gets values of object, array-like object, `Map` or `Set`.
-
-```typescript
-const valuesArray /*: ReadonlyArray<number> */ = values({ key1: 1, key2: 2 });
-```
-
-### entries
-
-```typescript
-function entries<V>(
-  obj: { [key: string]: V } | ArrayLike<V> | Set<V>
-): ReadonlyArray<[string, V]>;
-```
-
-Gets key-value pair from object, array-like object or Set.
-
-```typescript
-const entriesArray /*: Array<[string, number]> */ = entries({
-  key1: 1,
-  key2: 2,
-});
-```
-
 ### path
 
 ```typescript
@@ -266,20 +190,6 @@ const y1 /*: false */ = isNothing(false);
 const y2 /*: false */ = isNothing(0);
 ```
 
-### isArray
-
-```typescript
-function isArray<T>(value: any): value is Array<T>;
-```
-
-Checks if value is instance of `Array`.
-
-```typescript
-const y /*: true */ = isArray([]);
-const y1 /*: false */ = isArray({});
-const y2 /*: false */ = isArray(0);
-```
-
 ### isPromise
 
 ```typescript
@@ -291,34 +201,6 @@ Checks if value is `Promise`.
 ```typescript
 const y /*: false */ = isPromise(false);
 const y1 /*: true */ = isPromise(Promise.resolve(9));
-```
-
-### resolve
-
-```typescript
-function resolve(): Promise<void>;
-function resolve<T>(value: T | PromiseLike<T>): Promise<T>;
-```
-
-Creates resolved promise with or without value.
-
-```typescript
-const y /*: Promise<void> */ = resolve();
-const y1 /*: Promise<8> */ = resolve(8);
-```
-
-### reject
-
-```typescript
-function reject(): Promise<never>;
-function reject<E extends Error>(reason: E): Promise<never>;
-```
-
-Creates rejected promise with or without reason.
-
-```typescript
-const y /*: Promise<never> */ = reject();
-const y1 /*: Promise<never> */ = reject(new Error('Some reason'));
 ```
 
 ### promiseOf
@@ -333,18 +215,6 @@ Creates new resolved promise if value is not an error, otherwire returns rejecte
 ```typescript
 const y /*: Promise<9> */ = promiseOf(9);
 const y1 /*: Promise<never> */ = promiseOf(new Error('Some reason'));
-```
-
-### arrayOf
-
-```typescript
-function arrayOf<V>(...args: ReadonlyArray<V>): ReadonlyArray<V>;
-```
-
-Creates readonly array from set of elements.
-
-```typescript
-const y /*: ReadonlyArray<number> */ = arrayOf(9, 8, 9, 45, 98);
 ```
 
 ### arrayFrom
@@ -376,45 +246,6 @@ Creates readonly tuple from set of elements.
 const y /*: readonly [number, string] */ = tupleOf(9, 'state');
 ```
 
-### reduce
-
-```typescript
-function reduce<U>(
-  iterable: ArrayLike<U> | Iterable<U>,
-  fn: (accumulator: U, item: U, index: number) => U
-): U;
-function reduce<T, U>(
-  iterable: ArrayLike<U> | Iterable<U>,
-  fn: (accumulator: T, item: U, index: number) => T,
-  initial: T
-): T;
-```
-
-Calls the specified callback function for all the elements in
-an iterable or array-like object. The return value of the callback
-function is the accumulated result, and is provided as an argument
-in the next call to the callback function.
-
-```typescript
-const y /*: number */ = reduce([8, 8, 9, 7], (sum, num) => sum + num);
-// equals to
-const y1 /*: number */ = reduce([8, 8, 9, 7], (sum, num) => sum + num, 0);
-```
-
-### concat
-
-```typescript
-function concat<T>(
-  ...arraysOrValues: ReadonlyArray<ArrayLike<T> | Iterable<T>>
-): ReadonlyArray<T>;
-```
-
-Joins array-like's and iterable's elements and return readonly array of them.
-
-```typescript
-const y /*: ReadonlyArray<number> */ = concat([9, 8], new Set([1, 2]));
-```
-
 ### tryCatch
 
 ```typescript
@@ -431,6 +262,22 @@ const getUser /*: (id: string) => Either<NoUserError, User> */ = tryCatch(
   (id: string) => getUserFromDbById(id),
   (error: NoUserError) => createUser()
 );
+```
+
+### freeze
+
+```typescript
+function freeze<T extends object>(value: T, deep?: boolean): Readonly<T>;
+```
+
+Perform shallow(_deep_ is `false`) or deep(_deep_ is `true`) freeze of object. By default function does shallow freezing.
+
+```typescript
+const frozenObject /*: Readonly<{ hello: () => void }> */ = freeze({
+  hello() {
+    console.log('Hello world');
+  },
+});
 ```
 
 ### wrap

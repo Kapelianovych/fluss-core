@@ -1,4 +1,18 @@
-# [0.4.2] - 2020-08-25
+# [0.5.0] - 2020-09-02
+
+### Added
+
+- `freeze` function.
+
+### Changed
+
+- Add underscore to inner value and type of `MaybeConstructor`, `WrapperConstructor` and `EitherConstructor` to show that these fields are private.
+
+### Removed
+
+- `arrayOf`, `concat`, `forEach`, `isArray`, `resolve`, `reject`, `reduce`, `keys`, `values`, `entries`, `tap` functions.
+
+## [0.4.2] - 2020-08-25
 
 ### Removed
 

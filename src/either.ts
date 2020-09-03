@@ -9,8 +9,8 @@ const enum EitherType {
 class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
   implements Comonad, Monad<R> {
   private constructor(
-    private readonly value: T extends EitherType.Left ? L : R,
-    private readonly type: T
+    private readonly _value: T extends EitherType.Left ? L : R,
+    private readonly _type: T
   ) {}
 
   static left<L extends Error, R>(value: L): Either<L, R> {
@@ -33,11 +33,11 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
   }
 
   isRight(): this is EitherConstructor<L, R, EitherType.Right> {
-    return this.type === EitherType.Right;
+    return this._type === EitherType.Right;
   }
 
   isLeft(): this is EitherConstructor<L, R, EitherType.Left> {
-    return this.type === EitherType.Left;
+    return this._type === EitherType.Left;
   }
 
   map<A>(fn: (value: R) => A): Either<L, A> {
@@ -46,14 +46,14 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
 
   mapRight<A>(fn: (value: R) => A): Either<L, A> {
     return this.isRight()
-      ? EitherConstructor.right<L, A>(fn(this.value))
-      : EitherConstructor.left<L, A>(this.value as L);
+      ? EitherConstructor.right<L, A>(fn(this._value))
+      : EitherConstructor.left<L, A>(this._value as L);
   }
 
   mapLeft<E extends Error>(fn: (value: L) => E): Either<E, R> {
     return this.isRight()
-      ? EitherConstructor.right<E, R>(this.value)
-      : EitherConstructor.left<E, R>(fn(this.value as L));
+      ? EitherConstructor.right<E, R>(this._value)
+      : EitherConstructor.left<E, R>(fn(this._value as L));
   }
 
   apply<U>(other: Either<L, (value: R) => U>): Either<L, U> {
@@ -66,12 +66,12 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
 
   chain<U>(fn: (value: R) => Either<L, U>): Either<L, U> {
     return this.isRight()
-      ? fn(this.value)
-      : EitherConstructor.left<L, U>(this.value as L);
+      ? fn(this._value)
+      : EitherConstructor.left<L, U>(this._value as L);
   }
 
   extract(): T extends EitherType.Left ? L : R {
-    return this.value;
+    return this._value;
   }
 }
 

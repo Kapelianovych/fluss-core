@@ -1,4 +1,4 @@
-import { identity } from "./identity";
+import { identity } from './identity';
 
 export function compose<R>(fn: () => R): () => R;
 export function compose<A, R>(fn: (a: A) => R): (a: A) => R;

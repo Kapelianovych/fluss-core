@@ -10,8 +10,8 @@ const enum MaybeType {
 class MaybeConstructor<V, T extends MaybeType = MaybeType>
   implements Comonad, Monad<V> {
   private constructor(
-    private readonly value: T extends MaybeType.Just ? V : null | undefined,
-    private readonly type: T
+    private readonly _value: T extends MaybeType.Just ? V : null | undefined,
+    private readonly _type: T
   ) {}
 
   static just<T>(value: T): Maybe<T> {
@@ -31,16 +31,16 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
   }
 
   isJust(): this is MaybeConstructor<V, MaybeType.Just> {
-    return this.type === MaybeType.Just;
+    return this._type === MaybeType.Just;
   }
 
   isNothing(): this is MaybeConstructor<V, MaybeType.Nothing> {
-    return this.type === MaybeType.Nothing;
+    return this._type === MaybeType.Nothing;
   }
 
   map<R>(fn: (value: V) => R): Maybe<R> {
     return this.isJust()
-      ? MaybeConstructor.just(fn(this.value))
+      ? MaybeConstructor.just(fn(this._value))
       : MaybeConstructor.nothing();
   }
 
@@ -53,11 +53,11 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
   }
 
   chain<R>(fn: (value: V) => Maybe<R>): Maybe<R> {
-    return this.isJust() ? fn(this.value) : MaybeConstructor.nothing();
+    return this.isJust() ? fn(this._value) : MaybeConstructor.nothing();
   }
 
   extract(): T extends MaybeType.Just ? V : null | undefined {
-    return this.value;
+    return this._value;
   }
 }
 

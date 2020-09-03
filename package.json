@@ -1,6 +1,6 @@
 {
   "name": "@fluss/core",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Core functions and structures for functional programming.",
   "keywords": [
     "functional-programming",
@@ -11,14 +11,14 @@
   "module": "index.mjs",
   "scripts": {
     "test": "jest",
-    "clean": "rm -r dist/*",
+    "clean": "rm -r build/*",
     "build": "npm run test; npm run clean; rollup -c; npm run copy",
     "copy": "npm run copy:settings; npm run copy:docs; npm run copy:declaration; npm run copy:license",
-    "copy:settings": "cp package.json dist/",
-    "copy:license": "cp LICENSE dist/",
-    "copy:docs": "cp README.md dist/; cp CHANGELOG.md dist/",
-    "copy:declaration": "cp -r src/declaration/ dist/",
-    "release": "npm run build; npm publish dist/ --access public"
+    "copy:settings": "cp package.json build/",
+    "copy:license": "cp LICENSE build/",
+    "copy:docs": "cp README.md build/; cp CHANGELOG.md build/",
+    "copy:declaration": "cp -r src/declaration/ build/",
+    "release": "npm run build; npm publish build/ --access public"
   },
   "author": "Kapelianovych Yevhen",
   "repository": {
@@ -28,11 +28,11 @@
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-typescript": "^5.0.2",
-    "@types/jest": "^26.0.10",
+    "@types/jest": "^26.0.13",
     "jest": "^26.4.2",
-    "rollup": "^2.26.5",
-    "rollup-plugin-terser": "^7.0.0",
-    "ts-jest": "^26.2.0",
+    "rollup": "^2.26.9",
+    "rollup-plugin-terser": "^7.0.1",
+    "ts-jest": "^26.3.0",
     "tslib": "^2.0.1",
     "typescript": "^4.0.2"
   }

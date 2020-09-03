@@ -248,27 +248,9 @@ export function isNothing<T>(
 /** Checks if value is `Promise`. */
 export function isPromise<T>(value: any): value is Promise<T>;
 
-/** Checks if value is `Array`. */
-export function isArray<T>(value: any): value is Array<T>;
-
-/** Creates the new resolved promise with value or without it. */
-export function resolve(): Promise<void>;
-export function resolve<T>(value: T | PromiseLike<T>): Promise<T>;
-
-/** Creates the new rejected promise with the reason or without it. */
-export function reject(): Promise<never>;
-export function reject<E extends Error>(reason: E): Promise<never>;
-
 /** Creates new resolved promise if value is not an error, otherwire returns rejected promise. */
 export function promiseOf<T extends Error>(value: T): Promise<never>;
 export function promiseOf<T>(value: T): Promise<T>;
-
-/**
- * Joins array-like's and iterable's elements and return readonly array of them.
- */
-export function concat<T>(
-  ...arraysOrValues: ReadonlyArray<ArrayLike<T> | Iterable<T>>
-): ReadonlyArray<T>;
 
 /**
  * Lets invoke independent functions with the same value in order that they are declared.
@@ -279,25 +261,10 @@ export function sequence<V>(
 ): void;
 
 /**
- * Invokes function on every element of iterable or array-like object.
+ * Perform shallow(_deep_ is `false`) or deep(_deep_ is `true`)
+ * freeze of object. By default function does shallow freezing.
  */
-export function forEach<U>(
-  iterable: ArrayLike<U> | Iterable<U>,
-  fn: (item: U, index: number) => void
-): void;
-
-/** Get keys of object. */
-export function keys(obj: object): ReadonlyArray<string>;
-
-/** Gets values of *obj*. */
-export function values<T>(
-  obj: { [key: string]: T } | ArrayLike<T> | Map<any, T> | Set<T>
-): ReadonlyArray<T>;
-
-/** Gets key-value pair from object, array-like object or Set. */
-export function entries<V>(
-  obj: { [key: string]: V } | ArrayLike<V> | Set<V>
-): ReadonlyArray<[string, V]>;
+export function freeze<T extends object>(value: T, deep?: boolean): Readonly<T>;
 
 /**
  * Gets deep value of object based on path of keys.
@@ -308,17 +275,12 @@ export function path<R>(
 ): Maybe<R>;
 
 /**
- * Performs side-effect on `value` by `fn` and returns the same value.
+ * Creates "dirty" identity function. _fn_ performs side-effect on `value`.
  *
- * - Function `fn` may return any value - it will be discarded.
- * - Function `fn` must not mutate `value`.
+ * - _fn_ may return any value - it will be discarded.
+ * - **_fn_ must not mutate `value`!**
  */
-export function tap<T>(value: T, fn: (value: T) => any): T;
-
-/**
- * Creates readonly array from set of elements.
- */
-export function arrayOf<V>(...args: ReadonlyArray<V>): ReadonlyArray<V>;
+export function tap<T>(fn: (value: T) => any): (value: T) => T;
 
 /** Creates readonly array from set of ArrayLike or iterable objects. */
 export function arrayFrom<T>(
@@ -344,22 +306,6 @@ export function tupleOf<V, V1, V2, V3, V4>(
 ): readonly [V, V1, V2, V3, V4];
 
 /**
- * Calls the specified callback function for all the elements in
- * an iterable or array-like object. The return value of the callback
- * function is the accumulated result, and is provided as an argument
- * in the next call to the callback function.
- */
-export function reduce<U>(
-  iterable: ArrayLike<U> | Iterable<U>,
-  fn: (accumulator: U, item: U, index: number) => U
-): U;
-export function reduce<T, U>(
-  iterable: ArrayLike<U> | Iterable<U>,
-  fn: (accumulator: T, item: U, index: number) => T,
-  initial: T
-): T;
-
-/**
  * Wraps code into `try/catch` and returns `Either` monad with result.
  * If `catchFn` is not `undefined`, then `Either` with result will
  * be returned, otherwise - `Either` with error.
@@ -374,7 +320,7 @@ export function tryCatch<T, L extends Error, R>(
 ): (input: T) => Promise<Either<L, R>>;
 
 declare class WrapperConstructor<T> implements Comonad, Monad<T> {
-  private readonly value: T;
+  private readonly _value: T;
 
   private constructor();
 
@@ -402,8 +348,8 @@ declare const enum MaybeType {
 
 declare class MaybeConstructor<V, T extends MaybeType = MaybeType>
   implements Comonad, Monad<V> {
-  private readonly type: T;
-  private readonly value: T extends MaybeType.Just ? V : null | undefined;
+  private readonly _type: T;
+  private readonly _value: T extends MaybeType.Just ? V : null | undefined;
 
   private constructor();
 
@@ -448,10 +394,13 @@ declare const enum EitherType {
   Right = 'Right',
 }
 
-declare class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
-  implements Comonad, Monad<R> {
-  private readonly type: T;
-  private readonly value: T extends EitherType.Left ? L : R;
+declare class EitherConstructor<
+  L extends Error,
+  R,
+  T extends EitherType = EitherType
+> implements Comonad, Monad<R> {
+  private readonly _type: T;
+  private readonly _value: T extends EitherType.Left ? L : R;
 
   private constructor();
 
