@@ -1,4 +1,11 @@
-# [0.5.0] - 2020-09-02
+# [0.5.1] - 2020-09-03
+
+### Fixed
+
+- Incorrect type narrowing in Maybe when function inside map or apply return null or undefined.
+- Incorrect type narrowing in Either when function inside map or apply return Error.
+
+## [0.5.0] - 2020-09-03
 
 ### Added
 

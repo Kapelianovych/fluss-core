@@ -40,28 +40,28 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
     return this._type === EitherType.Left;
   }
 
-  map<A>(fn: (value: R) => A): Either<L, A> {
+  map<A>(fn: (value: R) => L | A): Either<L, A> {
     return this.mapRight(fn);
   }
 
-  mapRight<A>(fn: (value: R) => A): Either<L, A> {
+  mapRight<A>(fn: (value: R) => L | A): Either<L, A> {
     return this.isRight()
-      ? EitherConstructor.right<L, A>(fn(this._value))
+      ? EitherConstructor.eitherOf<L, A>(fn(this._value))
       : EitherConstructor.left<L, A>(this._value as L);
   }
 
-  mapLeft<E extends Error>(fn: (value: L) => E): Either<E, R> {
+  mapLeft<E extends Error>(fn: (value: L) => E | R): Either<E, R> {
     return this.isRight()
       ? EitherConstructor.right<E, R>(this._value)
-      : EitherConstructor.left<E, R>(fn(this._value as L));
+      : EitherConstructor.eitherOf<E, R>(fn(this._value as L));
   }
 
-  apply<U>(other: Either<L, (value: R) => U>): Either<L, U> {
+  apply<U>(other: Either<L, (value: R) => L | U>): Either<L, U> {
     if (other.isLeft()) {
       return EitherConstructor.left(other.extract());
     }
 
-    return this.mapRight(other.extract() as (value: R) => U);
+    return this.mapRight(other.extract() as (value: R) => L | U);
   }
 
   chain<U>(fn: (value: R) => Either<L, U>): Either<L, U> {

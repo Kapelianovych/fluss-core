@@ -1,6 +1,6 @@
 export interface Applicative<T> extends Functor<T> {
   /** Maps value by using value of `other` monad. Value of other monad must be a **function type**. */
-  apply<R>(other: Applicative<(value: T) => R>): Applicative<R>;
+  apply(other: Applicative<(value: T) => any>): Applicative<any>;
 }
 export interface Chain<T> extends Functor<T> {
   /** Maps inner value and returns new monad instance with new value. */
@@ -363,9 +363,9 @@ declare class MaybeConstructor<V, T extends MaybeType = MaybeType>
 
   isNothing(): this is MaybeConstructor<V, MaybeType.Nothing>;
 
-  map<R>(fn: (value: V) => R): Maybe<R>;
+  map<R>(fn: (value: V) => R | null | undefined): Maybe<R>;
 
-  apply<R>(other: Maybe<(value: V) => R>): Maybe<R>;
+  apply<R>(other: Maybe<(value: V) => R | null | undefined>): Maybe<R>;
 
   chain<R>(fn: (value: V) => Maybe<R>): Maybe<R>;
 
@@ -414,15 +414,15 @@ declare class EitherConstructor<
 
   isLeft(): this is EitherConstructor<L, R, EitherType.Left>;
 
-  map<A>(fn: (value: R) => A): Either<L, A>;
+  map<A>(fn: (value: R) => L | A): Either<L, A>;
 
   /** Maps inner value if it is not an `Error` instance. Same as `Either.map`. */
-  mapRight<A>(fn: (value: R) => A): Either<L, A>;
+  mapRight<A>(fn: (value: R) => L | A): Either<L, A>;
 
   /** Maps inner value if it is an `Error` instance */
-  mapLeft<E extends Error>(fn: (value: L) => E): Either<E, R>;
+  mapLeft<E extends Error>(fn: (value: L) => E | R): Either<E, R>;
 
-  apply<U>(other: Either<L, (value: R) => U>): Either<L, U>;
+  apply<U>(other: Either<L, (value: R) => L | U>): Either<L, U>;
 
   chain<U>(fn: (value: R) => Either<L, U>): Either<L, U>;
 
