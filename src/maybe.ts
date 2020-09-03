@@ -38,13 +38,13 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
     return this._type === MaybeType.Nothing;
   }
 
-  map<R>(fn: (value: V) => R): Maybe<R> {
+  map<R>(fn: (value: V) => R | null | undefined): Maybe<R> {
     return this.isJust()
-      ? MaybeConstructor.just(fn(this._value))
+      ? MaybeConstructor.maybeOf(fn(this._value))
       : MaybeConstructor.nothing();
   }
 
-  apply<R>(other: Maybe<(value: V) => R>): Maybe<R> {
+  apply<R>(other: Maybe<(value: V) => R | null | undefined>): Maybe<R> {
     if (other.isNothing()) {
       return MaybeConstructor.nothing();
     }
