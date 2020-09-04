@@ -248,8 +248,10 @@ export function isNothing<T>(
 /** Checks if value is `Promise`. */
 export function isPromise<T>(value: any): value is Promise<T>;
 
-/** Creates new resolved promise if value is not an error, otherwire returns rejected promise. */
-export function promiseOf<T extends Error>(value: T): Promise<never>;
+/**
+ * Creates new resolved promise if value is not an error,
+ * otherwire returns rejected promise.
+ */
 export function promiseOf<T>(value: T | PromiseLike<T>): Promise<T>;
 
 /**

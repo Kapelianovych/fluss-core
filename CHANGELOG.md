@@ -1,4 +1,10 @@
-# [0.5.3] - 2020-09-04
+# [0.5.4] - 2020-09-04
+
+### Removed
+
+- One overload of `promiseOf` function in d.ts file.
+
+## [0.5.3] - 2020-09-04
 
 ### Fixed
 

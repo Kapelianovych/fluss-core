@@ -206,7 +206,6 @@ const y1 /*: true */ = isPromise(Promise.resolve(9));
 ### promiseOf
 
 ```typescript
-function promiseOf<T extends Error>(value: T): Promise<never>;
 function promiseOf<T>(value: T | PromiseLike<T>): Promise<T>;
 ```
 
@@ -214,7 +213,11 @@ Creates new resolved promise if value is not an error, otherwire returns rejecte
 
 ```typescript
 const y /*: Promise<9> */ = promiseOf(9);
-const y1 /*: Promise<never> */ = promiseOf(new Error('Some reason'));
+
+function throwable() {
+  throw new Error();
+}
+const y1 /*: Promise<never> */ = promiseOf(throwable());
 ```
 
 ### arrayFrom
