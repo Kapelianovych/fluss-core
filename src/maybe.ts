@@ -24,10 +24,11 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
     return new MaybeConstructor<T, MaybeType.Nothing>(null, MaybeType.Nothing);
   }
 
-  static maybeOf<T>(value: T | null | undefined): Maybe<T> {
-    return isNothing(value)
+  static maybeOf<T>(value: T | Maybe<T> | null | undefined): Maybe<T> {
+    const exposedValue = isMaybe<T>(value) ? value.extract() : value;
+    return isNothing(exposedValue)
       ? MaybeConstructor.nothing<T>()
-      : MaybeConstructor.just(value);
+      : MaybeConstructor.just(exposedValue);
   }
 
   isJust(): this is MaybeConstructor<V, MaybeType.Just> {

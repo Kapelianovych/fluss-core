@@ -7,6 +7,7 @@ describe('wrapper', () => {
 
   test('wrap function wraps value into Wrapper and extract it', () => {
     expect(wrap(4).extract()).toBe(4);
+    expect(wrap(wrap(4)).extract()).toBe(4);
   });
 
   test('wrap function wraps value into Wrapper and can map it', () => {

@@ -21,6 +21,8 @@ describe('Either', () => {
     expect(eitherOf({}).isRight()).toBe(true);
     expect(eitherOf(new Error()).isLeft()).toBe(true);
     expect(eitherOf(new Error()).isLeft()).toBe(true);
+    expect(eitherOf(right(8)).extract()).toBe(8);
+    expect(eitherOf(left(new Error())).extract()).toEqual(new Error());
   });
 
   test('extract method return inner value of Either', () => {

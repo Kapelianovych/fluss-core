@@ -283,7 +283,7 @@ const frozenObject /*: Readonly<{ hello: () => void }> */ = freeze({
 ### wrap
 
 ```typescript
-function wrap<T>(value: T): Wrapper<T>;
+function wrap<T>(value: T | Wrapper<T>): Wrapper<T>;
 ```
 
 Wraps value in `Wrapper` monad and allow perform on it operations in chainable way.
@@ -339,7 +339,7 @@ isMaybe(maybeOf(8)); // true
 ### maybeOf
 
 ```typescript
-function maybeOf<T>(value: T | null | undefined): Maybe<T>;
+function maybeOf<T>(value: T | Maybe<T> | null | undefined): Maybe<T>;
 ```
 
 Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself.
@@ -401,7 +401,9 @@ isEither(eitherOf(8)); // true
 ### eitherOf
 
 ```typescript
-function eitherOf<L extends Error, R>(value: R | L): Either<L, R>;
+function eitherOf<L extends Error, R>(
+  value: L | R | Either<L, R>
+): Either<L, R>;
 ```
 
 Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself.

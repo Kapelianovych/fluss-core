@@ -1,4 +1,12 @@
-# [0.5.1] - 2020-09-03
+# [0.5.2] - 2020-09-04
+
+### Changed
+
+- `wrap` can make copy of `Wrapper` instance now.
+- `maybeOf` can make copy of `Maybe` instance now.
+- `eitherOf` can make copy of `Either` instance now.
+
+## [0.5.1] - 2020-09-03
 
 ### Fixed
 

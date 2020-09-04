@@ -26,10 +26,13 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
     );
   }
 
-  static eitherOf<A extends Error, B>(value: A | B): Either<A, B> {
-    return value instanceof Error
-      ? EitherConstructor.left<A, B>(value)
-      : EitherConstructor.right<A, B>(value);
+  static eitherOf<A extends Error, B>(
+    value: A | B | Either<A, B>
+  ): Either<A, B> {
+    const exposedValue = isEither<A, B>(value) ? value.extract() : value;
+    return exposedValue instanceof Error
+      ? EitherConstructor.left<A, B>(exposedValue)
+      : EitherConstructor.right<A, B>(exposedValue);
   }
 
   isRight(): this is EitherConstructor<L, R, EitherType.Right> {

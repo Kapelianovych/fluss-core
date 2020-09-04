@@ -4,8 +4,9 @@ import { Comonad } from './interfaces/comonad';
 class WrapperConstructor<T> implements Comonad, Monad<T> {
   private constructor(private readonly _value: T) {}
 
-  static wrap<U>(value: U): Wrapper<U> {
-    return new WrapperConstructor(value);
+  static wrap<U>(value: U | Wrapper<U>): Wrapper<U> {
+    const exposedValue = isWrapper<U>(value) ? value.extract() : value;
+    return new WrapperConstructor(exposedValue);
   }
 
   map<R>(fn: (value: T) => R): Wrapper<R> {

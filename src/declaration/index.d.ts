@@ -324,7 +324,7 @@ declare class WrapperConstructor<T> implements Comonad, Monad<T> {
 
   private constructor();
 
-  static wrap<U>(value: U): Wrapper<U>;
+  static wrap<U>(value: U | Wrapper<U>): Wrapper<U>;
 
   map<R>(fn: (value: T) => R): Wrapper<R>;
 
@@ -336,8 +336,11 @@ declare class WrapperConstructor<T> implements Comonad, Monad<T> {
 }
 /** Monad that contains value and allow perform operation on it by set of methods. */
 export type Wrapper<T> = WrapperConstructor<T>;
-/** Wraps value in `Wrapper` monad and allow perform on it operations in chainable way. */
-export function wrap<T>(value: T): Wrapper<T>;
+/**
+ * Wraps value in `Wrapper` monad and allow perform on it operations in chainable way.
+ * If value is `Wrapper`, then its copy will be returned.
+ */
+export function wrap<T>(value: T | Wrapper<T>): Wrapper<T>;
 /** Check if value is instance of Wrapper. */
 export function isWrapper<T>(value: any): value is Wrapper<T>;
 
@@ -357,7 +360,7 @@ declare class MaybeConstructor<V, T extends MaybeType = MaybeType>
 
   static nothing<T = null>(): Maybe<T>;
 
-  static maybeOf<T>(value: T | null | undefined): Maybe<T>;
+  static maybeOf<T>(value: T | Maybe<T> | null | undefined): Maybe<T>;
 
   isJust(): this is MaybeConstructor<V, MaybeType.Just>;
 
@@ -384,8 +387,12 @@ export type Maybe<V> = V extends null | undefined
 export function just<T>(value: T): Maybe<T>;
 /** Creates `Maybe` monad instance with **Nothing** state. */
 export function nothing<T = null>(): Maybe<T>;
-/** Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself. */
-export function maybeOf<T>(value: T | null | undefined): Maybe<T>;
+/**
+ * Wraps value with `Maybe` monad. Function detects state
+ * (**Just** or **Nothing**) of `Maybe` by yourself.
+ * If value is `Maybe`, then its copy will be returned.
+ */
+export function maybeOf<T>(value: T | Maybe<T> | null | undefined): Maybe<T>;
 /** Checks if value is instance of `Maybe` monad. */
 export function isMaybe<T>(value: any): value is Maybe<T>;
 
@@ -408,7 +415,9 @@ declare class EitherConstructor<
 
   static right<L extends Error, R>(value: R): Either<L, R>;
 
-  static eitherOf<A extends Error, B>(value: A | B): Either<A, B>;
+  static eitherOf<A extends Error, B>(
+    value: A | B | Either<A, B>
+  ): Either<A, B>;
 
   isRight(): this is EitherConstructor<L, R, EitherType.Right>;
 
@@ -438,7 +447,13 @@ export type Either<L extends Error, R> = L | R extends Error
 /** Creates `Either` monad instance with **Left** state. */
 export function left<L extends Error, R>(value: L): Either<L, R>;
 export function right<L extends Error, R>(value: R): Either<L, R>;
-/** Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself. */
-export function eitherOf<L extends Error, R>(value: R | L): Either<L, R>;
+/**
+ * Wraps value with `Either` monad. Function detects state
+ * (**Right** or **Left**) of `Either` by yourself.
+ * If value is `Either`, then its copy will be returned.
+ */
+export function eitherOf<L extends Error, R>(
+  value: L | R | Either<L, R>
+): Either<L, R>;
 /** Checks if value is instance of `Either` monad. */
 export function isEither<L extends Error, R>(value: any): value is Either<L, R>;

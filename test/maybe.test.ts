@@ -21,6 +21,8 @@ describe('Maybe', () => {
     expect(maybeOf({}).isJust()).toBe(true);
     expect(maybeOf(null).isNothing()).toBe(true);
     expect(maybeOf(undefined).isNothing()).toBe(true);
+    expect(maybeOf(just(8)).extract()).toBe(8);
+    expect(maybeOf(nothing()).extract()).toBe(null);
   });
 
   test('extract method return inner value of Maybe', () => {
