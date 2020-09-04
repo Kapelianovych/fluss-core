@@ -250,7 +250,7 @@ export function isPromise<T>(value: any): value is Promise<T>;
 
 /** Creates new resolved promise if value is not an error, otherwire returns rejected promise. */
 export function promiseOf<T extends Error>(value: T): Promise<never>;
-export function promiseOf<T>(value: T): Promise<T>;
+export function promiseOf<T>(value: T | PromiseLike<T>): Promise<T>;
 
 /**
  * Lets invoke independent functions with the same value in order that they are declared.

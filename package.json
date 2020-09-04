@@ -1,6 +1,6 @@
 {
   "name": "@fluss/core",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Core functions and structures for functional programming.",
   "keywords": [
     "functional-programming",

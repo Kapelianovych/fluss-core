@@ -207,7 +207,7 @@ const y1 /*: true */ = isPromise(Promise.resolve(9));
 
 ```typescript
 function promiseOf<T extends Error>(value: T): Promise<never>;
-function promiseOf<T>(value: T): Promise<T>;
+function promiseOf<T>(value: T | PromiseLike<T>): Promise<T>;
 ```
 
 Creates new resolved promise if value is not an error, otherwire returns rejected promise.

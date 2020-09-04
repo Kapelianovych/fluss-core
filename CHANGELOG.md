@@ -1,4 +1,10 @@
-# [0.5.2] - 2020-09-04
+# [0.5.3] - 2020-09-04
+
+### Fixed
+
+- Add `PromiseLike` type to `promiseOf`'s parameter type.
+
+## [0.5.2] - 2020-09-04
 
 ### Changed
 

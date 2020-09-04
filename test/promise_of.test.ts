@@ -7,5 +7,6 @@ describe('promiseOf', () => {
 
   test('promiseOf creates resolved promise', () => {
     expect(promiseOf(8)).resolves.toBe(8);
+    expect(promiseOf(Promise.resolve(8))).resolves.toBe(8);
   });
 });
