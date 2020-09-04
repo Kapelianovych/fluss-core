@@ -3,6 +3,7 @@
 ### Removed
 
 - One overload of `promiseOf` function in d.ts file.
+- Defunct `tap` function declaration.
 
 ## [0.5.3] - 2020-09-04
 

@@ -276,14 +276,6 @@ export function path<R>(
   obj: { [index: string]: any }
 ): Maybe<R>;
 
-/**
- * Creates "dirty" identity function. _fn_ performs side-effect on `value`.
- *
- * - _fn_ may return any value - it will be discarded.
- * - **_fn_ must not mutate `value`!**
- */
-export function tap<T>(fn: (value: T) => any): (value: T) => T;
-
 /** Creates readonly array from set of ArrayLike or iterable objects. */
 export function arrayFrom<T>(
   ...iterables: ReadonlyArray<ArrayLike<T> | Iterable<T>>
