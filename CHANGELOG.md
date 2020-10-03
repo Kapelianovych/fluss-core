@@ -1,4 +1,10 @@
-# [0.5.4] - 2020-09-04
+# [0.6.0] - 2020-10-03
+
+### Changed
+
+- `sequence` now returns function (back to first implementation).
+
+## [0.5.4] - 2020-09-04
 
 ### Removed
 

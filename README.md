@@ -144,18 +144,25 @@ const y /*: (a: number) => Maybe<number> */ = alternation(
 ### sequence
 
 ```typescript
-function sequence<V>(value: V, ...fns: ReadonlyArray<(value: V) => any>): void;
+function sequence<V>(
+  ...fns: ReadonlyArray<(value: V) => unknown>
+): (value: V) => void;
 ```
 
 Lets invoke independent functions with the same value in order that they are declared.
 
 ```typescript
-sequence(
-  someError, // Error instance
+function sendOverNetwork(error: Error) {
+  // send error to some url
+}
+
+const errorLogger /*: (value: Error) => void */ = sequence(
   console.log, // 1
   logIntoFile, // 2
   sendOverNetwork // 3
 );
+
+errorLogger(someError);
 ```
 
 ### path

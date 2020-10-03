@@ -1,6 +1,5 @@
 export function sequence<V>(
-  value: V,
-  ...fns: ReadonlyArray<(value: V) => any>
-): void {
-  fns.forEach((fn) => fn(value));
+  ...fns: ReadonlyArray<(value: V) => unknown>
+): (value: V) => void {
+  return (value: V) => fns.forEach((fn) => fn(value));
 }

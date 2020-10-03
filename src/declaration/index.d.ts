@@ -255,12 +255,12 @@ export function isPromise<T>(value: any): value is Promise<T>;
 export function promiseOf<T>(value: T | PromiseLike<T>): Promise<T>;
 
 /**
- * Lets invoke independent functions with the same value in order that they are declared.
+ * Lets invoke independent functions with the same value
+ * in order that they are declared.
  */
 export function sequence<V>(
-  value: V,
-  ...fns: ReadonlyArray<(value: V) => any>
-): void;
+  ...fns: ReadonlyArray<(value: V) => unknown>
+): (value: V) => void;
 
 /**
  * Perform shallow(_deep_ is `false`) or deep(_deep_ is `true`)
