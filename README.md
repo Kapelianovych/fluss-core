@@ -387,9 +387,7 @@ nothing<number>(); // Maybe<number>
 #### Maybe
 
 ```typescript
-type Maybe<V> = V extends null | undefined
-  ? MaybeConstructor<V, MaybeType.Nothing>
-  : MaybeConstructor<V, MaybeType.Just>;
+type Maybe<V> = MaybeConstructor<V>;
 ```
 
 Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`). Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
@@ -450,9 +448,7 @@ left<Error, number>(new Error('Error is occured!')); // Either<Error, number>
 #### Either
 
 ```typescript
-type Either<L extends Error, R> = L | R extends Error
-  ? EitherConstructor<L, R, EitherType.Left>
-  : EitherConstructor<L, R, EitherType.Right>;
+type Either<L extends Error, R> = EitherConstructor<L, R>;
 ```
 
 Monad that can contain value or `Error`. Allow handles errors in functional way.

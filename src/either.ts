@@ -1,29 +1,15 @@
 import { Monad } from './interfaces/monad';
 import { Comonad } from './interfaces/comonad';
 
-const enum EitherType {
-  Left = 'Left',
-  Right = 'Right',
-}
-
-class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
-  implements Comonad, Monad<R> {
-  private constructor(
-    private readonly _value: T extends EitherType.Left ? L : R,
-    private readonly _type: T
-  ) {}
+class EitherConstructor<L extends Error, R> implements Comonad, Monad {
+  private constructor(private readonly _value: L | R) {}
 
   static left<L extends Error, R>(value: L): Either<L, R> {
-    // @ts-ignore
-    return new EitherConstructor<L, R, EitherType.Left>(value, EitherType.Left);
+    return new EitherConstructor<L, R>(value);
   }
 
   static right<L extends Error, R>(value: R): Either<L, R> {
-    // @ts-ignore
-    return new EitherConstructor<L, R, EitherType.Right>(
-      value,
-      EitherType.Right
-    );
+    return new EitherConstructor<L, R>(value);
   }
 
   static eitherOf<A extends Error, B>(
@@ -35,12 +21,12 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
       : EitherConstructor.right<A, B>(exposedValue);
   }
 
-  isRight(): this is EitherConstructor<L, R, EitherType.Right> {
-    return this._type === EitherType.Right;
+  isRight(): this is Either<never, R> {
+    return !this.isLeft();
   }
 
-  isLeft(): this is EitherConstructor<L, R, EitherType.Left> {
-    return this._type === EitherType.Left;
+  isLeft(): this is Either<L, never> {
+    return this._value instanceof Error;
   }
 
   map<A>(fn: (value: R) => L | A): Either<L, A> {
@@ -60,11 +46,9 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
   }
 
   apply<U>(other: Either<L, (value: R) => L | U>): Either<L, U> {
-    if (other.isLeft()) {
-      return EitherConstructor.left(other.extract());
-    }
-
-    return this.mapRight(other.extract() as (value: R) => L | U);
+    return other.isRight()
+      ? this.mapRight(other.extract())
+      : EitherConstructor.left<L, U>(other.extract() as L);
   }
 
   chain<U>(fn: (value: R) => Either<L, U>): Either<L, U> {
@@ -73,14 +57,12 @@ class EitherConstructor<L extends Error, R, T extends EitherType = EitherType>
       : EitherConstructor.left<L, U>(this._value as L);
   }
 
-  extract(): T extends EitherType.Left ? L : R {
+  extract(): L | R {
     return this._value;
   }
 }
 
-export type Either<L extends Error, R> = L | R extends Error
-  ? EitherConstructor<L, R, EitherType.Left>
-  : EitherConstructor<L, R, EitherType.Right>;
+export type Either<L extends Error, R> = EitherConstructor<L, R>;
 
 export const { left, right, eitherOf } = EitherConstructor;
 

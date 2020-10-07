@@ -1,4 +1,14 @@
-# [0.6.0] - 2020-10-03
+# [0.7.0] - 2020-10-07
+
+### Changed
+
+- Make `Either` and `Maybe` types stricter.
+
+### Removed
+
+- Generic types from interfaces.
+
+## [0.6.0] - 2020-10-03
 
 ### Changed
 

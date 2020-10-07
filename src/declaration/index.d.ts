@@ -1,24 +1,22 @@
-export interface Applicative<T> extends Functor<T> {
+export interface Applicative extends Functor {
   /** Maps value by using value of `other` monad. Value of other monad must be a **function type**. */
-  apply(other: Applicative<(value: T) => any>): Applicative<any>;
+  apply(other: Applicative): Applicative;
 }
-export interface Chain<T> extends Functor<T> {
+export interface Chain extends Functor {
   /** Maps inner value and returns new monad instance with new value. */
-  chain<R>(fn: (value: T) => Chain<R>): Chain<R>;
+  chain(fn: (value: any) => Chain): Chain;
 }
 export interface Comonad {
   /** Expose inner value to outside */
   extract(): any;
 }
-export interface Functor<T> {
+export interface Functor {
   /** Maps inner value and returns new monad instance with new value. */
-  map<R>(fn: (value: T) => R): Functor<R>;
+  map(fn: (value: any) => any): Functor;
 }
-export interface Monad<T> extends Applicative<T>, Chain<T> {}
+export interface Monad extends Applicative, Chain {}
 
-/**
- * It performs right-to-left function composition.
- */
+/** It performs right-to-left function composition. */
 export function compose<R>(fn: () => R): () => R;
 export function compose<A, R>(fn: (a: A) => R): (a: A) => R;
 export function compose<A1, A2, R>(
@@ -313,7 +311,7 @@ export function tryCatch<T, L extends Error, R>(
   catchFn?: (error: L) => Promise<R>
 ): (input: T) => Promise<Either<L, R>>;
 
-declare class WrapperConstructor<T> implements Comonad, Monad<T> {
+declare class WrapperConstructor<T> implements Comonad, Monad {
   private readonly _value: T;
 
   private constructor();
@@ -338,15 +336,8 @@ export function wrap<T>(value: T | Wrapper<T>): Wrapper<T>;
 /** Check if value is instance of Wrapper. */
 export function isWrapper<T>(value: any): value is Wrapper<T>;
 
-declare const enum MaybeType {
-  Just = 'Just',
-  Nothing = 'Nothing',
-}
-
-declare class MaybeConstructor<V, T extends MaybeType = MaybeType>
-  implements Comonad, Monad<V> {
-  private readonly _type: T;
-  private readonly _value: T extends MaybeType.Just ? V : null | undefined;
+declare class MaybeConstructor<V> implements Comonad, Monad {
+  private readonly _value: V | null | undefined;
 
   private constructor();
 
@@ -356,26 +347,26 @@ declare class MaybeConstructor<V, T extends MaybeType = MaybeType>
 
   static maybeOf<T>(value: T | Maybe<T> | null | undefined): Maybe<T>;
 
-  isJust(): this is MaybeConstructor<V, MaybeType.Just>;
+  isJust(): this is Maybe<V>;
 
-  isNothing(): this is MaybeConstructor<V, MaybeType.Nothing>;
+  isNothing(): this is Maybe<null | undefined>;
 
-  map<R>(fn: (value: V) => R | null | undefined): Maybe<R>;
+  map<R>(fn: (value: NonNullable<V>) => R | null | undefined): Maybe<R>;
 
-  apply<R>(other: Maybe<(value: V) => R | null | undefined>): Maybe<R>;
+  apply<R>(
+    other: Maybe<(value: NonNullable<V>) => R | null | undefined>
+  ): Maybe<R>;
 
-  chain<R>(fn: (value: V) => Maybe<R>): Maybe<R>;
+  chain<R>(fn: (value: NonNullable<V>) => Maybe<R>): Maybe<R>;
 
-  extract(): T extends MaybeType.Just ? V : null | undefined;
+  extract(): V | null | undefined;
 }
 /**
  * Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not
  * _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`).
  * Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
  */
-export type Maybe<V> = V extends null | undefined
-  ? MaybeConstructor<V, MaybeType.Nothing>
-  : MaybeConstructor<V, MaybeType.Just>;
+export type Maybe<V> = MaybeConstructor<V>;
 
 /** Wraps value with `Maybe` monad with **Just** state. */
 export function just<T>(value: T): Maybe<T>;
@@ -390,18 +381,8 @@ export function maybeOf<T>(value: T | Maybe<T> | null | undefined): Maybe<T>;
 /** Checks if value is instance of `Maybe` monad. */
 export function isMaybe<T>(value: any): value is Maybe<T>;
 
-declare const enum EitherType {
-  Left = 'Left',
-  Right = 'Right',
-}
-
-declare class EitherConstructor<
-  L extends Error,
-  R,
-  T extends EitherType = EitherType
-> implements Comonad, Monad<R> {
-  private readonly _type: T;
-  private readonly _value: T extends EitherType.Left ? L : R;
+declare class EitherConstructor<L extends Error, R> implements Comonad, Monad {
+  private readonly _value: L | R;
 
   private constructor();
 
@@ -413,9 +394,9 @@ declare class EitherConstructor<
     value: A | B | Either<A, B>
   ): Either<A, B>;
 
-  isRight(): this is EitherConstructor<L, R, EitherType.Right>;
+  isRight(): this is Either<never, R>;
 
-  isLeft(): this is EitherConstructor<L, R, EitherType.Left>;
+  isLeft(): this is Either<L, never>;
 
   map<A>(fn: (value: R) => L | A): Either<L, A>;
 
@@ -429,14 +410,13 @@ declare class EitherConstructor<
 
   chain<U>(fn: (value: R) => Either<L, U>): Either<L, U>;
 
-  extract(): T extends EitherType.Left ? L : R;
+  extract(): L | R;
 }
 /**
- * Monad that can contain value or `Error`. Allow handles errors in functional way.
+ * Monad that can contain value or `Error`.
+ * Allow handles errors in functional way.
  */
-export type Either<L extends Error, R> = L | R extends Error
-  ? EitherConstructor<L, R, EitherType.Left>
-  : EitherConstructor<L, R, EitherType.Right>;
+export type Either<L extends Error, R> = EitherConstructor<L, R>;
 
 /** Creates `Either` monad instance with **Left** state. */
 export function left<L extends Error, R>(value: L): Either<L, R>;

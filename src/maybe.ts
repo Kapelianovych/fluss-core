@@ -2,26 +2,15 @@ import { Monad } from './interfaces/monad';
 import { Comonad } from './interfaces/comonad';
 import { isNothing } from './is_nothing';
 
-const enum MaybeType {
-  Just = 'Just',
-  Nothing = 'Nothing',
-}
-
-class MaybeConstructor<V, T extends MaybeType = MaybeType>
-  implements Comonad, Monad<V> {
-  private constructor(
-    private readonly _value: T extends MaybeType.Just ? V : null | undefined,
-    private readonly _type: T
-  ) {}
+class MaybeConstructor<V> implements Comonad, Monad {
+  private constructor(private readonly _value: V | null | undefined) {}
 
   static just<T>(value: T): Maybe<T> {
-    //@ts-ignore
-    return new MaybeConstructor<T, MaybeType.Just>(value, MaybeType.Just);
+    return new MaybeConstructor<T>(value);
   }
 
   static nothing<T = null>(): Maybe<T> {
-    // @ts-ignore
-    return new MaybeConstructor<T, MaybeType.Nothing>(null, MaybeType.Nothing);
+    return new MaybeConstructor<T>(null);
   }
 
   static maybeOf<T>(value: T | Maybe<T> | null | undefined): Maybe<T> {
@@ -31,42 +20,42 @@ class MaybeConstructor<V, T extends MaybeType = MaybeType>
       : MaybeConstructor.just(exposedValue);
   }
 
-  isJust(): this is MaybeConstructor<V, MaybeType.Just> {
-    return this._type === MaybeType.Just;
+  isJust(): this is Maybe<V> {
+    return !this.isNothing();
   }
 
-  isNothing(): this is MaybeConstructor<V, MaybeType.Nothing> {
-    return this._type === MaybeType.Nothing;
+  isNothing(): this is Maybe<null | undefined> {
+    return isNothing(this._value);
   }
 
-  map<R>(fn: (value: V) => R | null | undefined): Maybe<R> {
+  map<R>(fn: (value: NonNullable<V>) => R | null | undefined): Maybe<R> {
     return this.isJust()
-      ? MaybeConstructor.maybeOf(fn(this._value))
+      ? MaybeConstructor.maybeOf(fn(this._value as NonNullable<V>))
       : MaybeConstructor.nothing();
   }
 
-  apply<R>(other: Maybe<(value: V) => R | null | undefined>): Maybe<R> {
-    if (other.isNothing()) {
-      return MaybeConstructor.nothing();
-    }
-
-    return this.map(other.extract());
+  apply<R>(
+    other: Maybe<(value: NonNullable<V>) => R | null | undefined>
+  ): Maybe<R> {
+    return other.isJust()
+      ? this.map(other.extract() as (value: NonNullable<V>) => R)
+      : MaybeConstructor.nothing();
   }
 
-  chain<R>(fn: (value: V) => Maybe<R>): Maybe<R> {
-    return this.isJust() ? fn(this._value) : MaybeConstructor.nothing();
+  chain<R>(fn: (value: NonNullable<V>) => Maybe<R>): Maybe<R> {
+    return this.isJust()
+      ? fn(this._value as NonNullable<V>)
+      : MaybeConstructor.nothing();
   }
 
-  extract(): T extends MaybeType.Just ? V : null | undefined {
+  extract(): V | null | undefined {
     return this._value;
   }
 }
 
-export type Maybe<V> = V extends null | undefined
-  ? MaybeConstructor<V, MaybeType.Nothing>
-  : MaybeConstructor<V, MaybeType.Just>;
-
 export const { just, nothing, maybeOf } = MaybeConstructor;
+
+export type Maybe<V> = MaybeConstructor<V>;
 
 export function isMaybe<T>(value: any): value is Maybe<T> {
   return value instanceof MaybeConstructor;

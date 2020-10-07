@@ -1,7 +1,7 @@
 import { Monad } from './interfaces/monad';
 import { Comonad } from './interfaces/comonad';
 
-class WrapperConstructor<T> implements Comonad, Monad<T> {
+class WrapperConstructor<T> implements Comonad, Monad {
   private constructor(private readonly _value: T) {}
 
   static wrap<U>(value: U | Wrapper<U>): Wrapper<U> {

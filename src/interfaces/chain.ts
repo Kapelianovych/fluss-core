@@ -1,5 +1,5 @@
 import { Functor } from './functor';
 
-export interface Chain<T> extends Functor<T> {
-  chain<R>(fn: (value: T) => Chain<R>): Chain<R>;
+export interface Chain extends Functor {
+  chain(fn: (value: any) => Chain): Chain;
 }
