@@ -34,7 +34,15 @@ TypeScript definitions are included in the library.
 npm i @fluss/core
 ```
 
+## Import
+
+```js
+import { curry } from '@fluss/core';
+```
+
 ## API
+
+Package is bundled as _ES module_. It doesn't support _CommonJS_. If you need old module system, transform code with any tool (`Rollup`, `Babel` etc.).
 
 > In TypeScript's examples is used [Flow](https://flow.org)'s comment notation if TypeScript infer type by yourself.
 

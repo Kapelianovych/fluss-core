@@ -1,4 +1,14 @@
-# [0.7.0] - 2020-10-07
+# Unreleased - 2020-10-09
+
+### Changed
+
+- Bundle uses now ES2018 features.
+
+### Removed
+
+- CommonJS bundle version of package.
+
+## [0.7.0] - 2020-10-07
 
 ### Changed
 
