@@ -8,6 +8,7 @@
     "typescript"
   ],
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "jest",
     "clean": "rm -r build/*",
