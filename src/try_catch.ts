@@ -2,6 +2,11 @@ import { isPromise } from './is_promise';
 import { isNothing } from './is_nothing';
 import { eitherOf, Either } from './either';
 
+/**
+ * Wraps code into `try/catch` and returns `Either` monad with result.
+ * If `catchFn` is not `undefined`, then `Either` with result will
+ * be returned, otherwise - `Either` with error.
+ */
 export function tryCatch<T, L extends Error, R>(
   tryFn: (input: T) => R,
   catchFn?: (error: L) => R

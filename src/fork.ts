@@ -1,3 +1,7 @@
+/** 
+ * Allow join output of two functions that get
+ * the same input and process it in a different way.
+ */
 export function fork<T, R, R1, R2>(
   join: (f: R1, s: R2) => R,
   fn1: (a: T) => R1,

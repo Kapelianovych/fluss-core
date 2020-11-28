@@ -1,6 +1,9 @@
 import { isNothing } from './is_nothing';
 import { Maybe, maybeOf } from './maybe';
 
+/**
+ * Gets deep value of object based on path of keys.
+ */
 export function path<R>(
   keysList: string | Array<string>,
   obj: { [index: string]: any }

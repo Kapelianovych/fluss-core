@@ -1,4 +1,4 @@
-import { identity } from '../src';
+import { identity } from '../build';
 
 describe('identity', () => {
   test('Identity function returns the same primitive value', () => {

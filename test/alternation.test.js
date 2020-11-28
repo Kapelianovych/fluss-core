@@ -1,4 +1,4 @@
-import { alternation } from '../src';
+import { alternation } from '../build';
 
 describe('alternation', () => {
   test('alternation function must return result of first function if it is not null, undefined or NaN', () => {
@@ -9,7 +9,7 @@ describe('alternation', () => {
       )().extract()
     ).toBe('g');
   });
-  
+
   test('alternation function must return result of second function if result of first is null, undefined or NaN', () => {
     expect(
       alternation(

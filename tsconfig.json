@@ -2,10 +2,16 @@
   "compilerOptions": {
     "strict": true,
     "target": "ES2018",
+    "rootDir": "src",
+    "declaration": true,
     "noImplicitAny": true,
-    "removeComments": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node"
+    "declarationDir": "build",
+    "noImplicitThis": true,
+    "moduleResolution": "node",
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]

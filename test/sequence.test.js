@@ -1,12 +1,12 @@
-import { sequence } from '../src';
+import { sequence } from '../build';
 
 describe('sequence', () => {
   test('sequence function executes functions with same input value', () => {
     let stringValue = '';
     const concatNumberAsString = sequence(
-      (n: number) => (stringValue += n),
-      (b: number) => (stringValue += b),
-      (u: number) => (stringValue += u)
+      (n) => (stringValue += n),
+      (b) => (stringValue += b),
+      (u) => (stringValue += u)
     );
     concatNumberAsString(0);
 

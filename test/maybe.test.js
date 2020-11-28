@@ -1,4 +1,4 @@
-import { maybeOf, isMaybe, just, nothing } from '../src';
+import { maybeOf, isMaybe, just, nothing } from '../build';
 
 describe('Maybe', () => {
   test('isMaybe check if value is instance of Maybe', () => {
@@ -31,7 +31,7 @@ describe('Maybe', () => {
   });
 
   test('map method of Maybe invokes only if Maybe has Just state', () => {
-    const result = nothing<number>()
+    const result = nothing()
       .map((u) => u * u)
       .extract();
 
@@ -45,7 +45,7 @@ describe('Maybe', () => {
   });
 
   test('apply method of Maybe invokes only if Maybe has Just state', () => {
-    const result = nothing<number>()
+    const result = nothing()
       .apply(just((u) => u * u))
       .extract();
 
@@ -59,7 +59,7 @@ describe('Maybe', () => {
   });
 
   test('chain method of Maybe invokes only if Maybe has Just state', () => {
-    const result = nothing<number>()
+    const result = nothing()
       .chain((u) => just(u * u))
       .extract();
 

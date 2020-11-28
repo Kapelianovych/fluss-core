@@ -4,6 +4,10 @@ import { Comonad } from './interfaces/comonad';
 class WrapperConstructor<T> implements Comonad, Monad {
   private constructor(private readonly _value: T) {}
 
+  /**
+   * Wraps value in `Wrapper` monad and allow perform on it operations in chainable way.
+   * If value is `Wrapper`, then its copy will be returned.
+   */
   static wrap<U>(value: U | Wrapper<U>): Wrapper<U> {
     const exposedValue = isWrapper<U>(value) ? value.extract() : value;
     return new WrapperConstructor(exposedValue);
@@ -26,10 +30,12 @@ class WrapperConstructor<T> implements Comonad, Monad {
   }
 }
 
+/** Monad that contains value and allow perform operation on it by set of methods. */
 export type Wrapper<T> = WrapperConstructor<T>;
 
 export const { wrap } = WrapperConstructor;
 
+/** Check if value is instance of Wrapper. */
 export function isWrapper<T>(value: any): value is Wrapper<T> {
   return value instanceof WrapperConstructor;
 }

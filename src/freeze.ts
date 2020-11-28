@@ -1,3 +1,7 @@
+/**
+ * Perform shallow(_deep_ is `false`) or deep(_deep_ is `true`)
+ * freeze of object. By default function does shallow freezing.
+ */
 export function freeze<T extends object>(
   value: T,
   deep: boolean = false

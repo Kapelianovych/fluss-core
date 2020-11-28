@@ -1,13 +1,13 @@
-import { freeze } from '../src';
+import { freeze } from '../build';
 
 describe('freeze', () => {
   test('freeze makes shallow freezing of object', () => {
     const frozenObject = freeze({
-      a(): string {
+      a() {
         return '';
       },
       b: {
-        c(): string {
+        c() {
           return '';
         },
       },
@@ -21,11 +21,11 @@ describe('freeze', () => {
   test('freeze makes deep freezing of object', () => {
     const frozenObject = freeze(
       {
-        a(): string {
+        a() {
           return '';
         },
         b: {
-          c(): string {
+          c() {
             return 'old';
           },
         },

@@ -1,4 +1,4 @@
-import { isNothing } from '../src';
+import { isNothing } from '../build';
 
 describe('isNothing', () => {
   test('isNothing function checks if value is null or undefined', () => {

@@ -1,8 +1,8 @@
-import { tryCatch } from '../src';
+import { tryCatch } from '../build';
 
 describe('tryCatch', () => {
   test('tryCatch function without catch function and with right case returns Either with Right state', () => {
-    const safeFn = tryCatch((n: string) => {
+    const safeFn = tryCatch((n) => {
       if (n === 'error') {
         throw new Error(n);
       } else {
@@ -15,7 +15,7 @@ describe('tryCatch', () => {
   });
 
   test('tryCatch function without catch function and with left case returns Either with Left state', () => {
-    const safeFn = tryCatch((n: string) => {
+    const safeFn = tryCatch((n) => {
       if (n === 'error') {
         throw new Error(n);
       } else {
@@ -29,7 +29,7 @@ describe('tryCatch', () => {
 
   test('tryCatch function with catch function and with right case returns Either with Right state', () => {
     const safeFn = tryCatch(
-      (n: string) => {
+      (n) => {
         if (n === 'error') {
           throw new Error(n);
         } else {
@@ -45,7 +45,7 @@ describe('tryCatch', () => {
 
   test('tryCatch function with catch function and with left case returns Either with Right state', () => {
     const safeFn = tryCatch(
-      (n: string) => {
+      (n) => {
         if (n === 'error') {
           throw new Error(n);
         } else {

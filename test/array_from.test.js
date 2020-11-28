@@ -1,4 +1,4 @@
-import { arrayFrom } from '../src';
+import { arrayFrom } from '../build';
 
 describe('arrayFrom', () => {
   test('arrayFrom creates an array from iterables', () => {

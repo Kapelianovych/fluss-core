@@ -1,11 +1,26 @@
+import fs from 'fs';
+import path from 'path';
 import typescript from '@rollup/plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
 
+const SOURCE_DIR_NAME = 'src';
+
 export default {
-  input: 'src/index.ts',
+  input: fs
+    .readdirSync(path.resolve(process.cwd(), SOURCE_DIR_NAME), {
+      withFileTypes: true,
+    })
+    .filter(
+      (dirent) =>
+        !dirent.isDirectory(
+          path.resolve(process.cwd(), SOURCE_DIR_NAME, dirent.name)
+        )
+    )
+    .map((dirent) => `${SOURCE_DIR_NAME}/${dirent.name}`),
   output: {
-    file: 'build/index.js',
+    dir: 'build',
     format: 'es',
+    preserveModules: true,
   },
   plugins: [typescript(), terser()],
 };

@@ -1,4 +1,4 @@
-import { promiseOf } from '../src';
+import { promiseOf } from '../build/promise_of';
 
 describe('promiseOf', () => {
   test('promiseOf creates rejected promise', () => {

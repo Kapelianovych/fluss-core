@@ -1,5 +1,6 @@
 import { identity } from './identity';
 
+/** It performs right-to-left function composition. */
 export function compose<R>(fn: () => R): () => R;
 export function compose<A, R>(fn: (a: A) => R): (a: A) => R;
 export function compose<A1, A2, R>(

@@ -1,4 +1,4 @@
-import { tupleOf } from '../src';
+import { tupleOf } from '../build';
 
 describe('tupleOf', () => {
   test('tupleOf creates tuple of set of values', () => {

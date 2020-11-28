@@ -1,4 +1,14 @@
-# [0.8.0] - 2020-10-20
+# [0.9.0] - 2020-11-28
+
+### Added
+
+- `type="module"` field to package.json.
+
+### Changed
+
+- Compile each function as separate module in bundle.
+
+## [0.8.0] - 2020-10-20
 
 ### Changed
 

@@ -1,3 +1,4 @@
+/** Creates readonly type from set of elements. */
 export function tupleOf<V>(v: V): readonly [V];
 export function tupleOf<V, V1>(v: V, v1: V1): readonly [V, V1];
 export function tupleOf<V, V1, V2>(v: V, v1: V1, v2: V2): readonly [V, V1, V2];

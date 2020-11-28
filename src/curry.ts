@@ -1,3 +1,6 @@
+/**
+ * Create curried version of function with optional partial application.
+ */
 export function curry<R>(fn: () => R): () => R;
 export function curry<A, R>(fn: (a: A) => R, defaultArgs: [A]): () => R;
 export function curry<A, R>(fn: (a: A) => R): (a: A) => R;

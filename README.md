@@ -28,6 +28,8 @@ TypeScript definitions are included in the library.
 
 - Small size
 
+- Separated modules. You can import only needed functions into your code.
+
 ## Install
 
 ```sh
@@ -38,6 +40,8 @@ npm i @fluss/core
 
 ```js
 import { curry } from '@fluss/core';
+// or
+import { curry } from '@fluss/core/curry';
 ```
 
 ## API

@@ -1,4 +1,4 @@
-import { eitherOf, isEither, right, left } from '../src';
+import { eitherOf, isEither, right, left } from '../build';
 
 describe('Either', () => {
   test('isEither check if value is instance of Either', () => {
@@ -31,13 +31,13 @@ describe('Either', () => {
   });
 
   test('map method of Either invokes only if Either has Right state', () => {
-    const result = left<Error, number>(new Error())
+    const result = left(new Error())
       .map((u) => u * u)
       .extract();
 
     expect(result).toEqual(new Error());
 
-    const result2 = right<Error, number>(2)
+    const result2 = right(2)
       .map((u) => u * u)
       .extract();
 
@@ -45,13 +45,13 @@ describe('Either', () => {
   });
 
   test('apply method of Either invokes only if Either has Right state', () => {
-    const result = left<Error, number>(new Error())
+    const result = left(new Error())
       .apply(right((u) => u * u))
       .extract();
 
     expect(result).toEqual(new Error());
 
-    const result2 = right<Error, number>(2)
+    const result2 = right(2)
       .apply(right((u) => u * u))
       .extract();
 
@@ -59,13 +59,13 @@ describe('Either', () => {
   });
 
   test('chain method of Either invokes only if Either has Right state', () => {
-    const result = left<Error, number>(new Error())
+    const result = left(new Error())
       .chain((u) => right(u * u))
       .extract();
 
     expect(result).toEqual(new Error());
 
-    const result2 = right<Error, number>(2)
+    const result2 = right(2)
       .chain((u) => right(u * u))
       .extract();
 
