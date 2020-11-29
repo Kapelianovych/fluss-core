@@ -10,12 +10,7 @@ export default {
     .readdirSync(path.resolve(process.cwd(), SOURCE_DIR_NAME), {
       withFileTypes: true,
     })
-    .filter(
-      (dirent) =>
-        !dirent.isDirectory(
-          path.resolve(process.cwd(), SOURCE_DIR_NAME, dirent.name)
-        )
-    )
+    .filter((dirent) => !dirent.isDirectory() && dirent.name !== 'types.ts')
     .map((dirent) => `${SOURCE_DIR_NAME}/${dirent.name}`),
   output: {
     dir: 'build',

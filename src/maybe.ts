@@ -1,6 +1,5 @@
-import { Monad } from './interfaces/monad';
-import { Comonad } from './interfaces/comonad';
 import { isNothing } from './is_nothing';
+import type { Monad, Comonad } from './types';
 
 class MaybeConstructor<V> implements Comonad, Monad {
   private constructor(private readonly _value: V | null | undefined) {}

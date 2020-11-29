@@ -1,5 +1,4 @@
-import { Monad } from './interfaces/monad';
-import { Comonad } from './interfaces/comonad';
+import type { Monad, Comonad } from './types';
 
 class WrapperConstructor<T> implements Comonad, Monad {
   private constructor(private readonly _value: T) {}

@@ -1,6 +1,6 @@
 {
   "name": "@fluss/core",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Core functions and structures for functional programming.",
   "keywords": [
     "functional-programming",
@@ -12,7 +12,7 @@
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "clean": "rm -r build/*",
-    "build": "npm run test; npm run clean; rollup -c; npm run copy",
+    "build": "npm run clean; rollup -c; npm run copy; npm run test",
     "copy": "npm run copy:settings; npm run copy:docs; npm run copy:license",
     "copy:settings": "cp package.json build/",
     "copy:license": "cp LICENSE build/",
