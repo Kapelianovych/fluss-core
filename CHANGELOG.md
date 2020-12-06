@@ -3,6 +3,7 @@
 ### Changed
 
 - Rename `maybeOf` to `maybe`, `eitherOf` to `either`, `promiseOf` to `promise`, `tupleOf` to `tuple`, `arrayFrom` to `array`.
+- Makes inner values if `Wrapper`, `Maybe` and `Either` types as ECMAScript private fields.
 
 ## [0.9.1] - 2020-11-29
 

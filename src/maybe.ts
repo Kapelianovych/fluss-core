@@ -2,7 +2,11 @@ import { isNothing } from './is_nothing';
 import type { Monad, Comonad } from './types';
 
 class MaybeConstructor<V> implements Comonad, Monad {
-  private constructor(private readonly _value: V | null | undefined) {}
+  readonly #value: V | null | undefined;
+
+  private constructor(value: V | null | undefined) {
+    this.#value = value;
+  }
 
   /** Wraps value with `Maybe` monad with **Just** state. */
   static just<T>(value: T): Maybe<T> {
@@ -31,12 +35,12 @@ class MaybeConstructor<V> implements Comonad, Monad {
   }
 
   isNothing(): this is Maybe<null | undefined> {
-    return isNothing(this._value);
+    return isNothing(this.#value);
   }
 
   map<R>(fn: (value: NonNullable<V>) => R | null | undefined): Maybe<R> {
     return this.isJust()
-      ? MaybeConstructor.maybe(fn(this._value as NonNullable<V>))
+      ? MaybeConstructor.maybe(fn(this.#value as NonNullable<V>))
       : MaybeConstructor.nothing();
   }
 
@@ -50,12 +54,12 @@ class MaybeConstructor<V> implements Comonad, Monad {
 
   chain<R>(fn: (value: NonNullable<V>) => Maybe<R>): Maybe<R> {
     return this.isJust()
-      ? fn(this._value as NonNullable<V>)
+      ? fn(this.#value as NonNullable<V>)
       : MaybeConstructor.nothing();
   }
 
   extract(): V | null | undefined {
-    return this._value;
+    return this.#value;
   }
 }
 

@@ -1,7 +1,11 @@
 import type { Monad, Comonad } from './types';
 
 class EitherConstructor<L extends Error, R> implements Comonad, Monad {
-  private constructor(private readonly _value: L | R) {}
+  readonly #value: L | R;
+
+  private constructor(value: L | R) {
+    this.#value = value;
+  }
 
   /** Creates `Either` monad instance with **Left** state. */
   static left<L extends Error, R>(value: L): Either<L, R> {
@@ -32,7 +36,7 @@ class EitherConstructor<L extends Error, R> implements Comonad, Monad {
   }
 
   isLeft(): this is Either<L, never> {
-    return this._value instanceof Error;
+    return this.#value instanceof Error;
   }
 
   map<A>(fn: (value: R) => L | A): Either<L, A> {
@@ -42,15 +46,15 @@ class EitherConstructor<L extends Error, R> implements Comonad, Monad {
   /** Maps inner value if it is not an `Error` instance. Same as `Either.map`. */
   mapRight<A>(fn: (value: R) => L | A): Either<L, A> {
     return this.isRight()
-      ? EitherConstructor.either<L, A>(fn(this._value))
-      : EitherConstructor.left<L, A>(this._value as L);
+      ? EitherConstructor.either<L, A>(fn(this.#value))
+      : EitherConstructor.left<L, A>(this.#value as L);
   }
 
   /** Maps inner value if it is an `Error` instance */
   mapLeft<E extends Error>(fn: (value: L) => E | R): Either<E, R> {
     return this.isRight()
-      ? EitherConstructor.right<E, R>(this._value)
-      : EitherConstructor.either<E, R>(fn(this._value as L));
+      ? EitherConstructor.right<E, R>(this.#value)
+      : EitherConstructor.either<E, R>(fn(this.#value as L));
   }
 
   apply<U>(other: Either<L, (value: R) => L | U>): Either<L, U> {
@@ -61,12 +65,12 @@ class EitherConstructor<L extends Error, R> implements Comonad, Monad {
 
   chain<U>(fn: (value: R) => Either<L, U>): Either<L, U> {
     return this.isRight()
-      ? fn(this._value)
-      : EitherConstructor.left<L, U>(this._value as L);
+      ? fn(this.#value)
+      : EitherConstructor.left<L, U>(this.#value as L);
   }
 
   extract(): L | R {
-    return this._value;
+    return this.#value;
   }
 }
 

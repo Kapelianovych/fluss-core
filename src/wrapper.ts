@@ -1,7 +1,11 @@
 import type { Monad, Comonad } from './types';
 
 class WrapperConstructor<T> implements Comonad, Monad {
-  private constructor(private readonly _value: T) {}
+  readonly #value: T;
+
+  private constructor(value: T) {
+    this.#value = value;
+  }
 
   /**
    * Wraps value in `Wrapper` monad and allow perform on it operations in chainable way.
@@ -13,7 +17,7 @@ class WrapperConstructor<T> implements Comonad, Monad {
   }
 
   map<R>(fn: (value: T) => R): Wrapper<R> {
-    return WrapperConstructor.wrap(fn(this._value));
+    return WrapperConstructor.wrap(fn(this.#value));
   }
 
   apply<R>(other: Wrapper<(value: T) => R>): Wrapper<R> {
@@ -21,11 +25,11 @@ class WrapperConstructor<T> implements Comonad, Monad {
   }
 
   chain<R>(fn: (value: T) => Wrapper<R>): Wrapper<R> {
-    return fn(this._value);
+    return fn(this.#value);
   }
 
   extract(): T {
-    return this._value;
+    return this.#value;
   }
 }
 
