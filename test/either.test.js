@@ -1,10 +1,10 @@
-import { eitherOf, isEither, right, left } from '../build';
+import { either, isEither, right, left } from '../build';
 
 describe('Either', () => {
   test('isEither check if value is instance of Either', () => {
     expect(isEither(right(9))).toBe(true);
     expect(isEither(left(new Error()))).toBe(true);
-    expect(isEither(eitherOf(9))).toBe(true);
+    expect(isEither(either(9))).toBe(true);
   });
 
   test('right function creates Either with Right state', () => {
@@ -15,14 +15,14 @@ describe('Either', () => {
     expect(left(new Error()).isLeft()).toBe(true);
   });
 
-  test('eitherOf function creates Either with Left or Right state depending of value.', () => {
-    expect(eitherOf(0).isRight()).toBe(true);
-    expect(eitherOf('0').isRight()).toBe(true);
-    expect(eitherOf({}).isRight()).toBe(true);
-    expect(eitherOf(new Error()).isLeft()).toBe(true);
-    expect(eitherOf(new Error()).isLeft()).toBe(true);
-    expect(eitherOf(right(8)).extract()).toBe(8);
-    expect(eitherOf(left(new Error())).extract()).toEqual(new Error());
+  test('either function creates Either with Left or Right state depending of value.', () => {
+    expect(either(0).isRight()).toBe(true);
+    expect(either('0').isRight()).toBe(true);
+    expect(either({}).isRight()).toBe(true);
+    expect(either(new Error()).isLeft()).toBe(true);
+    expect(either(new Error()).isLeft()).toBe(true);
+    expect(either(right(8)).extract()).toBe(8);
+    expect(either(left(new Error())).extract()).toEqual(new Error());
   });
 
   test('extract method return inner value of Either', () => {

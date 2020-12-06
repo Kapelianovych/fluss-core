@@ -1,10 +1,10 @@
-import { Maybe, nothing, maybeOf } from './maybe';
+import { Maybe, nothing, maybe } from './maybe';
 
 /**
  * Lets accomplish condition logic depending of function application.
- * If function returns `NaN`, `null` or `undefined`, 
+ * If function returns `NaN`, `null` or `undefined`,
  * then result of next function is checked.
- * If no function return non-empty value, then result 
+ * If no function return non-empty value, then result
  * of last function is returned.
  */
 export function alternation<R>(
@@ -54,7 +54,7 @@ export function alternation<R>(
         return result;
       }
 
-      result = maybeOf(fn(...args));
+      result = maybe(fn(...args));
     }
 
     return result;

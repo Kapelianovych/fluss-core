@@ -1,4 +1,10 @@
-# [0.9.1] - 2020-11-29
+# [0.10.0] - 2020-12-06
+
+### Changed
+
+- Rename `maybeOf` to `maybe`, `eitherOf` to `either`, `promiseOf` to `promise`, `tupleOf` to `tuple`, `arrayFrom` to `array`.
+
+## [0.9.1] - 2020-11-29
 
 ### Changed
 

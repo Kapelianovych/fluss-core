@@ -222,27 +222,27 @@ const y /*: false */ = isPromise(false);
 const y1 /*: true */ = isPromise(Promise.resolve(9));
 ```
 
-### promiseOf
+### promise
 
 ```typescript
-function promiseOf<T>(value: T | PromiseLike<T>): Promise<T>;
+function promise<T>(value: T | PromiseLike<T>): Promise<T>;
 ```
 
 Creates new resolved promise if value is not an error, otherwire returns rejected promise.
 
 ```typescript
-const y /*: Promise<9> */ = promiseOf(9);
+const y /*: Promise<9> */ = promise(9);
 
 function throwable() {
   throw new Error();
 }
-const y1 /*: Promise<never> */ = promiseOf(throwable());
+const y1 /*: Promise<never> */ = promise(throwable());
 ```
 
-### arrayFrom
+### array
 
 ```typescript
-function arrayFrom<T>(
+function array<T>(
   ...iterables: ReadonlyArray<ArrayLike<T> | Iterable<T>>
 ): ReadonlyArray<T>;
 ```
@@ -250,22 +250,22 @@ function arrayFrom<T>(
 Creates readonly array from set of ArrayLike or iterable objects.
 
 ```typescript
-const y /*: ReadonlyArray<number> */ = arrayFrom([9], new Set([6]), {
+const y /*: ReadonlyArray<number> */ = array([9], new Set([6]), {
   0: 6,
   length: 1,
 });
 ```
 
-### tupleOf
+### tuple
 
 ```typescript
-function tupleOf<V, V1>(v: V, v1: V1): readonly [V, V1];
+function tuple<V, V1>(v: V, v1: V1): readonly [V, V1];
 ```
 
 Creates readonly tuple from set of elements.
 
 ```typescript
-const y /*: readonly [number, string] */ = tupleOf(9, 'state');
+const y /*: readonly [number, string] */ = tuple(9, 'state');
 ```
 
 ### tryCatch
@@ -355,19 +355,19 @@ Checks if value is instance of `Maybe` monad.
 
 ```typescript
 isMaybe(8); // false
-isMaybe(maybeOf(8)); // true
+isMaybe(maybe(8)); // true
 ```
 
-### maybeOf
+### maybe
 
 ```typescript
-function maybeOf<T>(value: T | Maybe<T> | null | undefined): Maybe<T>;
+function maybe<T>(value: T | Maybe<T> | null | undefined): Maybe<T>;
 ```
 
 Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself.
 
 ```typescript
-maybeOf(8); // Maybe<number>
+maybe(8); // Maybe<number>
 ```
 
 ### just
@@ -415,13 +415,13 @@ Checks if value is instance of `Either` monad.
 
 ```typescript
 isEither(8); // false
-isEither(eitherOf(8)); // true
+isEither(either(8)); // true
 ```
 
-### eitherOf
+### either
 
 ```typescript
-function eitherOf<L extends Error, R>(
+function either<L extends Error, R>(
   value: L | R | Either<L, R>
 ): Either<L, R>;
 ```
@@ -429,7 +429,7 @@ function eitherOf<L extends Error, R>(
 Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself.
 
 ```typescript
-eitherOf(8); // Either<Error, number>
+either(8); // Either<Error, number>
 ```
 
 ### right

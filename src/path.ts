@@ -1,17 +1,17 @@
 import { isNothing } from './is_nothing';
-import { Maybe, maybeOf } from './maybe';
+import { Maybe, maybe } from './maybe';
 
 /**
  * Gets deep value of object based on path of keys.
  */
 export function path<R>(
-  keysList: string | Array<string>,
+  keysList: string | ReadonlyArray<string>,
   obj: { [index: string]: any }
 ): Maybe<R> {
   const partsOfPath = Array.isArray(keysList) ? keysList : keysList.split('.');
 
   // @ts-ignore
-  return maybeOf(
+  return maybe(
     partsOfPath.reduce(
       (value, part) =>
         isNothing(value)

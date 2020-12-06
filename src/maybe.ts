@@ -19,7 +19,7 @@ class MaybeConstructor<V> implements Comonad, Monad {
    * (**Just** or **Nothing**) of `Maybe` by yourself.
    * If value is `Maybe`, then its copy will be returned.
    */
-  static maybeOf<T>(value: T | Maybe<T> | null | undefined): Maybe<T> {
+  static maybe<T>(value: T | Maybe<T> | null | undefined): Maybe<T> {
     const exposedValue = isMaybe<T>(value) ? value.extract() : value;
     return isNothing(exposedValue)
       ? MaybeConstructor.nothing<T>()
@@ -36,7 +36,7 @@ class MaybeConstructor<V> implements Comonad, Monad {
 
   map<R>(fn: (value: NonNullable<V>) => R | null | undefined): Maybe<R> {
     return this.isJust()
-      ? MaybeConstructor.maybeOf(fn(this._value as NonNullable<V>))
+      ? MaybeConstructor.maybe(fn(this._value as NonNullable<V>))
       : MaybeConstructor.nothing();
   }
 
@@ -59,7 +59,7 @@ class MaybeConstructor<V> implements Comonad, Monad {
   }
 }
 
-export const { just, nothing, maybeOf } = MaybeConstructor;
+export const { just, nothing, maybe } = MaybeConstructor;
 
 /**
  * Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not

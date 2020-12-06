@@ -1,6 +1,6 @@
 import { isPromise } from './is_promise';
 import { isNothing } from './is_nothing';
-import { eitherOf, Either } from './either';
+import { either, Either } from './either';
 
 /**
  * Wraps code into `try/catch` and returns `Either` monad with result.
@@ -25,19 +25,19 @@ export function tryCatch<T, L extends Error, R>(
         const fallbackResult = catchFn(error);
         return isPromise(fallbackResult)
           ? fallbackResult
-              .then((res) => eitherOf<L, R>(res))
-              .catch((error) => eitherOf<L, R>(error))
-          : eitherOf<L, R>(fallbackResult);
+              .then((res) => either<L, R>(res))
+              .catch((error) => either<L, R>(error))
+          : either<L, R>(fallbackResult);
       } else {
-        return eitherOf<L, R>(error);
+        return either<L, R>(error);
       }
     }
 
     try {
       const result = tryFn(input);
       return isPromise(result)
-        ? result.then((res) => eitherOf<L, R>(res)).catch(handleError)
-        : eitherOf<L, R>(result);
+        ? result.then((res) => either<L, R>(res)).catch(handleError)
+        : either<L, R>(result);
     } catch (error) {
       return handleError(error);
     }
