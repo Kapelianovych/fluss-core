@@ -2,7 +2,11 @@
   "name": "@fluss/core",
   "version": "0.10.0",
   "description": "Core functions and structures for functional programming.",
-  "keywords": ["functional-programming", "monad", "typescript"],
+  "keywords": [
+    "functional-programming",
+    "monad",
+    "typescript"
+  ],
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -23,10 +27,10 @@
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.0.0",
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^26.0.16",
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
-    "rollup": "^2.34.0",
+    "rollup": "^2.34.2",
     "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.0.3",
     "typescript": "^4.1.2"

@@ -5,7 +5,7 @@ export function array<T>(
   return Object.freeze(
     values
       .map((value) =>
-        // Right value if "in" operator must be an object.
+        // Right value of "in" operator must be an object.
         // [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/in)
         typeof value === 'object' &&
         // Check if value is ArrayLike or Iterable
