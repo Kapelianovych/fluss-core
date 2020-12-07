@@ -2,10 +2,12 @@ import { isNothing } from './is_nothing';
 import type { Monad, Comonad } from './types';
 
 class MaybeConstructor<V> implements Comonad, Monad {
-  readonly #value: V | null | undefined;
+  // TODO: review this when ECMAScript's private class fields will be
+  // widely spread in browsers.
+  private readonly _value: V | null | undefined;
 
   private constructor(value: V | null | undefined) {
-    this.#value = value;
+    this._value = value;
   }
 
   /** Wraps value with `Maybe` monad with **Just** state. */
@@ -35,12 +37,12 @@ class MaybeConstructor<V> implements Comonad, Monad {
   }
 
   isNothing(): this is Maybe<null | undefined> {
-    return isNothing(this.#value);
+    return isNothing(this._value);
   }
 
   map<R>(fn: (value: NonNullable<V>) => R | null | undefined): Maybe<R> {
     return this.isJust()
-      ? MaybeConstructor.maybe(fn(this.#value as NonNullable<V>))
+      ? MaybeConstructor.maybe(fn(this._value as NonNullable<V>))
       : MaybeConstructor.nothing();
   }
 
@@ -54,12 +56,12 @@ class MaybeConstructor<V> implements Comonad, Monad {
 
   chain<R>(fn: (value: NonNullable<V>) => Maybe<R>): Maybe<R> {
     return this.isJust()
-      ? fn(this.#value as NonNullable<V>)
+      ? fn(this._value as NonNullable<V>)
       : MaybeConstructor.nothing();
   }
 
   extract(): V | null | undefined {
-    return this.#value;
+    return this._value;
   }
 }
 

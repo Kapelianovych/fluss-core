@@ -1,10 +1,12 @@
 import type { Monad, Comonad } from './types';
 
 class WrapperConstructor<T> implements Comonad, Monad {
-  readonly #value: T;
+  // TODO: review this when ECMAScript's private class fields will be
+  // widely spread in browsers.
+  private readonly _value: T;
 
   private constructor(value: T) {
-    this.#value = value;
+    this._value = value;
   }
 
   /**
@@ -17,7 +19,7 @@ class WrapperConstructor<T> implements Comonad, Monad {
   }
 
   map<R>(fn: (value: T) => R): Wrapper<R> {
-    return WrapperConstructor.wrap(fn(this.#value));
+    return WrapperConstructor.wrap(fn(this._value));
   }
 
   apply<R>(other: Wrapper<(value: T) => R>): Wrapper<R> {
@@ -25,11 +27,11 @@ class WrapperConstructor<T> implements Comonad, Monad {
   }
 
   chain<R>(fn: (value: T) => Wrapper<R>): Wrapper<R> {
-    return fn(this.#value);
+    return fn(this._value);
   }
 
   extract(): T {
-    return this.#value;
+    return this._value;
   }
 }
 

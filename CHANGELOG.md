@@ -1,4 +1,10 @@
-# [0.10.0] - 2020-12-07
+# [0.10.1] - 2020-12-07
+
+### Fixed
+
+- Get rid of ECMAScript's private class field from `Either`, `Maybe` and `Wrapper` due to error of importing tslib helpers.
+
+## [0.10.0] - 2020-12-07
 
 ### Changed
 
