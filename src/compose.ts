@@ -1,6 +1,7 @@
-import { identity } from './identity';
-
 /** It performs right-to-left function composition. */
+export function compose(): (
+  ...args: ReadonlyArray<unknown>
+) => ReadonlyArray<unknown>;
 export function compose<R>(fn: () => R): () => R;
 export function compose<A, R>(fn: (a: A) => R): (a: A) => R;
 export function compose<A1, A2, R>(
@@ -127,20 +128,14 @@ export function compose<A1, A2, A3, R1, R2, R3, R4, R5, R6>(
   fn1: (a1: A1, a2: A2, a3: A3) => R1
 ): (a1: A1, a2: A2, a3: A3) => R6;
 export function compose<R>(
-  lastFn: (...args: ReadonlyArray<any>) => R,
-  ...fns: ReadonlyArray<(...args: ReadonlyArray<any>) => any>
-): (...args: ReadonlyArray<any>) => R {
-  // Copy of ReadonlyArray of functions
-  const fnsCopy = fns.slice();
+  ...fns: Array<(...args: ReadonlyArray<unknown>) => unknown>
+): (...args: ReadonlyArray<unknown>) => R {
+  return (...args: ReadonlyArray<unknown>): R => {
+    const firstFn = fns.pop() ?? ((...x) => x);
 
-  return (...args: ReadonlyArray<any>) => {
-    const firstFn = fnsCopy.pop() || identity;
-
-    return lastFn(
-      fnsCopy.reduceRight(
-        (currentArgs, fn) => fn(currentArgs),
-        firstFn(...args)
-      )
-    );
+    return fns.reduceRight(
+      (currentArgs, fn) => fn(currentArgs),
+      firstFn(...args)
+    ) as R;
   };
 }

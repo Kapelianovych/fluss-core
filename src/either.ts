@@ -1,3 +1,4 @@
+import { isError } from './is_error';
 import type { Monad, Comonad } from './types';
 
 class EitherConstructor<L extends Error, R> implements Comonad, Monad {
@@ -26,7 +27,7 @@ class EitherConstructor<L extends Error, R> implements Comonad, Monad {
    */
   static either<A extends Error, B>(value: A | B | Either<A, B>): Either<A, B> {
     const exposedValue = isEither<A, B>(value) ? value.extract() : value;
-    return exposedValue instanceof Error
+    return isError<A>(exposedValue)
       ? EitherConstructor.left<A, B>(exposedValue)
       : EitherConstructor.right<A, B>(exposedValue);
   }
@@ -36,7 +37,7 @@ class EitherConstructor<L extends Error, R> implements Comonad, Monad {
   }
 
   isLeft(): this is Either<L, never> {
-    return this._value instanceof Error;
+    return isError<L>(this._value);
   }
 
   map<A>(fn: (value: R) => L | A): Either<L, A> {

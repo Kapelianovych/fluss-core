@@ -209,6 +209,24 @@ const y1 /*: false */ = isNothing(false);
 const y2 /*: false */ = isNothing(0);
 ```
 
+### isError
+
+```typescript
+function isError<E extends Error>(
+  value: any,
+  childClass?: Constructor<E>
+): value is E;
+```
+
+Checks if value is `Error` or its extended classes.
+
+```typescript
+const y /*: false */ = isError(null);
+const y1 /*: true */ = isError(new Error('message'));
+const y2 /*: true */ = isError(new TypeError('message'), TypeError);
+const y2 /*: false */ = isError(new Error('message'), TypeError);
+```
+
 ### isPromise
 
 ```typescript
@@ -421,9 +439,7 @@ isEither(either(8)); // true
 ### either
 
 ```typescript
-function either<L extends Error, R>(
-  value: L | R | Either<L, R>
-): Either<L, R>;
+function either<L extends Error, R>(value: L | R | Either<L, R>): Either<L, R>;
 ```
 
 Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself.
@@ -468,3 +484,96 @@ Has the same methods as `Wrapper` monad and `mapLeft`, `mapRight`:
 
 - `mapLeft<E extends Error>(fn: (value: L) => E): Either<E, R>` - maps inner value if it is an `Error` instance.
 - `mapRight<A>(fn: (value: R) => A): Either<L, A>` - maps inner value if it is not an `Error` instance. Same as `map`.
+
+### task
+
+```typescript
+function task<T, E extends Error>(
+  fork: ForkFunction<T, E> | Task<T, E> | Promise<T>
+): Task<T, E>;
+```
+
+Defines `Task` or copies fork function from another `Task` or `Promise`.
+
+```typescript
+function getSomeDataFromInternet(): Promise<string> {
+  /* useful code */
+}
+
+const dataTask = task(getSomeDataFromInternet()).map(JSON.parse);
+
+// somewhere in code
+dataTask.start((data) => {
+  /* do job with data */
+});
+// or you can convert Task to Promise and expose data
+const data = await dataTask.asPromise(); // This method also starts task as `start`.
+```
+
+### done
+
+```typescript
+function done<T, E extends Error>(value: T): Task<T, E>;
+```
+
+Wraps value to process as `Task`.
+
+```typescript
+const data = {
+  /* some data */
+};
+
+const dataTask = done(data).map(JSON.stringify).chain(task(sendOverInternet));
+
+// somewhere in code
+dataTask.start(
+  () => {
+    /* on done job */
+  },
+  (error) => {
+    /* on fail job */
+  }
+);
+```
+
+### fail
+
+```typescript
+function fail<T, E extends Error>(value: E): Task<T, E>;
+```
+
+Create failed `Task`.
+
+```typescript
+const dataTask = fail(someError);
+
+// somewhere in code
+dataTask.start(
+  () => {
+    /* on done job */
+  },
+  (error) => {
+    /* on fail job */
+  }
+);
+```
+
+### isTask
+
+```typescript
+function isTask<T, E extends Error>(value: any): value is Task<T, E>;
+```
+
+Check if value is instance of `Task`.
+
+```typescript
+const dataTask = done(8);
+
+isTask(dataTask); // true
+```
+
+#### Task
+
+Monad that allow to perform some actions asyncrounously and deferred in time (in opposite `Promise` that start doing job immediately after definition).
+
+[Difference between Task and Promise.](https://glebbahmutov.com/blog/difference-between-promise-and-task/)

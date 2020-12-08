@@ -1,4 +1,16 @@
-# [0.10.1] - 2020-12-07
+# [0.11.0] - 2020-12-08
+
+### Added
+
+- `Task` monad.
+- `isError` function.
+- `Constructor<T>` utility type.
+
+### Fixed
+
+- `compose` function on calling without arguments.
+
+## [0.10.1] - 2020-12-07
 
 ### Fixed
 
