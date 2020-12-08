@@ -1,7 +1,11 @@
 import { isError } from './is_error';
 import type { Monad, Comonad } from './types';
 
-class EitherConstructor<L extends Error, R> implements Comonad, Monad {
+/**
+ * Monad that can contain value or `Error`.
+ * Allow handle errors in functional way.
+ */
+class Either<L extends Error, R> implements Comonad, Monad {
   // TODO: review this when ECMAScript's private class fields will be
   // widely spread in browsers.
   private readonly _value: L | R;
@@ -12,12 +16,12 @@ class EitherConstructor<L extends Error, R> implements Comonad, Monad {
 
   /** Creates `Either` monad instance with **Left** state. */
   static left<L extends Error, R>(value: L): Either<L, R> {
-    return new EitherConstructor<L, R>(value);
+    return new Either<L, R>(value);
   }
 
   /** Creates `Either` monad instance with **Right** state. */
   static right<L extends Error, R>(value: R): Either<L, R> {
-    return new EitherConstructor<L, R>(value);
+    return new Either<L, R>(value);
   }
 
   /**
@@ -28,8 +32,8 @@ class EitherConstructor<L extends Error, R> implements Comonad, Monad {
   static either<A extends Error, B>(value: A | B | Either<A, B>): Either<A, B> {
     const exposedValue = isEither<A, B>(value) ? value.extract() : value;
     return isError<A>(exposedValue)
-      ? EitherConstructor.left<A, B>(exposedValue)
-      : EitherConstructor.right<A, B>(exposedValue);
+      ? Either.left<A, B>(exposedValue)
+      : Either.right<A, B>(exposedValue);
   }
 
   isRight(): this is Either<never, R> {
@@ -47,27 +51,27 @@ class EitherConstructor<L extends Error, R> implements Comonad, Monad {
   /** Maps inner value if it is not an `Error` instance. Same as `Either.map`. */
   mapRight<A>(fn: (value: R) => L | A): Either<L, A> {
     return this.isRight()
-      ? EitherConstructor.either<L, A>(fn(this._value))
-      : EitherConstructor.left<L, A>(this._value as L);
+      ? Either.either<L, A>(fn(this._value))
+      : Either.left<L, A>(this._value as L);
   }
 
   /** Maps inner value if it is an `Error` instance */
   mapLeft<E extends Error>(fn: (value: L) => E | R): Either<E, R> {
     return this.isRight()
-      ? EitherConstructor.right<E, R>(this._value)
-      : EitherConstructor.either<E, R>(fn(this._value as L));
+      ? Either.right<E, R>(this._value)
+      : Either.either<E, R>(fn(this._value as L));
   }
 
   apply<U>(other: Either<L, (value: R) => L | U>): Either<L, U> {
     return other.isRight()
       ? this.mapRight(other.extract())
-      : EitherConstructor.left<L, U>(other.extract() as L);
+      : Either.left<L, U>(other.extract() as L);
   }
 
   chain<U>(fn: (value: R) => Either<L, U>): Either<L, U> {
     return this.isRight()
       ? fn(this._value)
-      : EitherConstructor.left<L, U>(this._value as L);
+      : Either.left<L, U>(this._value as L);
   }
 
   extract(): L | R {
@@ -75,17 +79,12 @@ class EitherConstructor<L extends Error, R> implements Comonad, Monad {
   }
 }
 
-/**
- * Monad that can contain value or `Error`.
- * Allow handles errors in functional way.
- */
-export type Either<L extends Error, R> = EitherConstructor<L, R>;
-
-export const { left, right, either } = EitherConstructor;
+export type { Either };
+export const { left, right, either } = Either;
 
 /** Checks if value is instance of `Either` monad. */
 export function isEither<L extends Error, R>(
   value: any
 ): value is Either<L, R> {
-  return value instanceof EitherConstructor;
+  return value instanceof Either;
 }

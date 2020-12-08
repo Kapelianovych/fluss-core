@@ -1,6 +1,6 @@
 # @fluss/core - small library that contains functions for easy functional coding.
 
-There are many libraries for functional programming - [Ramda](https://ramdajs.com), [Rambda](https://github.com/selfrefactor/rambda), [Lodash](https://lodash.com), [Underscore](https://underscorejs.org), [ts-fp](https://gcanti.github.io/fp-ts/) and so on. They all are great libraries and you can use them as well. But if you need some fresh and small functions that just extend set of native methods and functions for coding in functional way, you can try _@fluss/core_ :).
+Library for functional coding in modern environment.
 
 ## Design goals
 
@@ -9,8 +9,8 @@ There are many libraries for functional programming - [Ramda](https://ramdajs.co
 - All functions are immutable, and there are no side-effects.
 - All functions must be safe as much as possible.
 - Fixed number of arguments (preferably 3) whenever possible.
-- Do not override native methods, if function will make same work and produce result same as native method, then function is useless.
-- Each function is maximally independent module.
+- Do not override native methods, if function will make same work and produce result same as native method.
+- Each function is maximally independent module (we try our best, though there can be some dependencies).
 
 ## Example use
 
@@ -47,7 +47,7 @@ import { curry } from '@fluss/core/curry';
 
 ## API
 
-Library is bundled as bunch of _ES module_s. It doesn't support \_CommonJS_. If you need old module system, transform code with any tool (`Rollup`, `Babel` etc.).
+Library is bundled as bunch of _ES modules_. It doesn't support _CommonJS_. If you need old module system, transform code with any tool (`Babel` etc.).
 
 > In TypeScript's examples is used [Flow](https://flow.org)'s comment notation if TypeScript infer type by yourself.
 
@@ -116,7 +116,7 @@ Allow join output of two functions that get the same input and process it in a d
 ```typescript
 // Compute average.
 const y /*: (a: Array<number>) => number */ = fork(
-  (sum: number, count: string) => sum / coung,
+  (sum: number, count: string) => sum / count,
   (a: Array<number>) => a.reduce((sum, num) => sum + num, 0),
   (a: Array<number>) => a.length
 );
@@ -250,14 +250,14 @@ const y1 /*: Promise<never> */ = promise(throwable());
 
 ```typescript
 function array<T>(
-  ...iterables: ReadonlyArray<ArrayLike<T> | Iterable<T>>
+  ...iterables: ReadonlyArray<T | ArrayLike<T> | Iterable<T>>
 ): ReadonlyArray<T>;
 ```
 
-Creates readonly array from set of ArrayLike or iterable objects.
+Creates readonly array from set of ArrayLike, iterable objects or values.
 
 ```typescript
-const y /*: ReadonlyArray<number> */ = array([9], new Set([6]), {
+const y /*: ReadonlyArray<number> */ = array(9, new Set([6]), {
   0: 6,
   length: 1,
 });
@@ -405,10 +405,6 @@ nothing<number>(); // Maybe<number>
 
 #### Maybe
 
-```typescript
-type Maybe<V> = MaybeConstructor<V>;
-```
-
 Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`). Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
 Has the same methods as `Wrapper` monad.
 
@@ -463,10 +459,6 @@ left<Error, number>(new Error('Error is occured!')); // Either<Error, number>
 ```
 
 #### Either
-
-```typescript
-type Either<L extends Error, R> = EitherConstructor<L, R>;
-```
 
 Monad that can contain value or `Error`. Allow handles errors in functional way.
 Has the same methods as `Wrapper` monad and `mapLeft`, `mapRight`:

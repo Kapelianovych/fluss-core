@@ -1,7 +1,15 @@
 import { isNothing } from './is_nothing';
 import type { Monad, Comonad } from './types';
 
-class MaybeConstructor<V> implements Comonad, Monad {
+/**
+ * Monad that gets rid of `null` and `undefined`.
+ * Its methods works only if inner value is not
+ * _nothing_(`null` and `undefined`) and its state
+ * is `Just`, otherwise they aren't invoked (except `extract`).
+ * Wraps _nullable_ value and allow works with it without
+ * checking on `null` and `undefined`.
+ */
+class Maybe<V> implements Comonad, Monad {
   // TODO: review this when ECMAScript's private class fields will be
   // widely spread in browsers.
   private readonly _value: V | null | undefined;
@@ -12,12 +20,12 @@ class MaybeConstructor<V> implements Comonad, Monad {
 
   /** Wraps value with `Maybe` monad with **Just** state. */
   static just<T>(value: T): Maybe<T> {
-    return new MaybeConstructor<T>(value);
+    return new Maybe<T>(value);
   }
 
   /** Creates `Maybe` monad instance with **Nothing** state. */
   static nothing<T = null>(): Maybe<T> {
-    return new MaybeConstructor<T>(null);
+    return new Maybe<T>(null);
   }
 
   /**
@@ -28,8 +36,8 @@ class MaybeConstructor<V> implements Comonad, Monad {
   static maybe<T>(value: T | Maybe<T> | null | undefined): Maybe<T> {
     const exposedValue = isMaybe<T>(value) ? value.extract() : value;
     return isNothing(exposedValue)
-      ? MaybeConstructor.nothing<T>()
-      : MaybeConstructor.just(exposedValue);
+      ? Maybe.nothing<T>()
+      : Maybe.just(exposedValue);
   }
 
   isJust(): this is Maybe<V> {
@@ -42,8 +50,8 @@ class MaybeConstructor<V> implements Comonad, Monad {
 
   map<R>(fn: (value: NonNullable<V>) => R | null | undefined): Maybe<R> {
     return this.isJust()
-      ? MaybeConstructor.maybe(fn(this._value as NonNullable<V>))
-      : MaybeConstructor.nothing();
+      ? Maybe.maybe(fn(this._value as NonNullable<V>))
+      : Maybe.nothing();
   }
 
   apply<R>(
@@ -51,13 +59,11 @@ class MaybeConstructor<V> implements Comonad, Monad {
   ): Maybe<R> {
     return other.isJust()
       ? this.map(other.extract() as (value: NonNullable<V>) => R)
-      : MaybeConstructor.nothing();
+      : Maybe.nothing();
   }
 
   chain<R>(fn: (value: NonNullable<V>) => Maybe<R>): Maybe<R> {
-    return this.isJust()
-      ? fn(this._value as NonNullable<V>)
-      : MaybeConstructor.nothing();
+    return this.isJust() ? fn(this._value as NonNullable<V>) : Maybe.nothing();
   }
 
   extract(): V | null | undefined {
@@ -65,16 +71,10 @@ class MaybeConstructor<V> implements Comonad, Monad {
   }
 }
 
-export const { just, nothing, maybe } = MaybeConstructor;
-
-/**
- * Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not
- * _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`).
- * Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
- */
-export type Maybe<V> = MaybeConstructor<V>;
+export type { Maybe };
+export const { just, nothing, maybe } = Maybe;
 
 /** Checks if value is instance of `Maybe` monad. */
 export function isMaybe<T>(value: any): value is Maybe<T> {
-  return value instanceof MaybeConstructor;
+  return value instanceof Maybe;
 }
