@@ -50,18 +50,6 @@ Package is bundled as _ES module_. It doesn't support _CommonJS_. If you need ol
 
 > In TypeScript's examples is used [Flow](https://flow.org)'s comment notation if TypeScript infer type by yourself.
 
-### identity
-
-```typescript
-function identity<T>(value: T): T;
-```
-
-Just return the same value.
-
-```typescript
-const same /*: 6 */ = identity(6);
-```
-
 ### compose
 
 ```typescript
