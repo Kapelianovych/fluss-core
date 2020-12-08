@@ -10,6 +10,7 @@ There are many libraries for functional programming - [Ramda](https://ramdajs.co
 - All functions must be safe as much as possible.
 - Fixed number of arguments (preferably 3) whenever possible.
 - Do not override native methods, if function will make same work and produce result same as native method, then function is useless.
+- Each function is maximally independent module.
 
 ## Example use
 
@@ -46,7 +47,7 @@ import { curry } from '@fluss/core/curry';
 
 ## API
 
-Package is bundled as _ES module_. It doesn't support _CommonJS_. If you need old module system, transform code with any tool (`Rollup`, `Babel` etc.).
+Library is bundled as bunch of _ES module_s. It doesn't support \_CommonJS_. If you need old module system, transform code with any tool (`Rollup`, `Babel` etc.).
 
 > In TypeScript's examples is used [Flow](https://flow.org)'s comment notation if TypeScript infer type by yourself.
 
