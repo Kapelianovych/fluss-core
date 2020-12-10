@@ -8,6 +8,7 @@
 
 - Signature of `curry` function.
 - Type signature of `compose` function.
+- Type signature of `alternation` function.
 
 ## [0.11.0] - 2020-12-08
 

@@ -109,10 +109,9 @@ const y /*: (a: Array<number>) => number */ = fork(
 ### alternation
 
 ```typescript
-function alternation<T, R>(
-  fn: (a: T) => R | null | undefined,
-  fn1: (a: T) => R | null | undefined
-): (a: T) => Maybe<R>;
+function alternation<T extends ReadonlyArray<unknown>, R>(
+  ...fns: ReadonlyArray<(...args: T) => R | null | undefined>
+): (...args: T) => Maybe<R>;
 ```
 
 Lets accomplish condition logic depending of function application.
