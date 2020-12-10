@@ -2,11 +2,12 @@
 
 ### Added
 
-- `SomePartial`, `StrictSomePartial`, `SomeRequired`, `StrictSomeRequired`, `Rest`, `Length`, `Shift`, `Cast` and `Tail` types.
+- `SomePartial`, `StrictSomePartial`, `SomeRequired`, `StrictSomeRequired`, `Rest`, `Length`, `Shift`, `Cast`, `Last` and `Tail` types.
 
 ### Changed
 
 - Signature of `curry` function.
+- Type signature of `compose` function.
 
 ## [0.11.0] - 2020-12-08
 

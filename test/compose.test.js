@@ -21,9 +21,13 @@ describe('compose', () => {
     expect(composedFn(9)).toBe('9 is number!!!');
   });
 
-  test('if compose function has not arguments it must return identity function', () => {
-    const composedFn = compose();
+  test(
+    'if compose function has not arguments it must return ' +
+      'array of provided arguments of composed function.',
+    () => {
+      const composedFn = compose();
 
-    expect(composedFn(6, 5, 4)).toEqual([6, 5, 4]);
-  });
+      expect(composedFn(6, 5, 4)).toEqual([6, 5, 4]);
+    }
+  );
 });

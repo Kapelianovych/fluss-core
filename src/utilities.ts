@@ -1,6 +1,6 @@
 /** Gets constructor type from object type. */
 export type Constructor<T> = {
-  new (...args: ReadonlyArray<any>): T;
+  new (...args: ReadonlyArray<unknown>): T;
   prototype: T;
 };
 
@@ -20,7 +20,7 @@ export type SomeRequired<T, P extends keyof T = keyof T> = Omit<T, P> &
 export type StrictSomeRequired<T, P extends keyof T> = Partial<Omit<T, P>> &
   Required<Pick<T, P>>;
 
-// Some types are inspired by 
+// Some types are inspired by
 // [this article](https://www.freecodecamp.org/news/typescript-curry-ramda-types-f747e99744ab/)
 /** Return tail elements of A except of X. */
 export type Rest<
@@ -48,3 +48,6 @@ export type Tail<T extends ReadonlyArray<unknown>> = T extends [
 ]
   ? U
   : [];
+
+/** Get type of last element of `T`. */
+export type Last<T extends ReadonlyArray<unknown>> = T[Length<Tail<T>>];

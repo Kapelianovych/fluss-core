@@ -54,11 +54,9 @@ Library is bundled as bunch of _ES modules_. It doesn't support _CommonJS_. If y
 ### compose
 
 ```typescript
-function compose<A, R1, R2>(
-  // Up to 6 functions
-  fn2: (a1: R1) => R2,
-  fn1: (a: A) => R1
-): (a: A) => R2;
+function compose<T extends Array<(...args: ReadonlyArray<any>) => any>>(
+  ...fns: T
+): (...args: Parameters<Last<T>>) => ReturnType<T[0]>;
 ```
 
 Compose functions from right to left.
@@ -66,7 +64,7 @@ Compose functions from right to left.
 ```typescript
 const fn /*: (str: string) => string */ = compose(
   (str) => str + 3,
-  (str) => str + 2
+  (str: string) => str + 2
 );
 const result /*: '123' */ = fn('1');
 ```
