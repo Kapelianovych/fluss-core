@@ -446,7 +446,7 @@ left<Error, number>(new Error('Error is occured!')); // Either<Error, number>
 Monad that can contain value or `Error`. Allow handles errors in functional way.
 Has the same methods as `Wrapper` monad and `mapLeft`, `mapRight`:
 
-- `mapLeft<E extends Error>(fn: (value: L) => E): Either<E, R>` - maps inner value if it is an `Error` instance.
+- `mapLeft<E extends Error>(fn: (value: L) => E | R): Either<E, R>` - maps inner value if it is an `Error` instance.
 - `mapRight<A>(fn: (value: R) => A): Either<L, A>` - maps inner value if it is not an `Error` instance. Same as `map`.
 
 ### task
