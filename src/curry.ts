@@ -1,44 +1,22 @@
+import type { Rest } from './utilities';
+
+type Curried<P extends ReadonlyArray<unknown>, R> = <U extends Partial<P>>(
+  ...args: U
+) => Rest<P, U> extends [] ? R : Curried<Rest<P, U>, R>;
+
 /**
  * Create curried version of function with optional partial application.
  */
-export function curry<R>(fn: () => R): () => R;
-export function curry<A, R>(fn: (a: A) => R, defaultArgs: [A]): () => R;
-export function curry<A, R>(fn: (a: A) => R): (a: A) => R;
-export function curry<A1, A2, R>(
-  fn: (a1: A1, a2: A2) => R,
-  defaultArgs: [A1, A2]
-): () => R;
-export function curry<A1, A2, R>(
-  fn: (a1: A1, a2: A2) => R,
-  defaultArgs: [A1]
-): (a2: A2) => R;
-export function curry<A1, A2, R>(
-  fn: (a1: A1, a2: A2) => R
-): (a1: A1) => (a2: A2) => R;
-export function curry<A1, A2, A3, R>(
-  fn: (a1: A1, a2: A2, a3: A3) => R,
-  defaultArgs: [A1, A2, A3]
-): () => R;
-export function curry<A1, A2, A3, R>(
-  fn: (a1: A1, a2: A2, a3: A3) => R,
-  defaultArgs: [A1, A2]
-): (a3: A3) => R;
-export function curry<A1, A2, A3, R>(
-  fn: (a1: A1, a2: A2, a3: A3) => R,
-  defaultArgs: [A1]
-): (a2: A2) => (a3: A3) => R;
-export function curry<A1, A2, A3, R>(
-  fn: (a1: A1, a2: A2, a3: A3) => R
-): (a1: A1) => (a2: A2) => (a3: A3) => R;
-export function curry<R>(
-  fn: (...args: ReadonlyArray<any>) => R,
-  defaultArgs: ReadonlyArray<any> = []
-) {
-  return (...args: ReadonlyArray<any>) => {
-    return ((allArgs) => {
-      return allArgs.length >= fn.length
-        ? fn(...allArgs)
-        : curry(fn, allArgs as [any]);
-    })([...defaultArgs, ...args]);
+export function curry<P extends ReadonlyArray<unknown>, R>(
+  fn: (...args: P) => R
+): Curried<P, R> {
+  return <U extends Partial<P>>(
+    ...args: U
+  ): Rest<P, U> extends [] ? R : Curried<Rest<P, U>, R> => {
+    // @ts-ignore
+    return args.length >= fn.length
+      ? fn(...((args as unknown) as P))
+      : // @ts-ignore
+        curry<Rest<P, U>, R>((...rest) => fn(...args, ...rest));
   };
 }

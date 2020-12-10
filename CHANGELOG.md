@@ -2,7 +2,11 @@
 
 ### Added
 
-- `SomePartial`, `StrictSomePartial`, `SomeRequired` and `StrictSomeRequired` types.
+- `SomePartial`, `StrictSomePartial`, `SomeRequired`, `StrictSomeRequired`, `Rest`, `Length`, `Shift`, `Cast` and `Tail` types.
+
+### Changed
+
+- Signature of `curry` function.
 
 ## [0.11.0] - 2020-12-08
 

@@ -8,17 +8,17 @@ Library for functional coding in modern environment.
 - The implementation of each function should be as minimal as possible.
 - All functions are immutable, and there are no side-effects.
 - All functions must be safe as much as possible.
-- Fixed number of arguments (preferably 3) whenever possible.
 - Do not override native methods, if function will make same work and produce result same as native method.
 - Each function is maximally independent module (we try our best, though there can be some dependencies).
 
 ## Example use
 
 ```typescript
-const result = curry((left: string, right: string) => left + right); // TypeScript infer result variable as (a: string) => (b: string) => string
-const result2 = curry((left: string, right: string) => left + right, [
-  'Left and ',
-]); // TypeScript infer result2 variable as (b: string) => string
+const curriedFn /*: Curried<[left: string, right: string], string> */ = curry(
+  (left: string, right: string) => left + right
+);
+const curriedFn2 /*: Curried<[right: string], string> */ = curriedFn('');
+const result /*: string */ = curriedFn2('');
 ```
 
 ## @fluss/core's advantages
@@ -74,30 +74,16 @@ const result /*: '123' */ = fn('1');
 ### curry
 
 ```typescript
-function curry<A1, A2, R>(
-  fn: (a1: A1, a2: A2) => R,
-  defaultArgs: [A1, A2]
-): () => R;
-function curry<A1, A2, R>(
-  fn: (a1: A1, a2: A2) => R,
-  defaultArgs: [A1]
-): (a2: A2) => R;
-function curry<A1, A2, R>(
-  fn: (a1: A1, a2: A2) => R,
-  defaultArgs?: [A1, A2]
-): (a1: A1) => (a2: A2) => R;
+function curry<P extends ReadonlyArray<unknown>, R>(
+  fn: (...args: P) => R
+): Curried<P, R>;
 ```
 
 Create curried version of function with optional partial application.
 
 ```typescript
-const fn /*: (str1: string) => (str2: string) => string */ = curry(
+const fn /*: Curried<[str1: string, str2: string], string> */ = curry(
   (str1, str2) => str1 + str2 + 3
-);
-// TypeScript is smart enough 😜
-const fn1 /*: (str2: string) => string */ = curry(
-  (str1, str2) => str1 + str2 + 3,
-  ['1']
 );
 ```
 
