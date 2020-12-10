@@ -1,14 +1,9 @@
-import { maybe, isMaybe, just, nothing } from '../build';
+import { maybe, isMaybe, nothing } from '../build';
 
 describe('Maybe', () => {
   test('isMaybe check if value is instance of Maybe', () => {
-    expect(isMaybe(just(9))).toBe(true);
     expect(isMaybe(nothing())).toBe(true);
     expect(isMaybe(maybe(9))).toBe(true);
-  });
-
-  test('just function creates Maybe with Just state', () => {
-    expect(just(9).isJust()).toBe(true);
   });
 
   test('nothing function creates Maybe with Nothing state', () => {
@@ -21,12 +16,12 @@ describe('Maybe', () => {
     expect(maybe({}).isJust()).toBe(true);
     expect(maybe(null).isNothing()).toBe(true);
     expect(maybe(undefined).isNothing()).toBe(true);
-    expect(maybe(just(8)).extract()).toBe(8);
+    expect(maybe(maybe(8)).extract()).toBe(8);
     expect(maybe(nothing()).extract()).toBe(null);
   });
 
   test('extract method return inner value of Maybe', () => {
-    expect(just(8).extract()).toBe(8);
+    expect(maybe(8).extract()).toBe(8);
     expect(nothing().extract()).toBe(null);
   });
 
@@ -37,7 +32,7 @@ describe('Maybe', () => {
 
     expect(result).toBe(null);
 
-    const result2 = just(2)
+    const result2 = maybe(2)
       .map((u) => u * u)
       .extract();
 
@@ -46,13 +41,13 @@ describe('Maybe', () => {
 
   test('apply method of Maybe invokes only if Maybe has Just state', () => {
     const result = nothing()
-      .apply(just((u) => u * u))
+      .apply(maybe((u) => u * u))
       .extract();
 
     expect(result).toBe(null);
 
-    const result2 = just(2)
-      .apply(just((u) => u * u))
+    const result2 = maybe(2)
+      .apply(maybe((u) => u * u))
       .extract();
 
     expect(result2).toBe(4);
@@ -60,13 +55,13 @@ describe('Maybe', () => {
 
   test('chain method of Maybe invokes only if Maybe has Just state', () => {
     const result = nothing()
-      .chain((u) => just(u * u))
+      .chain((u) => maybe(u * u))
       .extract();
 
     expect(result).toBe(null);
 
-    const result2 = just(2)
-      .chain((u) => just(u * u))
+    const result2 = maybe(2)
+      .chain((u) => maybe(u * u))
       .extract();
 
     expect(result2).toBe(4);

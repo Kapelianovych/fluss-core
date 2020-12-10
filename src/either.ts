@@ -44,12 +44,12 @@ class Either<L extends Error, R> implements Comonad, Monad {
     return isError<L>(this._value);
   }
 
-  map<A>(fn: (value: R) => L | A): Either<L, A> {
+  map<A>(fn: (value: R) => A): Either<L, A> {
     return this.mapRight(fn);
   }
 
   /** Maps inner value if it is not an `Error` instance. Same as `Either.map`. */
-  mapRight<A>(fn: (value: R) => L | A): Either<L, A> {
+  mapRight<A>(fn: (value: R) => A): Either<L, A> {
     return this.isRight()
       ? Either.either<L, A>(fn(this._value))
       : Either.left<L, A>(this._value as L);
@@ -62,7 +62,7 @@ class Either<L extends Error, R> implements Comonad, Monad {
       : Either.either<E, R>(fn(this._value as L));
   }
 
-  apply<U>(other: Either<L, (value: R) => L | U>): Either<L, U> {
+  apply<U>(other: Either<L, (value: R) => U>): Either<L, U> {
     return other.isRight()
       ? this.mapRight(other.extract())
       : Either.left<L, U>(other.extract() as L);

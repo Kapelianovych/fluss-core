@@ -8,7 +8,7 @@ import { Maybe, nothing, maybe } from './maybe';
  * of last function is returned.
  */
 export function alternation<T extends ReadonlyArray<unknown>, R>(
-  ...fns: ReadonlyArray<(...args: T) => R | null | undefined>
+  ...fns: ReadonlyArray<(...args: T) => R>
 ): (...args: T) => Maybe<R> {
   return (...args) => {
     let result = nothing<R>();

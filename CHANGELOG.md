@@ -10,6 +10,12 @@
 - Type signature of `compose` function.
 - Type signature of `alternation` function.
 - Type signature of `tuple` function.
+- Type signature of inner value of `Maybe`.
+
+### Removed
+
+- Ability to return error in `map`, `mapRight` and `apply` methods of `Either`.
+- `just` method of `Maybe`.
 
 ## [0.11.0] - 2020-12-08
 

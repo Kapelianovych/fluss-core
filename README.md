@@ -110,13 +110,13 @@ const y /*: (a: Array<number>) => number */ = fork(
 
 ```typescript
 function alternation<T extends ReadonlyArray<unknown>, R>(
-  ...fns: ReadonlyArray<(...args: T) => R | null | undefined>
+  ...fns: ReadonlyArray<(...args: T) => R>
 ): (...args: T) => Maybe<R>;
 ```
 
 Lets accomplish condition logic depending of function application.
 If function returns `NaN`, `null` or `undefined`, then result of next function is checked.
-If no function return non-empty value, then result of last function is returned.
+If all functions return empty value, then result of last function is returned.
 
 ```typescript
 const y /*: (a: number) => Maybe<number> */ = alternation(
@@ -351,7 +351,7 @@ isMaybe(maybe(8)); // true
 ### maybe
 
 ```typescript
-function maybe<T>(value: T | Maybe<T> | null | undefined): Maybe<T>;
+function maybe<T>(value: T | Maybe<T>): Maybe<T>;
 ```
 
 Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself.
@@ -360,29 +360,16 @@ Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**)
 maybe(8); // Maybe<number>
 ```
 
-### just
-
-```typescript
-function just<T>(value: T): Maybe<T>;
-```
-
-Wraps value with `Maybe` monad with **Just** state.
-
-```typescript
-// We are sure that 8 is not "nothing" value.
-just(8); // Maybe<number>
-```
-
 ### nothing
 
 ```typescript
-function nothing<T = null>(): Maybe<T>;
+function nothing<T = unknown>(): Maybe<T>;
 ```
 
 Creates `Maybe` monad instance with **Nothing** state.
 
 ```typescript
-nothing(); // Maybe<null>
+nothing(); // Maybe<unknown>
 nothing<number>(); // Maybe<number>
 ```
 
