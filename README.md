@@ -249,7 +249,7 @@ const y /*: ReadonlyArray<number> */ = array(9, new Set([6]), {
 ### tuple
 
 ```typescript
-function tuple<V, V1>(v: V, v1: V1): readonly [V, V1];
+function tuple<T extends ReadonlyArray<unknown>>(...args: T): readonly [...T];
 ```
 
 Creates readonly tuple from set of elements.
