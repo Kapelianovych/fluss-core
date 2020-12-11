@@ -1,6 +1,7 @@
 import type { Monad, Comonad } from './types';
 
-class WrapperConstructor<T> implements Comonad, Monad {
+/** Monad that contains value and allow perform operation on it by set of methods. */
+class Wrapper<T> implements Comonad, Monad {
   // TODO: review this when ECMAScript's private class fields will be
   // widely spread in browsers.
   private readonly _value: T;
@@ -14,12 +15,11 @@ class WrapperConstructor<T> implements Comonad, Monad {
    * If value is `Wrapper`, then its copy will be returned.
    */
   static wrap<U>(value: U | Wrapper<U>): Wrapper<U> {
-    const exposedValue = isWrapper<U>(value) ? value.extract() : value;
-    return new WrapperConstructor(exposedValue);
+    return new Wrapper(isWrapper<U>(value) ? value.extract() : value);
   }
 
   map<R>(fn: (value: T) => R): Wrapper<R> {
-    return WrapperConstructor.wrap(fn(this._value));
+    return Wrapper.wrap(fn(this._value));
   }
 
   apply<R>(other: Wrapper<(value: T) => R>): Wrapper<R> {
@@ -35,12 +35,10 @@ class WrapperConstructor<T> implements Comonad, Monad {
   }
 }
 
-/** Monad that contains value and allow perform operation on it by set of methods. */
-export type Wrapper<T> = WrapperConstructor<T>;
-
-export const { wrap } = WrapperConstructor;
+export type { Wrapper };
+export const { wrap } = Wrapper;
 
 /** Check if value is instance of Wrapper. */
 export function isWrapper<T>(value: any): value is Wrapper<T> {
-  return value instanceof WrapperConstructor;
+  return value instanceof Wrapper;
 }
