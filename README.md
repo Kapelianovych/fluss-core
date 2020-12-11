@@ -54,7 +54,7 @@ Library is bundled as bunch of _ES modules_. It doesn't support _CommonJS_. If y
 ### compose
 
 ```typescript
-function compose<T extends Array<(...args: ReadonlyArray<any>) => any>>(
+function compose<T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
   ...fns: T
 ): (...args: Parameters<Last<T>>) => ReturnType<T[0]>;
 ```
@@ -88,11 +88,10 @@ const fn /*: Curried<[str1: string, str2: string], string> */ = curry(
 ### fork
 
 ```typescript
-function fork<T, R, R1, R2>(
-  join: (f: R1, s: R2) => R,
-  fn1: (a: T) => R1,
-  fn2: (a: T) => R2
-): (a: T) => R;
+function fork<T extends ReadonlyArray<unknown>, R>(
+  join: (...args: ReadonlyArray<any>) => R,
+  ...fns: ReadonlyArray<(...args: T) => unknown>
+): (...args: T) => R;
 ```
 
 Allow join output of two functions that get the same input and process it in a different way.
@@ -100,7 +99,7 @@ Allow join output of two functions that get the same input and process it in a d
 ```typescript
 // Compute average.
 const y /*: (a: Array<number>) => number */ = fork(
-  (sum: number, count: string) => sum / count,
+  (sum: number, count: number) => sum / count,
   (a: Array<number>) => a.reduce((sum, num) => sum + num, 0),
   (a: Array<number>) => a.length
 );

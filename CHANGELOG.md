@@ -10,6 +10,7 @@
 - Type signature of `compose` function.
 - Type signature of `alternation` function.
 - Type signature of `tuple` function.
+- Type signature of `fork` function.
 - Type signature of inner value of `Maybe`.
 
 ### Removed
