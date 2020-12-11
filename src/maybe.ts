@@ -22,7 +22,7 @@ class Maybe<V> implements Comonad, Monad {
   static nothing<T = unknown>(): Maybe<T> {
     // @ts-ignore - container may have empty inner value, but
     // we suppose that container can contain value of type `T`.
-    return Maybe.maybe(null);
+    return new Maybe(null);
   }
 
   /**
@@ -30,8 +30,7 @@ class Maybe<V> implements Comonad, Monad {
    * If value is `Maybe`, then its copy will be returned.
    */
   static maybe<T>(value: T | Maybe<T>): Maybe<T> {
-    const exposedValue = isMaybe<T>(value) ? value.extract() : value;
-    return new Maybe(exposedValue);
+    return new Maybe(isMaybe<T>(value) ? value.extract() : value);
   }
 
   isJust(): this is Maybe<NonNullable<V>> {
