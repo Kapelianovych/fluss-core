@@ -30,10 +30,7 @@ class Either<L extends Error, R> implements Comonad, Monad {
    * If value is `Either`, then its copy will be returned.
    */
   static either<A extends Error, B>(value: A | B | Either<A, B>): Either<A, B> {
-    const exposedValue = isEither<A, B>(value) ? value.extract() : value;
-    return isError<A>(exposedValue)
-      ? Either.left<A, B>(exposedValue)
-      : Either.right<A, B>(exposedValue);
+    return new Either<A, B>(isEither<A, B>(value) ? value.extract() : value);
   }
 
   isRight(): this is Either<never, R> {
@@ -50,28 +47,26 @@ class Either<L extends Error, R> implements Comonad, Monad {
 
   /** Maps inner value if it is not an `Error` instance. Same as `Either.map`. */
   mapRight<A>(fn: (value: R) => A): Either<L, A> {
-    return this.isRight()
-      ? Either.either<L, A>(fn(this._value))
-      : Either.left<L, A>(this._value as L);
+    return new Either<L, A>(
+      this.isRight() ? fn(this._value) : (this._value as L)
+    );
   }
 
   /** Maps inner value if it is an `Error` instance */
   mapLeft<E extends Error>(fn: (value: L) => E | R): Either<E, R> {
-    return this.isRight()
-      ? Either.right<E, R>(this._value)
-      : Either.either<E, R>(fn(this._value as L));
+    return new Either(this.isRight() ? this._value : fn(this._value as L));
   }
 
   apply<U>(other: Either<L, (value: R) => U>): Either<L, U> {
     return other.isRight()
       ? this.mapRight(other.extract())
-      : Either.left<L, U>(other.extract() as L);
+      : new Either<L, U>(other.extract() as L);
   }
 
   chain<U>(fn: (value: R) => Either<L, U>): Either<L, U> {
     return this.isRight()
       ? fn(this._value)
-      : Either.left<L, U>(this._value as L);
+      : new Either<L, U>(this._value as L);
   }
 
   extract(): L | R {
