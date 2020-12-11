@@ -58,6 +58,12 @@ describe('Task monad', () => {
       .start((num) => expect(num).toBe(10));
   });
 
+  test('Task can apply other tasks', () => {
+    const someTask = task((done, _) => setTimeout(() => done(5), 1000));
+
+    someTask.apply(done((num) => num * 2)).start((num) => expect(num).toBe(10));
+  });
+
   test('Task can return result wrapped in Promise', async () => {
     const result = done(5).asPromise();
 

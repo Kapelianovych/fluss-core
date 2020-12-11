@@ -1,4 +1,10 @@
-# [0.12.0] - 2020-12-11
+# Unreleased
+
+### Added
+
+- `apply` method to `Task` monad.
+
+## [0.12.0] - 2020-12-11
 
 ### Added
 

@@ -1,5 +1,5 @@
 import { isPromise } from './is_promise';
-import type { Chain } from './types';
+import type { Monad } from './types';
 
 export type DoneFunction<T> = (value: T) => void;
 export type FailFunction<E extends Error> = (value: E) => void;
@@ -14,7 +14,7 @@ export type ForkFunction<T, E extends Error> = (
  * in time (in opposite `Promise` that start doing job immediately
  * after definition).
  */
-class Task<T, E extends Error> implements Chain {
+class Task<T, E extends Error> implements Monad {
   private constructor(
     /** Starts `Task`. */ readonly start: ForkFunction<T, E>
   ) {}
@@ -43,14 +43,23 @@ class Task<T, E extends Error> implements Chain {
   }
 
   map<R>(fn: (value: T) => R): Task<R, E> {
-    return Task.task((done, fail) => {
+    return new Task((done, fail) => {
       this.start((value) => done(fn(value)), fail);
     });
   }
 
   chain<R>(fn: (value: T) => Task<R, E>): Task<R, E> {
-    return Task.task((done, fail) => {
+    return new Task((done, fail) => {
       this.start((value) => fn(value).start(done, fail), fail);
+    });
+  }
+
+  apply<R>(other: Task<(value: T) => R, E>): Task<R, E> {
+    return new Task((done, fail) => {
+      this.start(
+        (value) => other.asPromise().then((fn) => done(fn(value)), fail),
+        fail
+      );
     });
   }
 
