@@ -1,13 +1,18 @@
-import { maybe, isMaybe, nothing } from '../build';
+import { just, maybe, isMaybe, nothing } from '../build';
 
 describe('Maybe', () => {
   test('isMaybe check if value is instance of Maybe', () => {
     expect(isMaybe(nothing())).toBe(true);
     expect(isMaybe(maybe(9))).toBe(true);
+    expect(isMaybe(just(9))).toBe(true);
   });
 
   test('nothing function creates Maybe with Nothing state', () => {
     expect(nothing().isNothing()).toBe(true);
+  });
+
+  test('just function creates Maybe with Just state', () => {
+    expect(just(8).isJust()).toBe(true);
   });
 
   test('maybe function creates Maybe with Nothing or Just state depending of value.', () => {
@@ -32,7 +37,7 @@ describe('Maybe', () => {
 
     expect(result).toBe(null);
 
-    const result2 = maybe(2)
+    const result2 = just(2)
       .map((u) => u * u)
       .extract();
 
@@ -46,7 +51,7 @@ describe('Maybe', () => {
 
     expect(result).toBe(null);
 
-    const result2 = maybe(2)
+    const result2 = just(2)
       .apply(maybe((u) => u * u))
       .extract();
 
@@ -60,7 +65,7 @@ describe('Maybe', () => {
 
     expect(result).toBe(null);
 
-    const result2 = maybe(2)
+    const result2 = just(2)
       .chain((u) => maybe(u * u))
       .extract();
 

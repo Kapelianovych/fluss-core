@@ -359,6 +359,18 @@ Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**)
 maybe(8); // Maybe<number>
 ```
 
+### just
+
+```typescript
+function just<T>(value: T): Maybe<T>;
+```
+
+Creates `Maybe` monad instance with **Just** state.
+
+```typescript
+just(2); // Maybe<number>
+```
+
 ### nothing
 
 ```typescript

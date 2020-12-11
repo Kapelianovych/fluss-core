@@ -3,6 +3,7 @@
 ### Added
 
 - `apply` method to `Task` monad.
+- Return back `just` method of `Maybe`.
 
 ## [0.12.0] - 2020-12-11
 

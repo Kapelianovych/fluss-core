@@ -25,6 +25,11 @@ class Maybe<V> implements Comonad, Monad {
     return new Maybe(null);
   }
 
+  /** Creates `Maybe` monad instance with **Just** state. */
+  static just<T>(value: T): Maybe<T> {
+    return new Maybe(value);
+  }
+
   /**
    * Wraps value with `Maybe` monad.
    * If value is `Maybe`, then its copy will be returned.
@@ -42,7 +47,7 @@ class Maybe<V> implements Comonad, Monad {
   }
 
   map<R>(fn: (value: NonNullable<V>) => R): Maybe<R> {
-    return this.isJust() ? Maybe.maybe(fn(this._value)) : Maybe.nothing();
+    return this.isJust() ? new Maybe(fn(this._value)) : Maybe.nothing();
   }
 
   apply<R>(other: Maybe<(value: NonNullable<V>) => R>): Maybe<R> {
@@ -59,7 +64,7 @@ class Maybe<V> implements Comonad, Monad {
 }
 
 export type { Maybe };
-export const { maybe, nothing } = Maybe;
+export const { just, maybe, nothing } = Maybe;
 
 /** Checks if value is instance of `Maybe` monad. */
 export function isMaybe<T>(value: any): value is Maybe<T> {
