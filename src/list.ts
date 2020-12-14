@@ -108,12 +108,7 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
   }
 
   has(value: T): boolean {
-    for (const item of this) {
-      if (Object.is(value, item)) {
-        return true;
-      }
-    }
-    return false;
+    return this.some((item) => Object.is(item, value));
   }
 
   size(): number {
