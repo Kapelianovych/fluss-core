@@ -1,4 +1,4 @@
-# @fluss/core - small library that contains functions for easy functional coding.
+# @fluss/core
 
 Library for functional coding in modern environment.
 
