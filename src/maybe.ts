@@ -58,6 +58,13 @@ class Maybe<V> implements Comonad<V>, Monad<V> {
     return this.isJust() ? fn(this._value) : Maybe.nothing();
   }
 
+  /** Provide default value if `Maybe` has _Nothing_ state. */
+  fill(fn: () => NonNullable<V>): Maybe<NonNullable<V>> {
+    return new Maybe<NonNullable<V>>(
+      this.isNothing() ? fn() : (this._value as NonNullable<V>)
+    );
+  }
+
   extract(): V {
     return this._value;
   }

@@ -71,4 +71,12 @@ describe('Maybe', () => {
 
     expect(result2).toBe(4);
   });
+
+  test('fill method set default value for Maybe if it has Nothing state', () => {
+    expect(
+      nothing()
+        .fill(() => 2)
+        .extract()
+    ).toBe(2);
+  });
 });
