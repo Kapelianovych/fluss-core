@@ -24,9 +24,10 @@ export function tryCatch<T, L extends Error, R>(
       if (!isNothing(catchFn)) {
         const fallbackResult = catchFn(error);
         return isPromise(fallbackResult)
-          ? fallbackResult
-              .then((res) => either<L, R>(res))
-              .catch((error) => either<L, R>(error))
+          ? fallbackResult.then(
+              (res) => either<L, R>(res),
+              (error) => either<L, R>(error)
+            )
           : either<L, R>(fallbackResult);
       } else {
         return either<L, R>(error);
@@ -36,7 +37,7 @@ export function tryCatch<T, L extends Error, R>(
     try {
       const result = tryFn(input);
       return isPromise(result)
-        ? result.then((res) => either<L, R>(res)).catch(handleError)
+        ? result.then((res) => either<L, R>(res), handleError)
         : either<L, R>(result);
     } catch (error) {
       return handleError(error);

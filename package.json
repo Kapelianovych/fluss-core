@@ -1,13 +1,17 @@
 {
   "name": "@fluss/core",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Core functions and structures for functional programming.",
   "keywords": [
     "functional-programming",
     "monad",
     "typescript"
   ],
-  "main": "index.js",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./*": "./*.js"
+  },
   "type": "module",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",

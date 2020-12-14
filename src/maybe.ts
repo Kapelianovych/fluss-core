@@ -9,7 +9,7 @@ import type { Monad, Comonad } from './types';
  * Wraps _nullable_ value and allow works with it without
  * checking on `null` and `undefined`.
  */
-class Maybe<V> implements Comonad, Monad {
+class Maybe<V> implements Comonad<V>, Monad<V> {
   // TODO: review this when ECMAScript's private class fields will be
   // widely spread in browsers.
   private readonly _value: V;

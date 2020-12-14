@@ -5,7 +5,7 @@ import type { Monad, Comonad } from './types';
  * Monad that can contain value or `Error`.
  * Allow handle errors in functional way.
  */
-class Either<L extends Error, R> implements Comonad, Monad {
+class Either<L extends Error, R> implements Comonad<L | R>, Monad<R> {
   // TODO: review this when ECMAScript's private class fields will be
   // widely spread in browsers.
   private readonly _value: L | R;

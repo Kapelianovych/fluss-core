@@ -539,3 +539,49 @@ isTask(dataTask); // true
 Monad that allow to perform some actions asyncrounously and deferred in time (in opposite `Promise` that start doing job immediately after definition).
 
 [Difference between Task and Promise.](https://glebbahmutov.com/blog/difference-between-promise-and-task/)
+
+### list
+
+```typescript
+function list<T>(
+  ...values: ReadonlyArray<T | ArrayLike<T> | Iterable<T>>
+): List<T>;
+```
+
+Create `List` from values, array-like objects or iterables.
+
+```typescript
+const numbers /*: List<number> */ = list(1, new Set([2]), [3]);
+```
+
+### iterate
+
+```typescript
+function iterate<T>(fn: IteratorFunction<T>): List<T>;
+```
+
+Create `List` from function that returns iterator.
+
+```typescript
+const numbers /*: List<number> */ = iterate(function* () {
+  yield 1;
+  yield 2;
+  yield 3;
+});
+```
+
+### isList
+
+```typescript
+function isList<T>(value: any): value is List<T>;
+```
+
+Checks if value is instance of `List`.
+
+```typescript
+const result /*: boolean */ = isList(list());
+```
+
+#### List
+
+Monad that represents lazy `Array`. It can decrease computation step comparingly to `Array`. Actual execution of `List`'s methods starts when one of _terminating method_ (method that do not return List instance) is called.

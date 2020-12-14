@@ -18,3 +18,4 @@ export * from './alternation';
 export * from './wrapper';
 export * from './either';
 export * from './maybe';
+export * from './list';

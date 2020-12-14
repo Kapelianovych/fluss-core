@@ -14,7 +14,7 @@ export type ForkFunction<T, E extends Error> = (
  * in time (in opposite `Promise` that start doing job immediately
  * after definition).
  */
-class Task<T, E extends Error> implements Monad {
+class Task<T, E extends Error> implements Monad<T> {
   private constructor(
     /** Starts `Task`. */ readonly start: ForkFunction<T, E>
   ) {}

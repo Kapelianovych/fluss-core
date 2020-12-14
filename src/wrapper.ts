@@ -1,7 +1,7 @@
 import type { Monad, Comonad } from './types';
 
 /** Monad that contains value and allow perform operation on it by set of methods. */
-class Wrapper<T> implements Comonad, Monad {
+class Wrapper<T> implements Comonad<T>, Monad<T> {
   // TODO: review this when ECMAScript's private class fields will be
   // widely spread in browsers.
   private readonly _value: T;

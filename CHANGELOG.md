@@ -1,4 +1,17 @@
-# [0.13.0] - 2020-12-12
+# [0.14.0] - 2020-12-14
+
+### Added
+
+- `List` monad (lazy Array) and `isList` function.
+- `Foldable` and `Filterable` interfaces.
+- Generic parameters to interfaces.
+- **exports** field to _package.json_.
+
+### Fixed
+
+- Remove inner calls of `Object.freeze` method due to performance issues.
+
+## [0.13.0] - 2020-12-12
 
 ### Added
 
