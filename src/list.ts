@@ -46,10 +46,10 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
   }
 
   chain<R>(fn: (value: T) => List<R>): List<R> {
-    const selfMapped = this.map(fn);
+    const self = this;
     return new List<R>(function* () {
-      for (const list of selfMapped) {
-        yield* list;
+      for (const value of self) {
+        yield* fn(value);
       }
     });
   }
