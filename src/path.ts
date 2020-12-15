@@ -8,7 +8,8 @@ export function path<R>(
   keysList: string | ReadonlyArray<string>,
   obj: { [index: string]: any }
 ): Maybe<R> {
-  const partsOfPath = Array.isArray(keysList) ? keysList : keysList.split('.');
+  const partsOfPath =
+    typeof keysList === 'string' ? keysList.split('.') : keysList;
 
   // @ts-ignore
   return maybe(
