@@ -1,4 +1,10 @@
-# [0.15.0] - 2020-12-14
+# [0.15.1] - 2020-12-15
+
+### Fixed
+
+- Get rid of temporary list creation in `chain` method of `List`.
+
+## [0.15.0] - 2020-12-14
 
 ### Added
 
