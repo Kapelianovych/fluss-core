@@ -56,10 +56,7 @@ class Task<T, E extends Error> implements Monad<T> {
 
   apply<R>(other: Task<(value: T) => R, E>): Task<R, E> {
     return new Task((done, fail) => {
-      this.start(
-        (value) => other.asPromise().then((fn) => done(fn(value)), fail),
-        fail
-      );
+      this.start((value) => other.start((fn) => done(fn(value)), fail), fail);
     });
   }
 
