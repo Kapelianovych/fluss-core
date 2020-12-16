@@ -51,3 +51,8 @@ export type Tail<T extends ReadonlyArray<unknown>> = T extends [
 
 /** Get type of last element of `T`. */
 export type Last<T extends ReadonlyArray<unknown>> = T[Length<Tail<T>>];
+
+/** Checks if type `T` has `null` or `undefined` types. */
+export type HasNothing<T> = Extract<T, null | undefined> extends never
+  ? false
+  : true;

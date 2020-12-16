@@ -1,5 +1,6 @@
 import { isNothing } from './is_nothing';
 import type { Monad, Comonad } from './types';
+import type { HasNothing } from './utilities';
 
 /**
  * Monad that gets rid of `null` and `undefined`.
@@ -19,15 +20,13 @@ class Maybe<V> implements Comonad<V>, Monad<V> {
   }
 
   /** Creates `Maybe` monad instance with **Nothing** state. */
-  static nothing<T = unknown>(): Maybe<T> {
-    // @ts-ignore - container may have empty inner value, but
-    // we suppose that container can contain value of type `T`.
-    return new Maybe(null);
+  static nothing<T = null>(): Maybe<T | null> {
+    return new Maybe<T | null>(null);
   }
 
   /** Creates `Maybe` monad instance with **Just** state. */
-  static just<T>(value: T): Maybe<T> {
-    return new Maybe(value);
+  static just<T>(value: NonNullable<T>): Maybe<T> {
+    return new Maybe<T>(value);
   }
 
   /**
@@ -46,15 +45,24 @@ class Maybe<V> implements Comonad<V>, Monad<V> {
     return isNothing(this._value);
   }
 
-  map<R>(fn: (value: NonNullable<V>) => R): Maybe<R> {
+  map<R>(
+    fn: (value: NonNullable<V>) => R
+  ): HasNothing<V> extends true ? Maybe<R | null> : Maybe<R> {
+    // @ts-ignore
     return this.isJust() ? new Maybe(fn(this._value)) : Maybe.nothing();
   }
 
-  apply<R>(other: Maybe<(value: NonNullable<V>) => R>): Maybe<R> {
+  apply<R>(
+    other: Maybe<(value: NonNullable<V>) => R>
+  ): HasNothing<V> extends true ? Maybe<R | null> : Maybe<R> {
+    // @ts-ignore
     return other.isJust() ? this.map(other.extract()) : Maybe.nothing();
   }
 
-  chain<R>(fn: (value: NonNullable<V>) => Maybe<R>): Maybe<R> {
+  chain<R>(
+    fn: (value: NonNullable<V>) => Maybe<R>
+  ): HasNothing<V> extends true ? Maybe<R | null> : Maybe<R> {
+    // @ts-ignore
     return this.isJust() ? fn(this._value) : Maybe.nothing();
   }
 

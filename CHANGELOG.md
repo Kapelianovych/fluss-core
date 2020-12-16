@@ -1,8 +1,18 @@
 # Unreleased
 
+### Added
+
+- `HasNothing` utility type.
+
+### Changed
+
+- Signature of `nothing`, `just` functions, `map`, `chain` and `apply` methods of `Maybe`.
+
 ### Removed
 
 - `path` function.
+- `promise` function.
+- `alternation` function.
 
 ## [0.15.1] - 2020-12-15
 

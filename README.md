@@ -105,25 +105,6 @@ const y /*: (a: Array<number>) => number */ = fork(
 );
 ```
 
-### alternation
-
-```typescript
-function alternation<T extends ReadonlyArray<unknown>, R>(
-  ...fns: ReadonlyArray<(...args: T) => R>
-): (...args: T) => Maybe<R>;
-```
-
-Lets accomplish condition logic depending of function application.
-If function returns `NaN`, `null` or `undefined`, then result of next function is checked.
-If all functions return empty value, then result of last function is returned.
-
-```typescript
-const y /*: (a: number) => Maybe<number> */ = alternation(
-  (sum: number) => sum - 3,
-  (sum: number) => sum // As default value if first function returns NaN
-);
-```
-
 ### sequence
 
 ```typescript
@@ -191,23 +172,6 @@ Checks if value is `Promise`.
 ```typescript
 const y /*: false */ = isPromise(false);
 const y1 /*: true */ = isPromise(Promise.resolve(9));
-```
-
-### promise
-
-```typescript
-function promise<T>(value: T | PromiseLike<T>): Promise<T>;
-```
-
-Creates new resolved promise if value is not an error, otherwire returns rejected promise.
-
-```typescript
-const y /*: Promise<9> */ = promise(9);
-
-function throwable() {
-  throw new Error();
-}
-const y1 /*: Promise<never> */ = promise(throwable());
 ```
 
 ### array
@@ -344,7 +308,7 @@ maybe(8); // Maybe<number>
 ### just
 
 ```typescript
-function just<T>(value: T): Maybe<T>;
+function just<T>(value: NonNullable<T>): Maybe<T>;
 ```
 
 Creates `Maybe` monad instance with **Just** state.
@@ -356,14 +320,14 @@ just(2); // Maybe<number>
 ### nothing
 
 ```typescript
-function nothing<T = unknown>(): Maybe<T>;
+function nothing<T = null>(): Maybe<T | null>;
 ```
 
 Creates `Maybe` monad instance with **Nothing** state.
 
 ```typescript
-nothing(); // Maybe<unknown>
-nothing<number>(); // Maybe<number>
+nothing(); // Maybe<null>
+nothing<number>(); // Maybe<number | null>
 ```
 
 #### Maybe
