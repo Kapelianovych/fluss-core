@@ -1,4 +1,10 @@
-# [0.15.1] - 2020-12-15
+# Unreleased
+
+### Removed
+
+- `path` function.
+
+## [0.15.1] - 2020-12-15
 
 ### Fixed
 

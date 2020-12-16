@@ -2,7 +2,6 @@ export * from './types';
 export * from './utilities';
 export * from './task';
 export * from './is_error';
-export * from './path';
 export * from './fork';
 export * from './curry';
 export * from './array';
