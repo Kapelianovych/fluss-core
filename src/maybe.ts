@@ -1,6 +1,6 @@
 import { isNothing } from './is_nothing';
-import type { Monad, Comonad } from './types';
 import type { HasNothing } from './utilities';
+import type { Monad, Comonad } from './types';
 
 /**
  * Monad that gets rid of `null` and `undefined`.
