@@ -56,15 +56,15 @@ Library is bundled as bunch of _ES modules_. It doesn't support _CommonJS_. If y
 ```typescript
 function compose<T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
   ...fns: T
-): (...args: Parameters<Last<T>>) => ReturnType<T[0]>;
+): (...args: Parameters<T[0]>) => ReturnType<Last<T>>;
 ```
 
-Compose functions from right to left.
+Compose functions from left to right.
 
 ```typescript
 const fn /*: (str: string) => string */ = compose(
-  (str) => str + 3,
-  (str: string) => str + 2
+  (str) => str + 2,
+  (str: string) => str + 3
 );
 const result /*: '123' */ = fn('1');
 ```
@@ -81,7 +81,7 @@ Create curried version of function with optional partial application.
 
 ```typescript
 const fn /*: Curried<[str1: string, str2: string], string> */ = curry(
-  (str1, str2) => str1 + str2 + 3
+  (str1: string, str2: string) => str1 + str2 + 3
 );
 ```
 

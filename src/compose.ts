@@ -1,14 +1,14 @@
 import type { Last } from './utilities';
 
-/** Performs right-to-left function composition. */
+/** Performs left-to-right function composition. */
 export function compose<
   T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>
->(...fns: T): (...args: Parameters<Last<T>>) => ReturnType<T[0]> {
+>(...fns: T): (...args: Parameters<T[0]>) => ReturnType<Last<T>> {
   return (...args) => {
-    const firstFn = fns[fns.length - 1] ?? ((...x) => x);
+    const firstFn = fns[0] ?? ((...x) => x);
 
     return fns
-      .slice(0, fns.length - 1)
-      .reduceRight((currentArgs, fn) => fn(currentArgs), firstFn(...args));
+      .slice(1)
+      .reduce((currentArgs, fn) => fn(currentArgs), firstFn(...args));
   };
 }

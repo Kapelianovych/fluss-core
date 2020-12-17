@@ -7,6 +7,7 @@
 ### Changed
 
 - Signature of `nothing`, `just` functions, `map`, `chain` and `apply` methods of `Maybe`.
+- `compose` function to perform left-to-right function composition.
 
 ### Removed
 
