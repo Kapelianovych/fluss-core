@@ -101,6 +101,26 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
     });
   }
 
+  sort(fn: (first: T, second: T) => number): List<T> {
+    const sortedSelf = Array.from<T>(this).sort(fn);
+    return new List<T>(function* () {
+      for (const item of sortedSelf) {
+        yield item;
+      }
+    });
+  }
+
+  take(count: number): List<T> {
+    const self = this;
+    return new List<T>(function* () {
+      for (const item of self) {
+        if (0 <= --count) {
+          yield item;
+        }
+      }
+    });
+  }
+
   forEach(fn: (value: T) => unknown): void {
     for (const value of this) {
       fn(value);

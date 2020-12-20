@@ -108,4 +108,21 @@ describe('List data structure', () => {
     expect(list(1, 2, 3).every((num) => num < 0)).toBe(false);
     expect(list().every((num) => num > 0)).toBe(true);
   });
+
+  test('sort method sorts list of numbers in ascending order', () => {
+    expect(
+      list(1, 2, 3)
+        .sort((f, s) => f - s)
+        .asArray()
+    ).toEqual([1, 2, 3]);
+    expect(
+      list(5, 2, 3)
+        .sort((f, s) => f - s)
+        .asArray()
+    ).toEqual([2, 3, 5]);
+  });
+
+  test('take method take first 3 items from list', () => {
+    expect(list(1, 2, 3, 4, 5).take(3).asArray()).toEqual([1, 2, 3]);
+  });
 });
