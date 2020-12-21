@@ -147,6 +147,17 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
     });
   }
 
+  skip(count: number): List<T> {
+    const self = this;
+    return new List<T>(function* () {
+      for (const item of self) {
+        if (0 > --count) {
+          yield item;
+        }
+      }
+    });
+  }
+
   forEach(fn: (value: T) => unknown): void {
     for (const value of this) {
       fn(value);

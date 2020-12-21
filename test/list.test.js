@@ -155,4 +155,8 @@ describe('List data structure', () => {
       3,
     ]);
   });
+
+  test('skip method should skip 3 values', () => {
+    expect(list(1, 3, 4, 5, 6).skip(3).asArray()).toEqual([5, 6]);
+  });
 });

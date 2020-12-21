@@ -3,7 +3,7 @@
 ### Added
 
 - `HasNothing` utility type.
-- `uniqueBy`, `compress`, `sort` and `take` methods to `List`.
+- `uniqueBy`, `skip`, `compress`, `sort` and `take` methods to `List`.
 
 ### Changed
 
