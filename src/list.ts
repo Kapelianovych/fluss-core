@@ -186,7 +186,7 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
   }
 
   /**
-   * Checks if at least one value of `List` passes _predicat_ function.
+   * Checks if at least one value of `List` passes _predicate_ function.
    * If list is empty, then method returns `false`.
    */
   some(predicate: (value: T) => boolean): boolean {
@@ -199,7 +199,7 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
   }
 
   /**
-   * Checks if all values of `List` pass _predicat_ function.
+   * Checks if all values of `List` pass _predicate_ function.
    * If list is empty, then method returns `true`.
    */
   every(predicate: (value: T) => boolean): boolean {
