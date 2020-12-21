@@ -63,10 +63,6 @@ describe('List data structure', () => {
     expect(list(4).prepend(1, 2, 3).asArray()).toEqual([1, 2, 3, 4]);
   });
 
-  test('unique method collect only unique values of List', () => {
-    expect(list(1, 1, 2, 2, 3, 3, 3).unique().asArray()).toEqual([1, 2, 3]);
-  });
-
   test(
     'forEach method execute function for each value of List ' +
       'and does not return value',

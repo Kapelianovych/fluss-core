@@ -15,6 +15,7 @@
 - `path` function.
 - `promise` function.
 - `alternation` function.
+- `unique` method from `List`.
 
 ### Fixed
 

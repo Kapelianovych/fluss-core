@@ -88,20 +88,6 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
     });
   }
 
-  unique(): List<T> {
-    const self = this;
-    return new List<T>(function* () {
-      const uniqueValues = new Map<T, boolean>();
-
-      for (const value of self) {
-        if (!uniqueValues.has(value)) {
-          uniqueValues.set(value, true);
-          yield value;
-        }
-      }
-    });
-  }
-
   uniqueBy<U>(fn: (item: T) => U): List<T> {
     const self = this;
     return new List<T>(function* () {
@@ -203,9 +189,9 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
    * Checks if at least one value of `List` passes _predicat_ function.
    * If list is empty, then method returns `false`.
    */
-  some(predicat: (value: T) => boolean): boolean {
+  some(predicate: (value: T) => boolean): boolean {
     for (const item of this) {
-      if (predicat(item)) {
+      if (predicate(item)) {
         return true;
       }
     }
@@ -216,9 +202,9 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
    * Checks if all values of `List` pass _predicat_ function.
    * If list is empty, then method returns `true`.
    */
-  every(predicat: (value: T) => boolean): boolean {
+  every(predicate: (value: T) => boolean): boolean {
     for (const item of this) {
-      if (!predicat(item)) {
+      if (!predicate(item)) {
         return false;
       }
     }
