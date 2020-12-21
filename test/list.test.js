@@ -126,11 +126,25 @@ describe('List data structure', () => {
     expect(list(1, 2, 3, 4, 5).take(3).asArray()).toEqual([1, 2, 3]);
   });
 
-  test('uniqueBy skips values whose id property is lower than 4', () => {
+  test('uniqueBy skips duplicate values by id property', () => {
     expect(
       list({ id: 1 }, { id: 2 }, { id: 2 }, { id: 2 }, { id: 5 })
         .uniqueBy((item) => item.id)
         .asArray()
     ).toEqual([{ id: 1 }, { id: 2 }, { id: 5 }]);
+  });
+
+  test('uniqueBy skips values by id property of inner object', () => {
+    expect(
+      list(
+        { o: { id: 1 } },
+        { o: { id: 2 } },
+        { o: { id: 2 } },
+        { o: { id: 2 } },
+        { o: { id: 5 } }
+      )
+        .uniqueBy((item) => item.o.id)
+        .asArray()
+    ).toEqual([{ o: { id: 1 } }, { o: { id: 2 } }, { o: { id: 5 } }]);
   });
 });

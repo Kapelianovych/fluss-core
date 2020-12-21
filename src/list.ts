@@ -101,10 +101,10 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
     });
   }
 
-  uniqueBy<K extends keyof T>(fn: (item: T) => T[K]): List<T> {
+  uniqueBy<U>(fn: (item: T) => U): List<T> {
     const self = this;
     return new List<T>(function* () {
-      const uniqueValues = new Map<T[K], boolean>();
+      const uniqueValues = new Map<U, boolean>();
 
       for (const value of self) {
         if (!uniqueValues.has(fn(value))) {
