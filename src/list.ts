@@ -1,3 +1,4 @@
+import { maybe, Maybe, nothing } from './maybe';
 import type { Chain, Filterable, Foldable } from './types';
 
 export type IteratorFunction<T> = () => Iterator<T>;
@@ -156,6 +157,16 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
         }
       }
     });
+  }
+
+  find(predicate: (item: T) => boolean): Maybe<T | null> {
+    for (const item of this) {
+      if (predicate(item)) {
+        return maybe<T>(item);
+      }
+    }
+
+    return nothing<T>();
   }
 
   forEach(fn: (value: T) => unknown): void {

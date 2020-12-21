@@ -1,4 +1,4 @@
-import { list, iterate, isList } from '../build';
+import { list, iterate, isList, isMaybe } from '../build';
 
 describe('List data structure', () => {
   test('list and iterate functions create List container', () => {
@@ -158,5 +158,14 @@ describe('List data structure', () => {
 
   test('skip method should skip 3 values', () => {
     expect(list(1, 3, 4, 5, 6).skip(3).asArray()).toEqual([5, 6]);
+  });
+
+  test('find method returns Maybe and gets value from List', () => {
+    expect(isMaybe(list(1).find((item) => item === 1))).toBe(true);
+    expect(
+      list(1)
+        .find((item) => item === 1)
+        .extract()
+    ).toBe(1);
   });
 });
