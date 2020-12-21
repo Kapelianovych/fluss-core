@@ -147,4 +147,12 @@ describe('List data structure', () => {
         .asArray()
     ).toEqual([{ o: { id: 1 } }, { o: { id: 2 } }, { o: { id: 5 } }]);
   });
+
+  test('compress method should get rid of null and undefined values', () => {
+    expect(list(1, null, 2, undefined, 3).compress().asArray()).toEqual([
+      1,
+      2,
+      3,
+    ]);
+  });
 });

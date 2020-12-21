@@ -13,4 +13,9 @@ describe('array', () => {
     const testArray = array(6, [5], { 0: 8, length: 1 });
     expect(testArray).toEqual([6, 5, 8]);
   });
+
+  test('should accepts null and undefined as values', () => {
+    const testArray = array(null, undefined, 6, [5], { 0: 8, length: 1 });
+    expect(testArray).toEqual([null, undefined, 6, 5, 8]);
+  });
 });

@@ -3,7 +3,7 @@
 ### Added
 
 - `HasNothing` utility type.
-- `uniqueBy`, `sort` and `take` methods to `List`.
+- `uniqueBy`, `compress`, `sort` and `take` methods to `List`.
 
 ### Changed
 
@@ -15,6 +15,11 @@
 - `path` function.
 - `promise` function.
 - `alternation` function.
+
+### Fixed
+
+- `list` function to properly handling _null_ value.
+- `array` function to properly handling _null_ value.
 
 ## [0.15.1] - 2020-12-15
 

@@ -16,7 +16,7 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
   ): List<T> {
     return new List<T>(function* () {
       for (const value of values) {
-        if (typeof value === 'object') {
+        if (typeof value === 'object' && value !== null) {
           if (Symbol.iterator in value) {
             yield* value as Iterable<T>;
           } else if ('length' in value) {
@@ -120,6 +120,18 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
     return new List<T>(function* () {
       for (const item of sortedSelf) {
         yield item;
+      }
+    });
+  }
+
+  /** Get rid of `null` and `undefined` values. */
+  compress(): List<NonNullable<T>> {
+    const self = this;
+    return new List<NonNullable<T>>(function* () {
+      for (const item of self) {
+        if (item !== null && item !== undefined) {
+          yield item as NonNullable<T>;
+        }
       }
     });
   }
