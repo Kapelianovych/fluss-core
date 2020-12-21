@@ -125,4 +125,12 @@ describe('List data structure', () => {
   test('take method take first 3 items from list', () => {
     expect(list(1, 2, 3, 4, 5).take(3).asArray()).toEqual([1, 2, 3]);
   });
+
+  test('uniqueBy skips values whose id property is lower than 4', () => {
+    expect(
+      list({ id: 1 }, { id: 2 }, { id: 2 }, { id: 2 }, { id: 5 })
+        .uniqueBy((item) => item.id)
+        .asArray()
+    ).toEqual([{ id: 1 }, { id: 2 }, { id: 5 }]);
+  });
 });

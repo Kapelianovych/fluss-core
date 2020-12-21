@@ -3,7 +3,7 @@
 ### Added
 
 - `HasNothing` utility type.
-- `sort` and `take` methods to `List`.
+- `uniqueBy`, `sort` and `take` methods to `List`.
 
 ### Changed
 

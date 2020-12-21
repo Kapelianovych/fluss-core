@@ -101,6 +101,20 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
     });
   }
 
+  uniqueBy<K extends keyof T>(fn: (item: T) => T[K]): List<T> {
+    const self = this;
+    return new List<T>(function* () {
+      const uniqueValues = new Map<T[K], boolean>();
+
+      for (const value of self) {
+        if (!uniqueValues.has(fn(value))) {
+          uniqueValues.set(fn(value), true);
+          yield value;
+        }
+      }
+    });
+  }
+
   sort(fn: (first: T, second: T) => number): List<T> {
     const sortedSelf = Array.from<T>(this).sort(fn);
     return new List<T>(function* () {
