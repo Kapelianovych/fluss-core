@@ -40,7 +40,7 @@ class Maybe<V> implements Comonad<V>, Monad<V>, Serializable<V> {
    */
   static maybe<T>(
     value: T | Maybe<T>
-  ): HasNothing<T> extends true ? Maybe<T | null> : Maybe<T> {
+  ): HasNothing<T> extends true ? Maybe<NonNullable<T> | null> : Maybe<T> {
     // @ts-ignore
     return new Maybe((isMaybe<T>(value) ? value.extract() : value) ?? null);
   }
