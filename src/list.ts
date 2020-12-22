@@ -1,4 +1,5 @@
 import { maybe, Maybe, nothing } from './maybe';
+import type { Just } from './utilities';
 import type {
   Chain,
   Foldable,
@@ -123,13 +124,13 @@ class List<T>
     });
   }
 
-  /** Get rid of `null` and `undefined` values. */
-  compress(): List<NonNullable<T>> {
+  /** Get rid of `Nothing` values. */
+  compress(): List<Just<T>> {
     const self = this;
-    return new List<NonNullable<T>>(function* () {
+    return new List<Just<T>>(function* () {
       for (const item of self) {
         if (item !== null && item !== undefined) {
-          yield item as NonNullable<T>;
+          yield item as Just<T>;
         }
       }
     });
