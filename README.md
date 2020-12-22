@@ -132,15 +132,15 @@ errorLogger(someError);
 ### isNothing
 
 ```typescript
-function isNothing<T>(value: T | null | undefined): value is undefined | null;
+function isNothing<T>(value: T | Nothing): value is Nothing;
 ```
 
 Checks if value is `null` or `undefined`.
 
 ```typescript
-const y /*: true */ = isNothing(null);
-const y1 /*: false */ = isNothing(false);
-const y2 /*: false */ = isNothing(0);
+const y /*: boolean */ = isNothing(null);
+const y1 /*: boolean */ = isNothing(false);
+const y2 /*: boolean */ = isNothing(0);
 ```
 
 ### isError
@@ -296,7 +296,9 @@ isMaybe(maybe(8)); // true
 ### maybe
 
 ```typescript
-function maybe<T>(value: T | Maybe<T>): Maybe<T>;
+function maybe<T>(
+  value: T | Maybe<T>
+): HasNothing<T> extends true ? Maybe<Just<T> | null> : Maybe<T>;
 ```
 
 Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself.
@@ -308,7 +310,7 @@ maybe(8); // Maybe<number>
 ### just
 
 ```typescript
-function just<T>(value: NonNullable<T>): Maybe<T>;
+function just<T>(value: Just<T>): Maybe<T>;
 ```
 
 Creates `Maybe` monad instance with **Just** state.

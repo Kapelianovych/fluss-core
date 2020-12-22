@@ -53,6 +53,10 @@ export type Tail<T extends ReadonlyArray<unknown>> = T extends [
 export type Last<T extends ReadonlyArray<unknown>> = T[Length<Tail<T>>];
 
 /** Checks if type `T` has `null` or `undefined` types. */
-export type HasNothing<T> = Extract<T, null | undefined> extends never
-  ? false
-  : true;
+export type HasNothing<T> = Extract<T, Nothing> extends never ? false : true;
+
+/** Same as `NonNullable` utility type, but also excludes _void_. */
+export type Just<T> = T extends Nothing ? never : T;
+
+/** Union of empty values. */
+export type Nothing = void | null | undefined;

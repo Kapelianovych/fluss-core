@@ -2,7 +2,7 @@
 
 ### Added
 
-- `HasNothing` utility type.
+- `HasNothing`, `Just` and `Nothing` utility type.
 - `Serializable` interface.
 - `uniqueBy`, `toJSON` (make `List` serializable), `skip`, `find`, `compress`, `sort` and `take` methods to `List`.
 - `toJSON` method to `Maybe`.
@@ -13,6 +13,7 @@
 
 - Signature of `nothing`, `just` functions, `map`, `chain` and `apply` methods of `Maybe`.
 - `compose` function to perform left-to-right function composition.
+- Signature of `isNothing` function.
 
 ### Removed
 
@@ -25,7 +26,7 @@
 
 - `list` function to properly handling _null_ value.
 - `array` function to properly handling _null_ value.
-- converting _undefined_ value to _null_ in `maybe` function (for serialization purposes).
+- Converting _undefined_ value to _null_ in `Maybe` constructor (for serialization purposes).
 
 ## [0.15.1] - 2020-12-15
 

@@ -1,5 +1,5 @@
 import { isNothing } from './is_nothing';
-import type { HasNothing } from './utilities';
+import type { HasNothing, Just, Nothing } from './utilities';
 import type {
   Monad,
   Comonad,
@@ -21,7 +21,9 @@ class Maybe<V> implements Comonad<V>, Monad<V>, Serializable<V> {
   private readonly _value: V;
 
   private constructor(value: V) {
-    this._value = value;
+    // @ts-ignore - we need it to discard
+    // _undefined_ to make inner value serializable.
+    this._value = value ?? null;
   }
 
   /** Creates `Maybe` monad instance with **Nothing** state. */
@@ -30,7 +32,7 @@ class Maybe<V> implements Comonad<V>, Monad<V>, Serializable<V> {
   }
 
   /** Creates `Maybe` monad instance with **Just** state. */
-  static just<T>(value: NonNullable<T>): Maybe<T> {
+  static just<T>(value: Just<T>): Maybe<T> {
     return new Maybe<T>(value);
   }
 
@@ -40,44 +42,44 @@ class Maybe<V> implements Comonad<V>, Monad<V>, Serializable<V> {
    */
   static maybe<T>(
     value: T | Maybe<T>
-  ): HasNothing<T> extends true ? Maybe<NonNullable<T> | null> : Maybe<T> {
+  ): HasNothing<T> extends true ? Maybe<Just<T> | null> : Maybe<T> {
     // @ts-ignore
-    return new Maybe((isMaybe<T>(value) ? value.extract() : value) ?? null);
+    return new Maybe(isMaybe<T>(value) ? value.extract() : value);
   }
 
-  isJust(): this is Maybe<NonNullable<V>> {
+  isJust(): this is Maybe<Just<V>> {
     return !this.isNothing();
   }
 
-  isNothing(): this is Maybe<null | undefined> {
+  isNothing(): this is Maybe<Nothing> {
     return isNothing(this._value);
   }
 
   map<R>(
-    fn: (value: NonNullable<V>) => R
-  ): HasNothing<V> extends true ? Maybe<R | null> : Maybe<R> {
+    fn: (value: Just<V>) => R
+  ): HasNothing<V> extends true ? Maybe<Just<R> | null> : Maybe<R> {
     // @ts-ignore
     return this.isJust() ? new Maybe(fn(this._value)) : Maybe.nothing();
   }
 
   apply<R>(
-    other: Maybe<(value: NonNullable<V>) => R>
-  ): HasNothing<V> extends true ? Maybe<R | null> : Maybe<R> {
+    other: Maybe<(value: Just<V>) => R>
+  ): HasNothing<V> extends true ? Maybe<Just<R> | null> : Maybe<R> {
     // @ts-ignore
     return other.isJust() ? this.map(other.extract()) : Maybe.nothing();
   }
 
   chain<R>(
-    fn: (value: NonNullable<V>) => Maybe<R>
-  ): HasNothing<V> extends true ? Maybe<R | null> : Maybe<R> {
+    fn: (value: Just<V>) => Maybe<R>
+  ): HasNothing<V> extends true ? Maybe<Just<R> | null> : Maybe<R> {
     // @ts-ignore
     return this.isJust() ? fn(this._value) : Maybe.nothing();
   }
 
   /** Provide default value if `Maybe` has _Nothing_ state. */
-  fill(fn: () => NonNullable<V>): Maybe<NonNullable<V>> {
-    return new Maybe<NonNullable<V>>(
-      this.isNothing() ? fn() : (this._value as NonNullable<V>)
+  fill(fn: () => Just<V>): Maybe<Just<V>> {
+    return new Maybe<Just<V>>(
+      this.isNothing() ? fn() : (this._value as Just<V>)
     );
   }
 
