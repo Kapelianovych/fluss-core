@@ -6,6 +6,7 @@
 - `Serializable` interface.
 - `uniqueBy`, `toJSON` (make `List` serializable), `skip`, `find`, `compress`, `sort` and `take` methods to `List`.
 - `toJSON` method to `Maybe`.
+- `toJSON` method to `Either`.
 
 ### Changed
 

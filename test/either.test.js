@@ -71,4 +71,16 @@ describe('Either', () => {
 
     expect(result2).toEqual(4);
   });
+
+  test('should be serializable', () => {
+    const e1 = JSON.stringify(right(1));
+    const e2 = JSON.stringify(left(new TypeError('Wrong type!')));
+
+    expect(e1).toMatch('"type":"Either"');
+    expect(e1).toMatch('"value":1');
+
+    expect(e2).toMatch('"type":"Either"');
+    expect(e2).toMatch('"type":"Error"');
+    expect(e2).toMatch('"value":"Wrong type!"');
+  });
 });

@@ -1,11 +1,20 @@
 import { isError } from './is_error';
-import type { Monad, Comonad } from './types';
+import type {
+  Monad,
+  Comonad,
+  Serializable,
+  SerializabledObject,
+} from './types';
 
 /**
  * Monad that can contain value or `Error`.
  * Allow handle errors in functional way.
  */
-class Either<L extends Error, R> implements Comonad<L | R>, Monad<R> {
+class Either<L extends Error, R>
+  implements
+    Monad<R>,
+    Comonad<L | R>,
+    Serializable<SerializabledObject<string> | R> {
   // TODO: review this when ECMAScript's private class fields will be
   // widely spread in browsers.
   private readonly _value: L | R;
@@ -67,6 +76,18 @@ class Either<L extends Error, R> implements Comonad<L | R>, Monad<R> {
     return this.isRight()
       ? fn(this._value)
       : new Either<L, U>(this._value as L);
+  }
+
+  toJSON(): SerializabledObject<SerializabledObject<string> | R> {
+    return {
+      type: 'Either',
+      value: this.isLeft()
+        ? {
+            type: 'Error',
+            value: this._value.message,
+          }
+        : (this._value as R),
+    };
   }
 
   extract(): L | R {
