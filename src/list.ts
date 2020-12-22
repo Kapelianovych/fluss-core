@@ -175,7 +175,7 @@ class List<T>
   }
 
   has(value: T): boolean {
-    return this.some((item) => Object.is(item, value));
+    return this.any((item) => Object.is(item, value));
   }
 
   size(): number {
@@ -199,10 +199,10 @@ class List<T>
   }
 
   /**
-   * Checks if at least one value of `List` passes _predicate_ function.
+   * Check if at least one value of `List` passes _predicate_ function.
    * If list is empty, then method returns `false`.
    */
-  some(predicate: (value: T) => boolean): boolean {
+  any(predicate: (value: T) => boolean): boolean {
     for (const item of this) {
       if (predicate(item)) {
         return true;
@@ -212,10 +212,10 @@ class List<T>
   }
 
   /**
-   * Checks if all values of `List` pass _predicate_ function.
+   * Check if all values of `List` pass _predicate_ function.
    * If list is empty, then method returns `true`.
    */
-  every(predicate: (value: T) => boolean): boolean {
+  all(predicate: (value: T) => boolean): boolean {
     for (const item of this) {
       if (!predicate(item)) {
         return false;

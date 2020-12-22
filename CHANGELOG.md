@@ -14,6 +14,7 @@
 - Signature of `nothing`, `just` functions, `map`, `chain` and `apply` methods of `Maybe`.
 - `compose` function to perform left-to-right function composition.
 - Signature of `isNothing` function.
+- Rename `some` method of `List` as `any` and `every` as `all`.
 
 ### Removed
 

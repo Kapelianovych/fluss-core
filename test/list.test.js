@@ -93,16 +93,16 @@ describe('List data structure', () => {
     expect(list(1, 2, 3).fold((a, v) => a + v, 0)).toBe(6);
   });
 
-  test('some method check if at least one value pass predicat', () => {
-    expect(list(1, 2, 3).some((num) => num === 2)).toBe(true);
-    expect(list(1, 2, 3).some((num) => num === 9)).toBe(false);
-    expect(list().some((num) => num === 9)).toBe(false);
+  test('any method check if at least one value pass predicat', () => {
+    expect(list(1, 2, 3).any((num) => num === 2)).toBe(true);
+    expect(list(1, 2, 3).any((num) => num === 9)).toBe(false);
+    expect(list().any((num) => num === 9)).toBe(false);
   });
 
-  test('every method checks if all values pass predicat', () => {
-    expect(list(1, 2, 3).every((num) => num > 0)).toBe(true);
-    expect(list(1, 2, 3).every((num) => num < 0)).toBe(false);
-    expect(list().every((num) => num > 0)).toBe(true);
+  test('all method checks if all values pass predicat', () => {
+    expect(list(1, 2, 3).all((num) => num > 0)).toBe(true);
+    expect(list(1, 2, 3).all((num) => num < 0)).toBe(false);
+    expect(list().all((num) => num > 0)).toBe(true);
   });
 
   test('sort method sorts list of numbers in ascending order', () => {
