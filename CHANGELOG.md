@@ -7,6 +7,7 @@
 - `uniqueBy`, `toJSON` (make `List` serializable), `skip`, `find`, `compress`, `sort` and `take` methods to `List`.
 - `toJSON` method to `Maybe`.
 - `toJSON` method to `Either`.
+- `reviver` function to deserialize `Maybe`, `List` and `Either` (also with _Left_ state) monads.
 
 ### Changed
 

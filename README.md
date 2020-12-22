@@ -531,3 +531,26 @@ const result /*: boolean */ = isList(list());
 #### List
 
 Monad that represents lazy `Array`. It can decrease computation step comparingly to `Array`. Actual execution of `List`'s methods starts when one of _terminating method_ (method that do not return List instance) is called.
+
+### reviver
+
+```typescript
+function reviver(
+  key: string,
+  value: JSONValueTypes | SerializabledObject<unknown>
+):
+  | JSONValueTypes
+  | Error
+  | List<unknown>
+  | Maybe<unknown>
+  | Either<Error, unknown>;
+```
+
+Add recognition of `Maybe`, `List`, `Either` and `Error` data structures for `JSON.parse`.
+
+**Note**: constructing an `Error` is supported only from `SerializabledObject<string>` structure.
+
+```typescript
+const obj = JSON.parse('{"type":"Maybe","value":1}', reviver);
+// obj will be instance of Maybe.
+```
