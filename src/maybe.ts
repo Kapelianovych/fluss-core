@@ -38,8 +38,11 @@ class Maybe<V> implements Comonad<V>, Monad<V>, Serializable<V> {
    * Wraps value with `Maybe` monad.
    * If value is `Maybe`, then its copy will be returned.
    */
-  static maybe<T>(value: T | Maybe<T>): Maybe<T> {
-    return new Maybe(isMaybe<T>(value) ? value.extract() : value);
+  static maybe<T>(
+    value: T | Maybe<T>
+  ): HasNothing<T> extends true ? Maybe<T | null> : Maybe<T> {
+    // @ts-ignore
+    return new Maybe((isMaybe<T>(value) ? value.extract() : value) ?? null);
   }
 
   isJust(): this is Maybe<NonNullable<V>> {

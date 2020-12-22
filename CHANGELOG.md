@@ -5,6 +5,7 @@
 - `HasNothing` utility type.
 - `Serializable` interface.
 - `uniqueBy`, `toJSON` (make `List` serializable), `skip`, `find`, `compress`, `sort` and `take` methods to `List`.
+- `toJSON` method to `Maybe`.
 
 ### Changed
 
@@ -22,6 +23,7 @@
 
 - `list` function to properly handling _null_ value.
 - `array` function to properly handling _null_ value.
+- converting _undefined_ value to _null_ in `maybe` function (for serialization purposes).
 
 ## [0.15.1] - 2020-12-15
 

@@ -82,8 +82,16 @@ describe('Maybe', () => {
 
   test('should be serializable', () => {
     const s1 = JSON.stringify(just(1));
+    const s2 = JSON.stringify(nothing());
+    const s3 = JSON.stringify(maybe(undefined));
 
     expect(s1).toMatch('"type":"Maybe"');
     expect(s1).toMatch('"value":1');
+
+    expect(s2).toMatch('"type":"Maybe"');
+    expect(s2).toMatch('"value":null');
+
+    expect(s3).toMatch('"type":"Maybe"');
+    expect(s3).toMatch('"value":null');
   });
 });
