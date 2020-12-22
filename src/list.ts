@@ -1,10 +1,22 @@
 import { maybe, Maybe, nothing } from './maybe';
-import type { Chain, Filterable, Foldable } from './types';
+import type {
+  Chain,
+  Foldable,
+  Filterable,
+  Serializable,
+  SerializabledObject,
+} from './types';
 
 export type IteratorFunction<T> = () => Iterator<T>;
 
 /** Monad that represents lazy Array. */
-class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
+class List<T>
+  implements
+    Chain<T>,
+    Iterable<T>,
+    Foldable<T>,
+    Filterable<T>,
+    Serializable<ReadonlyArray<T>> {
   readonly [Symbol.iterator]: IteratorFunction<T>;
 
   private constructor(fn: IteratorFunction<T>) {
@@ -217,6 +229,13 @@ class List<T> implements Iterable<T>, Chain<T>, Foldable<T>, Filterable<T> {
     // but due to [this Chromium bug](https://bugs.chromium.org/p/chromium/issues/detail?id=980227)
     // it is very slow operation and this action is not performed.
     return Array.from<T>(this);
+  }
+
+  toJSON(): SerializabledObject<ReadonlyArray<T>> {
+    return {
+      type: 'List',
+      value: Array.from<T>(this),
+    };
   }
 }
 

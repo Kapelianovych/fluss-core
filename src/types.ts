@@ -32,3 +32,13 @@ export interface Filterable<T> {
   /** Filter data based on _predicat_ function. */
   filter(predicat: (value: T) => boolean): Filterable<T>;
 }
+
+export interface SerializabledObject<T> {
+  readonly type: string;
+  readonly value: T;
+}
+
+export interface Serializable<T> {
+  /** Convert data structure to serializable object. */
+  toJSON(): SerializabledObject<T>;
+}

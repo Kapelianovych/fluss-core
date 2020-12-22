@@ -3,7 +3,8 @@
 ### Added
 
 - `HasNothing` utility type.
-- `uniqueBy`, `skip`, `find`, `compress`, `sort` and `take` methods to `List`.
+- `Serializable` interface.
+- `uniqueBy`, `toJSON` (make `List` serializable), `skip`, `find`, `compress`, `sort` and `take` methods to `List`.
 
 ### Changed
 

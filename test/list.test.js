@@ -164,4 +164,10 @@ describe('List data structure', () => {
         .extract()
     ).toBe(1);
   });
+
+  test('should be serializable and return information about self', () => {
+    const serializabledObject = JSON.stringify(list(1, 2, 3));
+    expect(serializabledObject).toMatch('"type":"List"');
+    expect(serializabledObject).toMatch('"value":[1,2,3]');
+  });
 });
