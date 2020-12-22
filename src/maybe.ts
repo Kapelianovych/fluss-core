@@ -1,6 +1,11 @@
 import { isNothing } from './is_nothing';
 import type { HasNothing } from './utilities';
-import type { Monad, Comonad } from './types';
+import type {
+  Monad,
+  Comonad,
+  Serializable,
+  SerializabledObject,
+} from './types';
 
 /**
  * Monad that gets rid of `null` and `undefined`.
@@ -10,7 +15,7 @@ import type { Monad, Comonad } from './types';
  * Wraps _nullable_ value and allow works with it without
  * checking on `null` and `undefined`.
  */
-class Maybe<V> implements Comonad<V>, Monad<V> {
+class Maybe<V> implements Comonad<V>, Monad<V>, Serializable<V> {
   // TODO: review this when ECMAScript's private class fields will be
   // widely spread in browsers.
   private readonly _value: V;
@@ -71,6 +76,13 @@ class Maybe<V> implements Comonad<V>, Monad<V> {
     return new Maybe<NonNullable<V>>(
       this.isNothing() ? fn() : (this._value as NonNullable<V>)
     );
+  }
+
+  toJSON(): SerializabledObject<V> {
+    return {
+      type: 'Maybe',
+      value: this._value,
+    };
   }
 
   extract(): V {

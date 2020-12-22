@@ -79,4 +79,11 @@ describe('Maybe', () => {
         .extract()
     ).toBe(2);
   });
+
+  test('should be serializable', () => {
+    const s1 = JSON.stringify(just(1));
+
+    expect(s1).toMatch('"type":"Maybe"');
+    expect(s1).toMatch('"value":1');
+  });
 });
