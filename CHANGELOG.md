@@ -2,17 +2,17 @@
 
 ### Added
 
-- `HasNothing`, `Just` and `Nothing` utility type.
+- `Brand`, `Flavor`, `HasNothing`, `Just` and `Nothing` utility type.
 - `Serializable` interface.
 - `uniqueBy`, `toJSON` (make `List` serializable), `skip`, `find`, `compress`, `sort` and `take` methods to `List`.
 - `toJSON` method to `Maybe`.
 - `toJSON` method to `Either`.
 - `reviver` function to deserialize `Maybe`, `List` and `Either` (also with _Left_ state) monads.
+- `pipe` function (perform left-to-right composition).
 
 ### Changed
 
 - Signature of `nothing`, `just` functions, `map`, `chain` and `apply` methods of `Maybe`.
-- `compose` function to perform left-to-right function composition.
 - Signature of `isNothing` function.
 - Rename `some` method of `List` as `any` and `every` as `all`.
 
@@ -20,6 +20,7 @@
 
 - `path` function.
 - `promise` function.
+- `compose` function.
 - `alternation` function.
 - `unique` method from `List`.
 

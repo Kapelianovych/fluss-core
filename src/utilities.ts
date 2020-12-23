@@ -60,3 +60,32 @@ export type Just<T> = T extends Nothing ? never : T;
 
 /** Union of empty values. */
 export type Nothing = void | null | undefined;
+
+interface Flavoring<I> {
+  _type?: I;
+}
+
+/**
+ * Create nominal type of _T_ based on unique _I_ type.
+ *
+ * As opposed to `Brand` type allows unbranded values to be
+ * implicitly converted into the branded type, but doesn't
+ * allow implicit conversion between branded types.
+ *
+ * [Info about `Flavor` type](https://spin.atomicobject.com/2018/01/15/typescript-flexible-nominal-typing/).
+ */
+export type Flavor<T, I> = T & Flavoring<I>;
+
+interface Branding<I> {
+  _type: I;
+}
+
+/**
+ * Create strict nominal type of _T_ based on unique _I_ type.
+ *
+ * Do not allow unbranded types to be implicitly converted
+ * to branded types.
+ *
+ * [Info about `Brand` type](https://basarat.gitbook.io/typescript/main-1/nominaltyping).
+ */
+export type Brand<T, I> = T & Branding<I>;

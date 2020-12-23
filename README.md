@@ -51,10 +51,10 @@ Library is bundled as bunch of _ES modules_. It doesn't support _CommonJS_. If y
 
 > In TypeScript's examples is used [Flow](https://flow.org)'s comment notation if TypeScript infer type by yourself.
 
-### compose
+### pipe
 
 ```typescript
-function compose<T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
+function pipe<T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
   ...fns: T
 ): (...args: Parameters<T[0]>) => ReturnType<Last<T>>;
 ```
@@ -62,7 +62,7 @@ function compose<T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
 Compose functions from left to right.
 
 ```typescript
-const fn /*: (str: string) => string */ = compose(
+const fn /*: (str: string) => string */ = pipe(
   (str) => str + 2,
   (str: string) => str + 3
 );

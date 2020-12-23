@@ -7,7 +7,7 @@ export * from './curry';
 export * from './array';
 export * from './tuple';
 export * from './freeze';
-export * from './compose';
+export * from './pipe';
 export * from './try_catch';
 export * from './sequence';
 export * from './is_nothing';

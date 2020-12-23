@@ -1,11 +1,11 @@
-import { compose } from '../build';
+import { pipe } from '../build';
 
-describe('compose', () => {
+describe('pipe', () => {
   test(
-    'compose function must compose two functions and return function ' +
+    'pipe function must compose two functions and return function ' +
       'which input equals to input parameters of last function and output - output first function.',
     () => {
-      const composedFn = compose(
+      const composedFn = pipe(
         (n) => `${n} is number`,
         (n) => n + '!'
       );
@@ -15,10 +15,10 @@ describe('compose', () => {
   );
 
   test(
-    'compose function must compose two functions and return function ' +
+    'pipe function must compose two functions and return function ' +
       ' which input equals to input parameters of last function and output - output first function.',
     () => {
-      const composedFn = compose(
+      const composedFn = pipe(
         (n) => `${n} is number`,
         (n) => n + '!',
         (n) => n + '!',
@@ -30,10 +30,10 @@ describe('compose', () => {
   );
 
   test(
-    'if compose function has not arguments it must return ' +
+    'if pipe function has not arguments it must return ' +
       'array of provided arguments of composed function.',
     () => {
-      const composedFn = compose();
+      const composedFn = pipe();
 
       expect(composedFn(6, 5, 4)).toEqual([6, 5, 4]);
     }

@@ -1,7 +1,7 @@
 import type { Last } from './utilities';
 
 /** Performs left-to-right function composition. */
-export function compose<
+export function pipe<
   T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>
 >(...fns: T): (...args: Parameters<T[0]>) => ReturnType<Last<T>> {
   return (...args) => {
