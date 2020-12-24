@@ -61,8 +61,16 @@ export type Just<T> = T extends Nothing ? never : T;
 /** Union of empty values. */
 export type Nothing = void | null | undefined;
 
-interface Flavoring<I> {
-  _type?: I;
+/**
+ * Represents addition to type in order to
+ * make type a nominal. That interface
+ * does not give a value and at runtime branded
+ * values have zero cost.
+ *
+ * [See TypeScript core team description](https://github.com/microsoft/TypeScript/blob/3b2c48f3cdfb441ce80eaac77400cdaa7a8d0c11/src/compiler/types.ts#L1667).
+ */
+interface Branding<I> {
+  _typeBrand: I;
 }
 
 /**
@@ -74,11 +82,7 @@ interface Flavoring<I> {
  *
  * [Info about `Flavor` type](https://spin.atomicobject.com/2018/01/15/typescript-flexible-nominal-typing/).
  */
-export type Flavor<T, I> = T & Flavoring<I>;
-
-interface Branding<I> {
-  _type: I;
-}
+export type Flavor<T, I> = T & Partial<Branding<I>>;
 
 /**
  * Create strict nominal type of _T_ based on unique _I_ type.
