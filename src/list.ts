@@ -187,10 +187,6 @@ class List<T>
   }
 
   fold<R>(fn: (accumulator: R, value: T) => R, accumulator: R): R {
-    if (this.isEmpty()) {
-      return accumulator;
-    }
-
     for (const item of this) {
       accumulator = fn(accumulator, item);
     }

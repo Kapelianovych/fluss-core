@@ -93,6 +93,10 @@ describe('List data structure', () => {
     expect(list(1, 2, 3).fold((a, v) => a + v, 0)).toBe(6);
   });
 
+  test('fold method must return accumulator value if list is empty', () => {
+    expect(list().fold((a, v) => a + v, 0)).toBe(0);
+  });
+
   test('any method check if at least one value pass predicat', () => {
     expect(list(1, 2, 3).any((num) => num === 2)).toBe(true);
     expect(list(1, 2, 3).any((num) => num === 9)).toBe(false);
