@@ -122,6 +122,10 @@ describe('List data structure', () => {
     ).toEqual([2, 3, 5]);
   });
 
+  test('take method returns empty List if parent has not values', () => {
+    expect(list().take(1).asArray()).toEqual([]);
+  });
+
   test('take method take first 3 items from list', () => {
     expect(list(1, 2, 3, 4, 5).take(3).asArray()).toEqual([1, 2, 3]);
   });

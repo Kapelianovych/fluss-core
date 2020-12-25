@@ -142,6 +142,11 @@ class List<T>
       for (const item of self) {
         if (0 <= --count) {
           yield item;
+        } else {
+          // Ends iteration even if in parent list are many
+          // values yet. Explicit returning increase
+          // method's performance.
+          return;
         }
       }
     });
@@ -179,11 +184,11 @@ class List<T>
   }
 
   size(): number {
-    return Array.from(this).length;
+    return Array.from<T>(this).length;
   }
 
   isEmpty(): boolean {
-    return this.size() === 0;
+    return this.take(1).size() === 0;
   }
 
   fold<R>(fn: (accumulator: R, value: T) => R, accumulator: R): R {

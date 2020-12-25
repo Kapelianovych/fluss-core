@@ -30,6 +30,7 @@
 - `array` function to properly handling _null_ value.
 - Converting _undefined_ value to _null_ in `Maybe` constructor (for serialization purposes).
 - Walking twice on list in `fold` method.
+- Increase `isEmpty` and `take` methods performance.
 
 ## [0.15.1] - 2020-12-15
 
