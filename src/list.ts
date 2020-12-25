@@ -104,11 +104,11 @@ class List<T>
   uniqueBy<U>(fn: (item: T) => U): List<T> {
     const self = this;
     return new List<T>(function* () {
-      const uniqueValues = new Map<U, boolean>();
+      const uniqueValues = new Set<U>();
 
       for (const value of self) {
         if (!uniqueValues.has(fn(value))) {
-          uniqueValues.set(fn(value), true);
+          uniqueValues.add(fn(value));
           yield value;
         }
       }
