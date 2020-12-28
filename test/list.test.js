@@ -39,12 +39,12 @@ describe('List data structure', () => {
     expect(list(1, 2, 3).chain(list).asArray()).toEqual([1, 2, 3]);
   });
 
-  test('join concat iterables', () => {
+  test('join concat iterables and array-like objects', () => {
     expect(
       list(0)
-        .join([1], new Set([2]), list(3))
+        .join([1], new Set([2]), list(3), { 0: 4, length: 1 })
         .asArray()
-    ).toEqual([0, 1, 2, 3]);
+    ).toEqual([0, 1, 2, 3, 4]);
   });
 
   test('filter skip values that do not pass predicat function', () => {

@@ -68,11 +68,13 @@ class List<T>
     });
   }
 
-  join(...others: ReadonlyArray<Iterable<T>>): List<T> {
+  join(...others: ReadonlyArray<ArrayLike<T> | Iterable<T>>): List<T> {
     const iterables = [this, ...others];
     return new List<T>(function* () {
       for (const iterable of iterables) {
-        yield* iterable;
+        yield* Symbol.iterator in iterable
+          ? (iterable as Iterable<T>)
+          : Array.from<T>(iterable);
       }
     });
   }
