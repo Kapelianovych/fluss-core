@@ -23,7 +23,7 @@ class Task<T, E extends Error> implements Monad<T> {
   static task<T, E extends Error>(
     fork: ForkFunction<T, E> | Task<T, E> | Promise<T>
   ): Task<T, E> {
-    return new Task(
+    return new Task<T, E>(
       isTask<T, E>(fork)
         ? fork.start
         : isPromise<T>(fork)
@@ -34,7 +34,7 @@ class Task<T, E extends Error> implements Monad<T> {
 
   /** Wraps value to process as `Task`. */
   static done<T, E extends Error>(value: T): Task<T, E> {
-    return new Task((done) => done(value));
+    return new Task<T, E>((done) => done(value));
   }
 
   /** Create failed `Task`. */
@@ -43,28 +43,26 @@ class Task<T, E extends Error> implements Monad<T> {
   }
 
   map<R>(fn: (value: T) => R): Task<R, E> {
-    return new Task((done, fail) => {
+    return new Task<R, E>((done, fail) => {
       this.start((value) => done(fn(value)), fail);
     });
   }
 
   chain<R>(fn: (value: T) => Task<R, E>): Task<R, E> {
-    return new Task((done, fail) => {
+    return new Task<R, E>((done, fail) => {
       this.start((value) => fn(value).start(done, fail), fail);
     });
   }
 
   apply<R>(other: Task<(value: T) => R, E>): Task<R, E> {
-    return new Task((done, fail) => {
+    return new Task<R, E>((done, fail) => {
       this.start((value) => other.start((fn) => done(fn(value)), fail), fail);
     });
   }
 
   /** Starts `Task` and return result in `Promise`. */
   asPromise(): Promise<T> {
-    return new Promise((resolve, reject) => {
-      this.start(resolve, reject);
-    });
+    return new Promise<T>(this.start);
   }
 }
 
