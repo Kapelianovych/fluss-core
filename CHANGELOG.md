@@ -2,7 +2,7 @@
 
 ### Added
 
-- `Brand`, `Flavor`, `HasNothing`, `Just` and `Nothing` utility type.
+- `Brand`, `Flavor`, `DeepReadonly`, `HasNothing`, `Just` and `Nothing` utility type.
 - `Serializable` interface.
 - `uniqueBy`, `toJSON` (make `List` serializable), `skip`, `find`, `compress`, `sort` and `take` methods to `List`.
 - `toJSON` method to `Maybe`.
@@ -15,6 +15,7 @@
 - Signature of `nothing`, `just` functions, `map`, `chain` and `apply` methods of `Maybe`.
 - Signature of `isNothing` function.
 - Rename `some` method of `List` as `any` and `every` as `all`.
+- Signature of `freeze` function.
 
 ### Removed
 

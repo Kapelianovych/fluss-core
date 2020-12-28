@@ -93,3 +93,8 @@ export type Flavor<T, I> = T & Partial<Branding<I>>;
  * [Info about `Brand` type](https://basarat.gitbook.io/typescript/main-1/nominaltyping).
  */
 export type Brand<T, I> = T & Branding<I>;
+
+/** Make type and its inner properties (any deep level) readonly. */
+export type DeepReadonly<T> = {
+  readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P];
+};

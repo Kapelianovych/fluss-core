@@ -224,7 +224,10 @@ const getUser /*: (id: string) => Either<NoUserError, User> */ = tryCatch(
 ### freeze
 
 ```typescript
-function freeze<T extends object>(value: T, deep?: boolean): Readonly<T>;
+function freeze<T extends object, D extends boolean = false>(
+  value: T,
+  deep?: D
+): D extends true ? DeepReadonly<T> : Readonly<T>;
 ```
 
 Perform shallow(_deep_ is `false`) or deep(_deep_ is `true`) freeze of object. By default function does shallow freezing.
@@ -235,6 +238,14 @@ const frozenObject /*: Readonly<{ hello: () => void }> */ = freeze({
     console.log('Hello world');
   },
 });
+const deepFrozenObject /*: DeepReadonly<{ hello: () => void }> */ = freeze(
+  {
+    hello() {
+      console.log('Hello world');
+    },
+  },
+  true
+);
 ```
 
 ### wrap
