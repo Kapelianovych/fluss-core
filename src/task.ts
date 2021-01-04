@@ -14,13 +14,13 @@ export type ForkFunction<T, E extends Error> = (
  * in time (in opposite `Promise` that start doing job immediately
  * after definition).
  */
-class Task<T, E extends Error> implements Monad<T> {
+class Task<T, E extends Error = Error> implements Monad<T> {
   private constructor(
     /** Starts `Task`. */ readonly start: ForkFunction<T, E>
   ) {}
 
   /** Defines `Task` or copies fork function from another `Task` or `Promise`. */
-  static task<T, E extends Error>(
+  static task<T, E extends Error = Error>(
     fork: ForkFunction<T, E> | Task<T, E> | Promise<T>
   ): Task<T, E> {
     return new Task<T, E>(
@@ -33,13 +33,13 @@ class Task<T, E extends Error> implements Monad<T> {
   }
 
   /** Wraps value to process as `Task`. */
-  static done<T, E extends Error>(value: T): Task<T, E> {
+  static done<T, E extends Error = Error>(value: T): Task<T, E> {
     return new Task<T, E>((done) => done(value));
   }
 
   /** Create failed `Task`. */
-  static fail<T, E extends Error>(value: E): Task<T, E> {
-    return new Task((_, fail) => fail(value));
+  static fail<T, E extends Error = Error>(value: E): Task<T, E> {
+    return new Task<T, E>((_, fail) => fail(value));
   }
 
   map<R>(fn: (value: T) => R): Task<R, E> {

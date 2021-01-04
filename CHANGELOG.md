@@ -1,4 +1,10 @@
-# [0.16.0] - 2021-01-04
+# Unreleased
+
+### Changed
+
+- Add default error type to `Task` class, `task`, `done` and `fail` functions.
+
+## [0.16.0] - 2021-01-04
 
 ### Added
 
