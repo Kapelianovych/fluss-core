@@ -1,6 +1,6 @@
 import { isPromise } from './is_promise';
 import { isNothing } from './is_nothing';
-import { either, Either } from './either';
+import { Either, left, right } from './either';
 
 /**
  * Wraps code into `try/catch` and returns `Either` monad with result.
@@ -20,27 +20,20 @@ export function tryCatch<T, L extends Error, R>(
   catchFn?: (error: L) => R | Promise<R>
 ): (input: T) => Either<L, R> | Promise<Either<L, R>> {
   return (input: T) => {
-    function handleError(error: L): Either<L, R> | Promise<Either<L, R>> {
-      if (!isNothing(catchFn)) {
-        const fallbackResult = catchFn(error);
-        return isPromise(fallbackResult)
-          ? fallbackResult.then(
-              (res) => either<L, R>(res),
-              (error) => either<L, R>(error)
-            )
-          : either<L, R>(fallbackResult);
-      } else {
-        return either<L, R>(error);
-      }
-    }
-
     try {
-      const result = tryFn(input);
-      return isPromise(result)
-        ? result.then((res) => either<L, R>(res), handleError)
-        : either<L, R>(result);
+      return wrapResultWithEither<L, R>(tryFn(input));
     } catch (error) {
-      return handleError(error);
+      return isNothing(catchFn)
+        ? left<L, R>(error)
+        : wrapResultWithEither<L, R>(catchFn(error));
     }
   };
+}
+
+function wrapResultWithEither<L extends Error, R>(
+  result: R | Promise<R>
+): Either<L, R> | Promise<Either<L, R>> {
+  return isPromise<R>(result)
+    ? result.then<Either<L, R>, Either<L, R>>(right, left)
+    : right<L, R>(result);
 }
