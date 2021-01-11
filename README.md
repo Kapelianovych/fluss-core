@@ -54,9 +54,16 @@ Library is bundled as bunch of _ES modules_. It doesn't support _CommonJS_. If y
 ### pipe
 
 ```typescript
-function pipe<T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
+function pipe<
+  T extends readonly [
+    (...args: ReadonlyArray<any>) => any,
+    ...ReadonlyArray<(arg: any) => any>
+  ]
+>(
   ...fns: T
-): (...args: Parameters<T[0]>) => ReturnType<Last<T>>;
+): PipeCheck<T> extends never
+  ? never
+  : (...args: Parameters<T[0]>) => ReturnType<Last<T>>;
 ```
 
 Compose functions from left to right.
