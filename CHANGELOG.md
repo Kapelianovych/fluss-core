@@ -3,7 +3,7 @@
 ### Changed
 
 - Add default error type to `Task` class, `task`, `done` and `fail` functions.
-- Change type signature of `pipe` function to raise _never_ type if parameters chain is incompatible.
+- Change type signature of `pipe` function to raise _unknown_ type if parameters chain is incompatible.
 
 ## [0.16.0] - 2021-01-04
 

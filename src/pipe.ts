@@ -22,7 +22,10 @@ export function pipe<
 >(
   ...fns: T
 ): PipeCheck<T> extends never
-  ? never
+  ? // If function returns _never_ type, then TS will not
+    // warn users about incompatible function chain in pipe.
+    // So we return _unknown_ for sound type error checking.
+    unknown
   : (...args: Parameters<T[0]>) => ReturnType<Last<T>> {
   // @ts-ignore
   return (...args) => {
