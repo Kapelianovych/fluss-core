@@ -17,3 +17,4 @@ export * from './either';
 export * from './maybe';
 export * from './list';
 export * from './reviver';
+export * from './lazy';

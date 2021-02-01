@@ -8,6 +8,7 @@ export default {
   output: {
     dir: 'build',
     format: 'es',
+    sourcemap: true,
     preserveModules: true,
     preserveModulesRoot: SOURCE_DIR_NAME,
   },

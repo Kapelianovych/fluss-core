@@ -502,7 +502,7 @@ isTask(dataTask); // true
 
 #### Task
 
-Monad that allow to perform some actions asyncrounously and deferred in time (in opposite `Promise` that start doing job immediately after definition).
+Monad that allow to perform some actions asynchronously and deferred in time (in opposite `Promise` that starts doing job immediately after definition).
 
 [Difference between Task and Promise.](https://glebbahmutov.com/blog/difference-between-promise-and-task/)
 
@@ -551,6 +551,24 @@ const result /*: boolean */ = isList(list());
 #### List
 
 Monad that represents lazy `Array`. It can decrease computation step comparingly to `Array`. Actual execution of `List`'s methods starts when one of _terminating method_ (method that do not return List instance) is called.
+
+### lazy
+
+```typescript
+function lazy<F, L>(value: Operation<F, L> | Lazy<F, L>): Lazy<F, L>;
+```
+
+Creates `Lazy` monad with some operation or from another `Lazy` instance.
+
+```typescript
+const lazyPower /*: Lazy<number, number> */ = lazy((num: number) =>
+  Math.pow(num, 2)
+);
+```
+
+#### Lazy
+
+Monad that constructs and compose operations over some value. Similar to `pipe` function, but allows more comprehensive transformation of intermediate values.
 
 ### reviver
 

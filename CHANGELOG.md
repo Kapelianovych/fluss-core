@@ -1,10 +1,18 @@
 # Unreleased
 
+### Added
+
+- Default error type to `Task` class, `task`, `done` and `fail` functions.
+- Add `Lazy` monad and `isLazy` function.
+
 ### Changed
 
-- Add default error type to `Task` class, `task`, `done` and `fail` functions.
 - Change type signature of `pipe` function to raise _unknown_ type if parameters chain is incompatible.
 - Change signature of `sequence` function to accept more that one argument.
+
+### Fixed
+
+- Typo in `Task` doc comment.
 
 ## [0.16.0] - 2021-01-04
 

@@ -10,7 +10,7 @@ export type ForkFunction<T, E extends Error> = (
 ) => void;
 
 /**
- * Monad that allow to perform some actions asyncrounously and deferred
+ * Monad that allow to perform some actions asynchronously and deferred
  * in time (in opposite `Promise` that start doing job immediately
  * after definition).
  */
