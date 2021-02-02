@@ -11,7 +11,7 @@ export interface Operation<A, B> {
  * transformation of intermediate values.
  */
 class Lazy<F, L> implements Monad<L> {
-  constructor(
+  private constructor(
     /** Perform operation over _value_. */ readonly result: Operation<F, L>
   ) {}
 
