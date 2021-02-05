@@ -62,7 +62,7 @@ function pipe<
 >(
   ...fns: T
 ): PipeCheck<T> extends never
-  ? never
+  ? unknown
   : (...args: Parameters<T[0]>) => ReturnType<Last<T>>;
 ```
 
@@ -115,9 +115,9 @@ const y /*: (a: Array<number>) => number */ = fork(
 ### sequence
 
 ```typescript
-function sequence<V>(
-  ...fns: ReadonlyArray<(value: V) => unknown>
-): (value: V) => void;
+function sequence<V extends ReadonlyArray<unknown>>(
+  ...fns: ReadonlyArray<(...values: V) => unknown>
+): (...values: V) => void;
 ```
 
 Lets invoke independent functions with the same value in order that they are declared.

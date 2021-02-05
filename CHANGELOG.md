@@ -1,4 +1,4 @@
-# Unreleased
+# [0.17.0] - 2021-02-05
 
 ### Added
 
@@ -8,7 +8,7 @@
 ### Changed
 
 - Change type signature of `pipe` function to raise _unknown_ type if parameters chain is incompatible.
-- Change signature of `sequence` function to accept more that one argument.
+- Change signature of `sequence` function to accept more than one argument.
 
 ### Fixed
 
