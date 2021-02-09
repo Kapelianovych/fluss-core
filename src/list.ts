@@ -247,6 +247,5 @@ export type { List };
 export const { list, iterate } = List;
 
 /** Check if _value_ is instance of `List`. */
-export function isList<T>(value: any): value is List<T> {
-  return value instanceof List;
-}
+export const isList = <T>(value: unknown): value is List<T> =>
+  value instanceof List;

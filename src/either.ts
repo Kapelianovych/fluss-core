@@ -99,8 +99,6 @@ export type { Either };
 export const { left, right, either } = Either;
 
 /** Checks if value is instance of `Either` monad. */
-export function isEither<L extends Error, R>(
-  value: any
-): value is Either<L, R> {
-  return value instanceof Either;
-}
+export const isEither = <L extends Error, R>(
+  value: unknown
+): value is Either<L, R> => value instanceof Either;

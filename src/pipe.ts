@@ -14,7 +14,7 @@ type PipeCheck<
     >;
 
 /** Performs left-to-right function composition. */
-export function pipe<
+export const pipe = <
   T extends readonly [
     (...args: ReadonlyArray<any>) => any,
     ...ReadonlyArray<(arg: any) => any>
@@ -26,7 +26,7 @@ export function pipe<
     // warn users about incompatible function chain in pipe.
     // So we return _unknown_ for sound type error checking.
     unknown
-  : (...args: Parameters<T[0]>) => ReturnType<Last<T>> {
+  : (...args: Parameters<T[0]>) => ReturnType<Last<T>> => {
   // @ts-ignore
   return (...args) => {
     const firstFn = fns[0] ?? ((...x) => x);
@@ -35,4 +35,4 @@ export function pipe<
       .slice(1)
       .reduce((currentArgs, fn) => fn(currentArgs), firstFn(...args));
   };
-}
+};

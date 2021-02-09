@@ -1,7 +1,7 @@
 import { List, list } from './list';
 import { Maybe, maybe } from './maybe';
 import { Either, either } from './either';
-import { SerializabledObject } from './types';
+import type { SerializabledObject } from './types';
 
 export type JSONValueTypes =
   | null
@@ -18,7 +18,7 @@ export type JSONValueTypes =
  * **Note**: constructing an `Error` is supported only from
  * `SerializabledObject<string>` structure.
  */
-export function reviver(
+export const reviver = (
   key: string,
   value: JSONValueTypes | SerializabledObject<unknown>
 ):
@@ -26,7 +26,7 @@ export function reviver(
   | Error
   | List<unknown>
   | Maybe<unknown>
-  | Either<Error, unknown> {
+  | Either<Error, unknown> => {
   if (typeof value === 'object' && value !== null) {
     // Check for both properties to match SerializabledObject interface.
     if ('type' in value && 'value' in value) {
@@ -49,4 +49,4 @@ export function reviver(
   } else {
     return value;
   }
-}
+};

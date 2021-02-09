@@ -37,6 +37,5 @@ export type { Lazy };
 export const { lazy } = Lazy;
 
 /** Check if value is `Lazy` instance. */
-export function isLazy<F, L>(value: unknown): value is Lazy<F, L> {
-  return value instanceof Lazy;
-}
+export const isLazy = <F, L>(value: unknown): value is Lazy<F, L> =>
+  value instanceof Lazy;

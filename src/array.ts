@@ -1,7 +1,7 @@
 /** Creates readonly array from set of ArrayLike, Iterable objects or values. */
-export function array<T>(
+export const array = <T>(
   ...values: ReadonlyArray<T | ArrayLike<T> | Iterable<T>>
-): ReadonlyArray<T> {
+): ReadonlyArray<T> => {
   // Here must be freezing array operation,
   // but due to [this Chromium bug](https://bugs.chromium.org/p/chromium/issues/detail?id=980227)
   // it is very slow operation and this action is not performed.
@@ -16,5 +16,5 @@ export function array<T>(
         ? Array.from(value as ArrayLike<T> | Iterable<T>)
         : Array.of(value as T)
     )
-    .reduce((resultArray, innerArray) => resultArray.concat(innerArray), []);
-}
+    .reduce((accumulator, current) => accumulator.concat(current), []);
+};

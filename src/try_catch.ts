@@ -1,39 +1,33 @@
 import { isPromise } from './is_promise';
 import { isNothing } from './is_nothing';
-import { Either, left, right } from './either';
+import { either, Either, left, right } from './either';
+
+const wrapResultWithEither = <L extends Error, R>(
+  result: R
+): R extends Promise<infer U> ? Promise<Either<L, U>> : Either<L, R> => {
+  //@ts-ignore
+  return isPromise(result) ? result.then(right, left) : either(result);
+};
 
 /**
  * Wraps code into `try/catch` and returns `Either` monad with result.
  * If `catchFn` is not `undefined`, then `Either` with result will
  * be returned, otherwise - `Either` with error.
  */
-export function tryCatch<T, L extends Error, R>(
-  tryFn: (input: T) => R,
+export const tryCatch = <T extends ReadonlyArray<unknown>, L extends Error, R>(
+  tryFn: (...inputs: T) => R,
   catchFn?: (error: L) => R
-): (input: T) => Either<L, R>;
-export function tryCatch<T, L extends Error, R>(
-  tryFn: (input: T) => Promise<R>,
-  catchFn?: (error: L) => Promise<R>
-): (input: T) => Promise<Either<L, R>>;
-export function tryCatch<T, L extends Error, R>(
-  tryFn: (input: T) => R | Promise<R>,
-  catchFn?: (error: L) => R | Promise<R>
-): (input: T) => Either<L, R> | Promise<Either<L, R>> {
-  return (input: T) => {
+): ((
+  ...inputs: T
+) => R extends Promise<infer U> ? Promise<Either<L, U>> : Either<L, R>) => {
+  // @ts-ignore
+  return (...inputs: T) => {
     try {
-      return wrapResultWithEither<L, R>(tryFn(input));
+      return wrapResultWithEither<L, R>(tryFn(...inputs));
     } catch (error) {
       return isNothing(catchFn)
         ? left<L, R>(error)
         : wrapResultWithEither<L, R>(catchFn(error));
     }
   };
-}
-
-function wrapResultWithEither<L extends Error, R>(
-  result: R | Promise<R>
-): Either<L, R> | Promise<Either<L, R>> {
-  return isPromise<R>(result)
-    ? result.then<Either<L, R>, Either<L, R>>(right, left)
-    : right<L, R>(result);
-}
+};

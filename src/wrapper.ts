@@ -35,6 +35,5 @@ export type { Wrapper };
 export const { wrap } = Wrapper;
 
 /** Check if value is instance of Wrapper. */
-export function isWrapper<T>(value: any): value is Wrapper<T> {
-  return value instanceof Wrapper;
-}
+export const isWrapper = <T>(value: unknown): value is Wrapper<T> =>
+  value instanceof Wrapper;

@@ -70,6 +70,5 @@ export type { Task };
 export const { task, done, fail } = Task;
 
 /** Check if _value_ is instance of `Task` monad. */
-export function isTask<T, E extends Error>(value: any): value is Task<T, E> {
-  return value instanceof Task;
-}
+export const isTask = <T, E extends Error>(value: unknown): value is Task<T, E> =>
+  value instanceof Task;

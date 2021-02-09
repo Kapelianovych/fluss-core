@@ -99,6 +99,5 @@ export type { Maybe };
 export const { just, maybe, nothing } = Maybe;
 
 /** Checks if value is instance of `Maybe` monad. */
-export function isMaybe<T>(value: any): value is Maybe<T> {
-  return value instanceof Maybe;
-}
+export const isMaybe = <T>(value: unknown): value is Maybe<T> =>
+  value instanceof Maybe;

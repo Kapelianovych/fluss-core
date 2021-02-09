@@ -8,6 +8,7 @@ describe('List data structure', () => {
 
   test('isList checks if value is List container.', () => {
     expect(isList(list(8))).toBe(true);
+    expect(isList(iterate(function* () {}))).toBe(true);
   });
 
   test('asArray method returns Array representation of List', () => {
