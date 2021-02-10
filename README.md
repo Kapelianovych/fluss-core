@@ -258,10 +258,10 @@ const deepFrozenObject /*: DeepReadonly<{ hello: () => void }> */ = freeze(
 ### wrap
 
 ```typescript
-function wrap<T>(value: T | Wrapper<T>): Wrapper<T>;
+function wrap<T>(value: T | Container<T>): Container<T>;
 ```
 
-Wraps value in `Wrapper` monad and allow perform on it operations in chainable way.
+Wraps value in `Container` monad and allow perform on it operations in chainable way.
 
 ```typescript
 wrap(1)
@@ -271,28 +271,28 @@ wrap(1)
   .extract(); // => 100
 ```
 
-### isWrapper
+### isContainer
 
 ```typescript
-function isWrapper<T>(value: any): value is Wrapper<T>;
+function isContainer<T>(value: any): value is Container<T>;
 ```
 
-Check if value is instance of Wrapper.
+Check if value is instance of Container.
 
 ```typescript
-isWrapper(wrap(1)); // true
-isWrapper(1); // false
+isContainer(wrap(1)); // true
+isContainer(1); // false
 ```
 
-#### Wrapper
+#### Container
 
 Monad that contains value and allow perform operation on it by set of methods.
 
-1. `map<R>(fn: (value: T) => R): Wrapper<R>` - maps inner value and returns new `Wrapper` instance with new value.
+1. `map<R>(fn: (value: T) => R): Container<R>` - maps inner value and returns new `Container` instance with new value.
 
-2. `chain<R>(fn: (value: T) => Wrapper<R>): Wrapper<R>` - the same as `map`, but function must return already wrapped value.
+2. `chain<R>(fn: (value: T) => Container<R>): Container<R>` - the same as `map`, but function must return already wrapped value.
 
-3. `apply<R>(other: Wrapper<(value: T) => R>): Wrapper<R>` - maps value by using value of `other` wrapper. Value of other wrapper must be a function type.
+3. `apply<R>(other: Container<(value: T) => R>): Container<R>` - maps value by using value of `other` wrapper. Value of other wrapper must be a function type.
 
 4. `extract(): T` - expose inner value to outside.
 
@@ -353,7 +353,7 @@ nothing<number>(); // Maybe<number | null>
 #### Maybe
 
 Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`). Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
-Has the same methods as `Wrapper` monad.
+Has the same methods as `Container` monad.
 
 ### isEither
 
@@ -408,7 +408,7 @@ left<Error, number>(new Error('Error is occured!')); // Either<Error, number>
 #### Either
 
 Monad that can contain value or `Error`. Allow handles errors in functional way.
-Has the same methods as `Wrapper` monad and `mapLeft`, `mapRight`:
+Has the same methods as `Container` monad and `mapLeft`, `mapRight`:
 
 - `mapLeft<E extends Error>(fn: (value: L) => E | R): Either<E, R>` - maps inner value if it is an `Error` instance.
 - `mapRight<A>(fn: (value: R) => A): Either<L, A>` - maps inner value if it is not an `Error` instance. Same as `map`.

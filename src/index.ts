@@ -12,7 +12,7 @@ export * from './try_catch';
 export * from './sequence';
 export * from './is_nothing';
 export * from './is_promise';
-export * from './wrapper';
+export * from './container';
 export * from './either';
 export * from './maybe';
 export * from './list';

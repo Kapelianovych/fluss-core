@@ -1,16 +1,16 @@
-import { wrap, isWrapper } from '../build';
+import { wrap, isContainer } from '../build';
 
-describe('wrapper', () => {
-  test('wrap function wraps value into Wrapper', () => {
+describe('Container', () => {
+  test('wrap function wraps value into Container', () => {
     expect(typeof wrap(4)).toBe('object');
   });
 
-  test('wrap function wraps value into Wrapper and extract it', () => {
+  test('wrap function wraps value into Container and extract it', () => {
     expect(wrap(4).extract()).toBe(4);
     expect(wrap(wrap(4)).extract()).toBe(4);
   });
 
-  test('wrap function wraps value into Wrapper and can map it', () => {
+  test('wrap function wraps value into Container and can map it', () => {
     expect(
       wrap(4)
         .map((u) => String(u))
@@ -30,8 +30,8 @@ describe('wrapper', () => {
     ).toBe('4');
   });
 
-  test('isWrapper checks if value is Wrapper instance', () => {
-    expect(isWrapper(wrap(8))).toBe(true);
-    expect(isWrapper('')).toBe(false);
+  test('isContainer checks if value is Container instance', () => {
+    expect(isContainer(wrap(8))).toBe(true);
+    expect(isContainer('')).toBe(false);
   });
 });
