@@ -3,12 +3,12 @@ export interface Functor<T> {
   map<R>(fn: (value: T) => R): Functor<R>;
 }
 
-export interface Applicative<T> extends Functor<T> {
+export interface Apply<T> extends Functor<T> {
   /**
    * Maps value by using value of `other` monad.
    * Value of other monad must be a **function type**.
    */
-  apply<R>(other: Applicative<(value: any) => R>): Applicative<R>;
+  apply<R>(other: Apply<(value: any) => R>): Apply<R>;
 }
 
 export interface Chain<T> extends Functor<T> {
@@ -21,7 +21,7 @@ export interface Comonad<T> {
   extract(): T;
 }
 
-export interface Monad<T> extends Applicative<T>, Chain<T> {}
+export interface Monad<T> extends Apply<T>, Chain<T> {}
 
 export interface Foldable<T> {
   /** Reduce iterable to some value. */

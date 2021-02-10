@@ -9,6 +9,7 @@
 
 - Change type signature of `pipe` function to raise _unknown_ type if parameters chain is incompatible.
 - Change signature of `sequence` function to accept more than one argument.
+- Rename `Applicative` to `Apply` according to [Fantasy Land specification](https://github.com/fantasyland/fantasy-land#apply)
 
 ### Fixed
 
