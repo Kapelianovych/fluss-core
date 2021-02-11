@@ -109,8 +109,9 @@ class List<T>
       const uniqueValues = new Set<U>();
 
       for (const value of self) {
-        if (!uniqueValues.has(fn(value))) {
-          uniqueValues.add(fn(value));
+        const key = fn(value);
+        if (!uniqueValues.has(key)) {
+          uniqueValues.add(key);
           yield value;
         }
       }
