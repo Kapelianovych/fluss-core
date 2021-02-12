@@ -198,18 +198,6 @@ const y /*: ReadonlyArray<number> */ = array(9, new Set([6]), {
 });
 ```
 
-### tuple
-
-```typescript
-function tuple<T extends ReadonlyArray<unknown>>(...args: T): readonly [...T];
-```
-
-Creates readonly tuple from set of elements.
-
-```typescript
-const y /*: readonly [number, string] */ = tuple(9, 'state');
-```
-
 ### tryCatch
 
 ```typescript
@@ -570,6 +558,22 @@ const lazyPower /*: Lazy<number, number> */ = lazy((num: number) =>
 
 Monad that constructs and compose operations over some value. Similar to `pipe` function, but allows more comprehensive transformation of intermediate values.
 
+### tuple
+
+```typescript
+function tuple<T extends ReadonlyArray<unknown>>(...args: T): Tuple<T>;
+```
+
+Creates `Tuple` from set of elements.
+
+```typescript
+const y /*: Tuple<[number, string]> */ = tuple(9, 'state');
+```
+
+#### Tuple
+
+Immutable container for fixed sequence of values.
+
 ### reviver
 
 ```typescript
@@ -581,10 +585,12 @@ function reviver(
   | Error
   | List<unknown>
   | Maybe<unknown>
+  | Tuple<[unknown]>
+  | Container<unknown>
   | Either<Error, unknown>;
 ```
 
-Add recognition of `Maybe`, `List`, `Either` and `Error` data structures for `JSON.parse`.
+Add recognition of `Container`, `Tuple`, `Maybe`, `List`, `Either` and `Error` data structures for `JSON.parse`.
 
 **Note**: constructing an `Error` is supported only from `SerializabledObject<string>` structure.
 

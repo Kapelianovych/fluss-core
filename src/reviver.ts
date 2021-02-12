@@ -1,6 +1,8 @@
 import { List, list } from './list';
+import { Tuple, tuple } from './tuple';
 import { Maybe, maybe } from './maybe';
 import { Either, either } from './either';
+import { Container, wrap } from './container';
 import type { SerializabledObject } from './types';
 
 export type JSONValueTypes =
@@ -26,6 +28,8 @@ export const reviver = (
   | Error
   | List<unknown>
   | Maybe<unknown>
+  | Tuple<[unknown]>
+  | Container<unknown>
   | Either<Error, unknown> => {
   if (typeof value === 'object' && value !== null) {
     // Check for both properties to match SerializabledObject interface.
@@ -33,8 +37,12 @@ export const reviver = (
       switch (value['type']) {
         case 'List':
           return list(value['value']);
+        case 'Tuple':
+          return tuple(value['value']);
         case 'Maybe':
           return maybe(value['value']);
+        case 'Container':
+          return wrap(value['value']);
         case 'Either':
           return either(value['value']);
         // Handle Error object in Either.

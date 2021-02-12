@@ -34,4 +34,8 @@ describe('Container', () => {
     expect(isContainer(wrap(8))).toBe(true);
     expect(isContainer('')).toBe(false);
   });
+
+  test('should be serializable', () => {
+    expect(wrap(5).toJSON()).toEqual({ type: 'Container', value: 5 });
+  });
 });

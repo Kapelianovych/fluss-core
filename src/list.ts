@@ -6,9 +6,8 @@ import type {
   Filterable,
   Serializable,
   SerializabledObject,
+  IterableIteratorFunction,
 } from './types';
-
-export type IteratorFunction<T> = () => Iterator<T>;
 
 /** Monad that represents lazy Array. */
 class List<T>
@@ -18,9 +17,9 @@ class List<T>
     Foldable<T>,
     Filterable<T>,
     Serializable<ReadonlyArray<T>> {
-  readonly [Symbol.iterator]: IteratorFunction<T>;
+  readonly [Symbol.iterator]: IterableIteratorFunction<T>;
 
-  private constructor(fn: IteratorFunction<T>) {
+  private constructor(fn: IterableIteratorFunction<T>) {
     this[Symbol.iterator] = fn;
   }
 
@@ -46,7 +45,7 @@ class List<T>
   }
 
   /** Create `List` from function that returns iterator. */
-  static iterate<T>(fn: IteratorFunction<T>): List<T> {
+  static iterate<T>(fn: IterableIteratorFunction<T>): List<T> {
     return new List<T>(fn);
   }
 

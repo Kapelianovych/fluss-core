@@ -7,6 +7,4 @@ import type { Constructor } from './utilities';
 export const isError = <E extends Error>(
   value: any,
   childClass?: Constructor<E>
-): value is E => {
-  return value instanceof (childClass ?? Error);
-};
+): value is E => value instanceof (childClass ?? Error);

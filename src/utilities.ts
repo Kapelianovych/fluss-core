@@ -31,17 +31,26 @@ export type Rest<
 /** Get length of array. */
 export type Length<T extends ReadonlyArray<unknown>> = T['length'];
 
-/** Get rid of first `Index` elements from `From` array. */
+/** Get rid of first `Index` elements from a `From` array. */
 export type Shift<
   Index extends number = 0,
   From extends ReadonlyArray<unknown> = [],
   I extends ReadonlyArray<unknown> = []
-> = Length<I> extends Index ? From : Shift<Index, Tail<From>, [From[0], ...I]>;
+> = Length<I> extends Index
+  ? From
+  : Shift<Index, Tail<From>, [First<From>, ...I]>;
 
-/** Cast X type to Y. */
+/** Get rid of last `Index` elements from a `From` array. */
+export type Pop<
+  Index extends number = 0,
+  From extends ReadonlyArray<unknown> = [],
+  I extends ReadonlyArray<unknown> = []
+> = Length<I> extends Index ? From : Pop<Index, Head<From>, [Last<From>, ...I]>;
+
+/** Cast `X` type to `Y` if `X` is not subtype of `Y`. */
 export type Cast<X, Y> = X extends Y ? X : Y;
 
-/** Get types of elements `T` except of first one. */
+/** Get types of `T` elements except of first one. */
 export type Tail<T extends ReadonlyArray<unknown>> = T extends [
   unknown,
   ...infer U
@@ -49,8 +58,19 @@ export type Tail<T extends ReadonlyArray<unknown>> = T extends [
   ? U
   : [];
 
+/** Get types of `T` elements except of last one. */
+export type Head<T extends ReadonlyArray<unknown>> = T extends [
+  ...infer U,
+  unknown
+]
+  ? U
+  : [];
+
 /** Get type of last element of `T`. */
 export type Last<T extends ReadonlyArray<unknown>> = T[Length<Tail<T>>];
+
+/** Get type of first element of `T`. */
+export type First<T extends ReadonlyArray<unknown>> = T[0];
 
 /** Checks if type `T` has `null` or `undefined` types. */
 export type HasNothing<T> = Extract<T, Nothing> extends never ? false : true;
@@ -98,3 +118,29 @@ export type Brand<T, I> = T & Branding<I>;
 export type DeepReadonly<T> = {
   readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P];
 };
+
+/** Transform type of item in `T` array with position `P` to `R`. */
+export type Transform<
+  P extends number,
+  R,
+  T extends ReadonlyArray<unknown>,
+  A extends ReadonlyArray<unknown> = []
+> = Length<T> extends 0
+  ? A
+  : Length<A> extends P
+  ? Transform<P, R, Tail<T>, [...A, R]>
+  : Transform<P, R, Tail<T>, [...A, First<T>]>;
+
+/** Get position of `V` element from `T` array. */
+export type Position<
+  V,
+  T extends ReadonlyArray<unknown>,
+  A extends ReadonlyArray<unknown> = []
+> = Length<T> extends Length<A>
+  ? -1
+  : V extends T[Length<A>]
+  ? Length<A>
+  : Position<V, T, [...A, unknown]>;
+
+/** Widen `T` to `W` if `T` is subtype of `W`. */
+export type Widen<T, W = never> = T extends W ? W : T;

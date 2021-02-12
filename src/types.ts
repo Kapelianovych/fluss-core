@@ -42,3 +42,8 @@ export interface Serializable<T> {
   /** Convert data structure to serializable object. */
   toJSON(): SerializabledObject<T>;
 }
+
+/** Function that returns iterable iterator. */
+export interface IterableIteratorFunction<T> {
+  (): IterableIterator<T>;
+}

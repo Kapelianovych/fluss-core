@@ -1,7 +1,12 @@
-import type { Monad, Comonad } from './types';
+import type {
+  Monad,
+  Comonad,
+  Serializable,
+  SerializabledObject,
+} from './types';
 
 /** Monad that contains value and allow perform operation on it by set of methods. */
-class Container<T> implements Comonad<T>, Monad<T> {
+class Container<T> implements Comonad<T>, Monad<T>, Serializable<T> {
   // TODO: review this when ECMAScript's private class fields will be
   // widely spread in browsers.
   private constructor(private readonly _value: T) {}
@@ -28,6 +33,13 @@ class Container<T> implements Comonad<T>, Monad<T> {
 
   extract(): T {
     return this._value;
+  }
+
+  toJSON(): SerializabledObject<T> {
+    return {
+      type: 'Container',
+      value: this._value,
+    };
   }
 }
 
