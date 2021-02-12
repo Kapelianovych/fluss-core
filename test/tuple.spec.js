@@ -40,6 +40,7 @@ describe('tuple', () => {
 
   test('should remove first element from tuple', () => {
     expect(tuple(6).shift().size()).toBe(0);
+    expect(tuple(6, 8, 9).shift().item(0)).toBe(8);
   });
 
   test('should remove element from end of tuple', () => {
