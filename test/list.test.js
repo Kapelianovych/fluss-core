@@ -48,7 +48,7 @@ describe('List data structure', () => {
     ).toEqual([0, 1, 2, 3, 4]);
   });
 
-  test('filter skip values that do not pass predicat function', () => {
+  test('filter skip values that do not pass predicate function', () => {
     expect(
       list(1, 2, 3, 4, 5, 6)
         .filter((num) => num > 3)
@@ -98,13 +98,13 @@ describe('List data structure', () => {
     expect(list().fold((a, v) => a + v, 0)).toBe(0);
   });
 
-  test('any method check if at least one value pass predicat', () => {
+  test('any method check if at least one value pass predicate', () => {
     expect(list(1, 2, 3).any((num) => num === 2)).toBe(true);
     expect(list(1, 2, 3).any((num) => num === 9)).toBe(false);
     expect(list().any((num) => num === 9)).toBe(false);
   });
 
-  test('all method checks if all values pass predicat', () => {
+  test('all method checks if all values pass predicate', () => {
     expect(list(1, 2, 3).all((num) => num > 0)).toBe(true);
     expect(list(1, 2, 3).all((num) => num < 0)).toBe(false);
     expect(list().all((num) => num > 0)).toBe(true);

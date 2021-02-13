@@ -6,6 +6,7 @@
 - Add `Lazy` monad and `isLazy` function.
 - `Tuple` type and `isTuple` function.
 - `First`, `Widen`, `Shift`, `Pop`, `Head`, `Transform`, `Position` utility types.
+- `Stream` functor and `isStream` function.
 
 ### Changed
 

@@ -29,8 +29,8 @@ export interface Foldable<T> {
 }
 
 export interface Filterable<T> {
-  /** Filter data based on _predicat_ function. */
-  filter(predicat: (value: T) => boolean): Filterable<T>;
+  /** Filter data based on the _predicate_ function. */
+  filter(predicate: (value: T) => boolean): Filterable<T>;
 }
 
 export interface SerializabledObject<T> {

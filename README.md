@@ -574,6 +574,22 @@ const y /*: Tuple<[number, string]> */ = tuple(9, 'state');
 
 Immutable container for fixed sequence of values.
 
+### stream
+
+```typescript
+function stream<T>(): Stream<T>;
+```
+
+Creates live empty stream.
+
+```typescript
+const y /*: Stream<number> */ = stream<number>();
+```
+
+#### Stream
+
+Structure that makes operations with values over time in live mode.
+
 ### reviver
 
 ```typescript
