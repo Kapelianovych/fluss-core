@@ -163,4 +163,30 @@ describe('stream', () => {
     d.send(4);
     expect(value).toBe(4);
   });
+
+  test('uniqueBy method should filter values that sream already passed on', () => {
+    let value;
+    const s = stream();
+
+    s.uniqueBy((value) => value).listen((v) => (value = v));
+
+    s.send(1);
+    expect(value).toBe(1);
+    s.send(2);
+    s.send(1);
+    expect(value).toBe(2);
+  });
+
+  test('compress method should filter null and undefined values', () => {
+    let value = 1;
+    const s = stream();
+
+    s.compress().listen((v) => (value = v));
+
+    s.send(null);
+    expect(value).toBe(1);
+
+    s.send(undefined);
+    expect(value).toBe(1);
+  });
 });

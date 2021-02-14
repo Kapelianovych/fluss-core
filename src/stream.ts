@@ -1,3 +1,4 @@
+import type { Just } from './utilities';
 import type { Filterable, Functor } from './types';
 
 export interface StreamListener<T> {
@@ -71,6 +72,35 @@ class Stream<T> implements Functor<T>, Filterable<T> {
       ...[this, ...others].map((stream) =>
         stream.listen(joined.send.bind(joined))
       )
+    );
+  }
+
+  uniqueBy<F>(fn: (value: T) => F): Stream<T> {
+    const unique = new Stream<T>();
+    const cache = new Set<F>();
+
+    return unique.on(
+      StreamEvent.DESTROY,
+      this.listen((value) => {
+        const key = fn(value);
+        if (!cache.has(key)) {
+          cache.add(key);
+          unique.send(value);
+        }
+      })
+    );
+  }
+
+  /** Get rid of `Nothing` values. */
+  compress(): Stream<Just<T>> {
+    const compressed = new Stream<Just<T>>();
+    return compressed.on(
+      StreamEvent.DESTROY,
+      this.listen((value) => {
+        if (value !== null && value !== undefined) {
+          compressed.send(value as Just<T>);
+        }
+      })
     );
   }
 
