@@ -1,4 +1,4 @@
-import { stream, isStream } from '../build';
+import { stream, isStream, StreamEvent } from '../build';
 
 describe('stream', () => {
   test('should creates stream object', () => {
@@ -85,9 +85,9 @@ describe('stream', () => {
     expect(value).toBeUndefined();
   });
 
-  test('should invoke onDestroyed before self destroying', () => {
+  test('should invoke destroyed listener before self destroying', () => {
     let value;
-    const s = stream().onDestroy(() => (value = 'destroyed'));
+    const s = stream().on(StreamEvent.DESTROY, () => (value = 'destroyed'));
 
     s.destroy();
 
@@ -106,6 +106,15 @@ describe('stream', () => {
     expect(value).toBeUndefined();
   });
 
+  test('should invoke frozen listener before self freezing', () => {
+    let value;
+    const s = stream().on(StreamEvent.FREEZE, () => (value = 'frozen'));
+
+    s.freeze();
+
+    expect(value).toMatch('frozen');
+  });
+
   test('resume should allow stream to pass new values', () => {
     let value;
     const s = stream();
@@ -118,5 +127,40 @@ describe('stream', () => {
     s.send(1);
 
     expect(value).toBe(1);
+  });
+
+  test('should invoke resumed listener before self resume', () => {
+    let value;
+    const s = stream().on(StreamEvent.RESUME, () => (value = 'resumed'));
+
+    s.freeze();
+    s.resume();
+
+    expect(value).toMatch('resumed');
+  });
+
+  test('join method should merge sterams into one stream', () => {
+    let value;
+
+    const f = stream();
+    const b = stream();
+    const c = stream();
+    const d = stream();
+
+    const n = f.join(b, c, d);
+
+    n.listen((v) => (value = v));
+
+    f.send(1);
+    expect(value).toBe(1);
+
+    b.send(2);
+    expect(value).toBe(2);
+
+    c.send(3);
+    expect(value).toBe(3);
+
+    d.send(4);
+    expect(value).toBe(4);
   });
 });

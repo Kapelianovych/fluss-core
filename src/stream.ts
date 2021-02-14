@@ -1,5 +1,15 @@
 import type { Filterable, Functor } from './types';
 
+export interface StreamListener<T> {
+  (value: T): void;
+}
+
+export enum StreamEvent {
+  FREEZE = 'freeze',
+  RESUME = 'resume',
+  DESTROY = 'destroy',
+}
+
 /** Structure that makes operations with values over time in live mode. */
 class Stream<T> implements Functor<T>, Filterable<T> {
   /**
@@ -11,7 +21,9 @@ class Stream<T> implements Functor<T>, Filterable<T> {
    * will never recieve values from destroyed stream.
    */
   private _isActive: boolean = true;
-  private _valueListeners: ReadonlyArray<(value: T) => void> = [];
+  private _valueListeners: ReadonlyArray<StreamListener<T>> = [];
+  private _freezeListeners: ReadonlyArray<VoidFunction> = [];
+  private _resumeListeners: ReadonlyArray<VoidFunction> = [];
   private _destroyListeners: ReadonlyArray<VoidFunction> = [];
 
   private constructor() {}
@@ -31,15 +43,35 @@ class Stream<T> implements Functor<T>, Filterable<T> {
   }
 
   map<R>(fn: (value: T) => R): Stream<R> {
-    return this.derive((transformed) => (value) => transformed.send(fn(value)));
+    const mapped = new Stream<R>();
+    return mapped.on(
+      StreamEvent.DESTROY,
+      this.listen((value) => {
+        mapped.send(fn(value));
+      })
+    );
   }
 
   filter(predicate: (value: T) => boolean): Stream<T> {
-    return this.derive((filtered) => (value) => {
-      if (predicate(value)) {
-        filtered.send(value);
-      }
-    });
+    const filtered = new Stream<T>();
+    return filtered.on(
+      StreamEvent.DESTROY,
+      this.listen((value) => {
+        if (predicate(value)) {
+          filtered.send(value);
+        }
+      })
+    );
+  }
+
+  join(...others: ReadonlyArray<Stream<T>>): Stream<T> {
+    const joined = new Stream<T>();
+    return joined.on(
+      StreamEvent.DESTROY,
+      ...[this, ...others].map((stream) =>
+        stream.listen(joined.send.bind(joined))
+      )
+    );
   }
 
   /**
@@ -47,15 +79,26 @@ class Stream<T> implements Functor<T>, Filterable<T> {
    * Allow to create custom transform methods that maps over values
    * of current stream and sends it to derived stream.
    */
-  derive<R>(fn: (derivedStream: Stream<R>) => (value: T) => void): Stream<R> {
+  derive<R>(fn: (derivedStream: Stream<R>) => StreamListener<T>): Stream<R> {
     const derived = new Stream<R>();
-    return derived.onDestroy(this.listen(fn(derived)));
+    return derived.on(StreamEvent.DESTROY, this.listen(fn(derived)));
   }
 
-  /** Attach listener to be invoked in time of stream destroying. */
-  onDestroy(fn: VoidFunction): this {
+  on(event: StreamEvent, ...fns: ReadonlyArray<VoidFunction>): this {
     if (this._isActive) {
-      this._destroyListeners = [...this._destroyListeners, fn];
+      switch (event) {
+        case StreamEvent.FREEZE:
+          this._freezeListeners = this._freezeListeners.concat(fns);
+          break;
+        case StreamEvent.RESUME:
+          this._resumeListeners = this._resumeListeners.concat(fns);
+          break;
+        case StreamEvent.DESTROY:
+          this._destroyListeners = this._destroyListeners.concat(fns);
+          break;
+        default:
+        // Do nothing.
+      }
     }
 
     return this;
@@ -68,6 +111,7 @@ class Stream<T> implements Functor<T>, Filterable<T> {
    */
   freeze(): this {
     this._isActive = false;
+    this._freezeListeners.forEach((fn) => fn());
 
     return this;
   }
@@ -78,6 +122,7 @@ class Stream<T> implements Functor<T>, Filterable<T> {
    */
   resume(): this {
     this._isActive = true;
+    this._resumeListeners.forEach((fn) => fn());
 
     return this;
   }
@@ -92,6 +137,7 @@ class Stream<T> implements Functor<T>, Filterable<T> {
   destroy(): this {
     this._isActive = false;
     this._destroyListeners.forEach((fn) => fn());
+
     this._destroyListeners = [];
     this._valueListeners = [];
 
@@ -103,7 +149,7 @@ class Stream<T> implements Functor<T>, Filterable<T> {
    *
    * @returns function that stops listener from observing stream.
    */
-  listen(listener: (value: T) => void): VoidFunction {
+  listen(listener: StreamListener<T>): VoidFunction {
     if (this._isActive) {
       this._valueListeners = [...this._valueListeners, listener];
       return () => {
