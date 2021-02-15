@@ -10,7 +10,7 @@ describe('lazy', () => {
   test('should map value', () => {
     const mapped = container.map((number) => Math.pow(number, 2));
 
-    expect(mapped.result(2)).toBe(4);
+    expect(mapped.run(2)).toBe(4);
   });
 
   test('should map value with chain method', () => {
@@ -18,7 +18,7 @@ describe('lazy', () => {
       lazy((first) => first + number + '!')
     );
 
-    expect(chained.result(1)).toBe('2!');
+    expect(chained.run(1)).toBe('2!');
   });
 
   test('should perform application operation', () => {
@@ -26,6 +26,6 @@ describe('lazy', () => {
       lazy((number) => (result) => number + result)
     );
 
-    expect(applied.result(1)).toBe(2);
+    expect(applied.run(1)).toBe(2);
   });
 });

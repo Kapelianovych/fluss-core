@@ -12,24 +12,24 @@ export interface Operation<A, B> {
  */
 class Lazy<F, L> implements Monad<L> {
   private constructor(
-    /** Perform operation over _value_. */ readonly result: Operation<F, L>
+    /** Perform operation over _value_. */ readonly run: Operation<F, L>
   ) {}
 
   /** Defines lazy operation. */
   static lazy<F, L>(value: Operation<F, L> | Lazy<F, L>): Lazy<F, L> {
-    return new Lazy<F, L>(isLazy<F, L>(value) ? value.result : value);
+    return new Lazy<F, L>(isLazy<F, L>(value) ? value.run : value);
   }
 
   apply<R>(other: Lazy<F, Operation<L, R>>): Lazy<F, R> {
-    return new Lazy<F, R>((value) => other.result(value)(this.result(value)));
+    return new Lazy<F, R>((value) => other.run(value)(this.run(value)));
   }
 
   map<R>(fn: (value: L) => R): Lazy<F, R> {
-    return new Lazy<F, R>((value) => fn(this.result(value)));
+    return new Lazy<F, R>((value) => fn(this.run(value)));
   }
 
   chain<R>(fn: (value: L) => Lazy<F, R>): Lazy<F, R> {
-    return new Lazy<F, R>((value) => fn(this.result(value)).result(value));
+    return new Lazy<F, R>((value) => fn(this.run(value)).run(value));
   }
 }
 
