@@ -18,6 +18,7 @@
 - `tuple` function constructs now `Tuple` object.
 - `reviver` can now parse `Container` and `Tuple` from JSON string.
 - Move `IterableFunction` to _types.ts_ and rename it to `IterableIteratorFunction`.
+- Rename `result` method of `Lazy` to `run`.
 
 ### Fixed
 
