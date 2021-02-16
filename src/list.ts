@@ -175,7 +175,7 @@ class List<T>
     return nothing<T>();
   }
 
-  forEach(fn: (value: T) => unknown): void {
+  forEach(fn: (value: T) => void): void {
     for (const value of this) {
       fn(value);
     }
