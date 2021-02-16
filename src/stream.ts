@@ -44,25 +44,17 @@ class Stream<T> implements Functor<T>, Filterable<T> {
   }
 
   map<R>(fn: (value: T) => R): Stream<R> {
-    const mapped = new Stream<R>();
-    return mapped.on(
-      StreamEvent.DESTROY,
-      this.listen((value) => {
-        mapped.send(fn(value));
-      })
-    );
+    return this.derive((mapped) => (value) => {
+      mapped.send(fn(value));
+    });
   }
 
   filter(predicate: (value: T) => boolean): Stream<T> {
-    const filtered = new Stream<T>();
-    return filtered.on(
-      StreamEvent.DESTROY,
-      this.listen((value) => {
-        if (predicate(value)) {
-          filtered.send(value);
-        }
-      })
-    );
+    return this.derive((filtered) => (value) => {
+      if (predicate(value)) {
+        filtered.send(value);
+      }
+    });
   }
 
   join(...others: ReadonlyArray<Stream<T>>): Stream<T> {
@@ -76,32 +68,23 @@ class Stream<T> implements Functor<T>, Filterable<T> {
   }
 
   uniqueBy<F>(fn: (value: T) => F): Stream<T> {
-    const unique = new Stream<T>();
     const cache = new Set<F>();
-
-    return unique.on(
-      StreamEvent.DESTROY,
-      this.listen((value) => {
-        const key = fn(value);
-        if (!cache.has(key)) {
-          cache.add(key);
-          unique.send(value);
-        }
-      })
-    );
+    return this.derive((unique) => (value) => {
+      const key = fn(value);
+      if (!cache.has(key)) {
+        cache.add(key);
+        unique.send(value);
+      }
+    });
   }
 
   /** Get rid of `Nothing` values. */
   compress(): Stream<Just<T>> {
-    const compressed = new Stream<Just<T>>();
-    return compressed.on(
-      StreamEvent.DESTROY,
-      this.listen((value) => {
-        if (value !== null && value !== undefined) {
-          compressed.send(value as Just<T>);
-        }
-      })
-    );
+    return this.derive((compressed) => (value) => {
+      if (value !== null && value !== undefined) {
+        compressed.send(value as Just<T>);
+      }
+    });
   }
 
   /**
