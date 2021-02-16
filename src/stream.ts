@@ -151,8 +151,10 @@ class Stream<T> implements Functor<T>, Filterable<T> {
     this._isActive = false;
     this._destroyListeners.forEach((fn) => fn());
 
-    this._destroyListeners = [];
     this._valueListeners = [];
+    this._freezeListeners = [];
+    this._resumeListeners = [];
+    this._destroyListeners = [];
 
     return this;
   }
