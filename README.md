@@ -568,6 +568,9 @@ Creates `Tuple` from set of elements.
 
 ```typescript
 const y /*: Tuple<[number, string]> */ = tuple(9, 'state');
+
+// Tuple can be destructured
+const [num, str] = y;
 ```
 
 #### Tuple
@@ -584,6 +587,13 @@ Creates live empty stream.
 
 ```typescript
 const y /*: Stream<number> */ = stream<number>();
+
+y.map((value) => Math.pow(value, 2)).listen(
+  (value) => (document.body.innerHTML = value)
+);
+
+// Somewhere in the code
+y.send(2); // document.body.innerHTML will be equal to 4
 ```
 
 #### Stream

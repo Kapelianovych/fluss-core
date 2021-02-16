@@ -1,17 +1,13 @@
-# [0.17.0] - 2021-02-05
+# [0.18.0] - 2021-02-16
 
 ### Added
 
-- Default error type to `Task` class, `task`, `done` and `fail` functions.
-- Add `Lazy` monad and `isLazy` function.
 - `Tuple` type and `isTuple` function.
 - `First`, `Widen`, `Shift`, `Pop`, `Head`, `Transform`, `Position` utility types.
 - `Stream` functor and `isStream` function.
 
 ### Changed
 
-- Change type signature of `pipe` function to raise _unknown_ type if parameters chain is incompatible.
-- Change signature of `sequence` function to accept more than one argument.
 - Rename `Applicative` to `Apply` according to [Fantasy Land specification](https://github.com/fantasyland/fantasy-land#apply)
 - Rename `Wrapper` type to `Container` and `isWrapper` function to `isContainer`.
 - Make `Container` serializable.
@@ -19,6 +15,18 @@
 - `reviver` can now parse `Container` and `Tuple` from JSON string.
 - Move `IterableFunction` to _types.ts_ and rename it to `IterableIteratorFunction`.
 - Rename `result` method of `Lazy` to `run`.
+
+## [0.17.0] - 2021-02-05
+
+### Added
+
+- Default error type to `Task` class, `task`, `done` and `fail` functions.
+- Add `Lazy` monad and `isLazy` function.
+
+### Changed
+
+- Change type signature of `pipe` function to raise _unknown_ type if parameters chain is incompatible.
+- Change signature of `sequence` function to accept more than one argument.
 
 ### Fixed
 
