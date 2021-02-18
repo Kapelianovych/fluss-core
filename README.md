@@ -600,6 +600,24 @@ y.send(2); // document.body.innerHTML will be equal to 4
 
 Structure that makes operations with values over time in live mode.
 
+### idle
+
+```typescript
+function idle<T>(fn: () => T): Idle<T>;
+```
+
+Queues a data returned by `fn` to be evaluated at interpretator's idle period.
+
+```typescript
+const value /*: Idle<boolean> */ = idle(() => 1).map((num) => num > 7);
+// somewhere in the code
+const evaluated /*: boolean */ = value.extract();
+```
+
+#### Idle
+
+Monad that allow to defer data initialization.
+
 ### reviver
 
 ```typescript
