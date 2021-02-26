@@ -1,147 +1,161 @@
-import { maybe, Maybe, nothing } from './maybe';
+import { isObject } from './is_object';
+import { isNothing } from './is_just_nothing';
+import { isFunction } from './is_function';
+import { some, Option, none } from './option';
 import type { Just } from './utilities';
 import type {
-  Chain,
   Foldable,
-  Filterable,
+  Typeable,
+  Sizeable,
   Serializable,
-  SerializabledObject,
   IterableIteratorFunction,
 } from './types';
 
+export const LIST_OBJECT_TYPE = 'List';
+
 /** Monad that represents lazy Array. */
-class List<T>
-  implements
-    Chain<T>,
+export interface List<T>
+  extends Typeable,
+    Sizeable,
     Iterable<T>,
     Foldable<T>,
-    Filterable<T>,
     Serializable<ReadonlyArray<T>> {
-  readonly [Symbol.iterator]: IterableIteratorFunction<T>;
+  /**
+   * Check if all values of `List` pass _predicate_ function.
+   * If list is empty, then method returns `true`.
+   */
+  all(predicate: (value: T) => boolean): boolean;
+  /**
+   * Check if at least one value of `List` passes _predicate_ function.
+   * If list is empty, then method returns `false`.
+   */
+  any(predicate: (value: T) => boolean): boolean;
+  has(value: T): boolean;
+  map<R>(fn: (value: T) => R): List<R>;
+  sort(fn: (first: T, second: T) => number): List<T>;
+  take(count: number): List<T>;
+  skip(count: number): List<T>;
+  find(predicate: (item: T) => boolean): Option<T>;
+  chain<R>(fn: (value: T) => List<R>): List<R>;
+  apply<R>(other: List<(value: T) => R>): List<R>;
+  filter(predicate: (value: T) => boolean): List<T>;
+  append(...values: ReadonlyArray<T>): List<T>;
+  concat(other: List<T>): List<T>;
+  prepend(...values: ReadonlyArray<T>): List<T>;
+  asArray(): ReadonlyArray<T>;
+  uniqueBy<U>(fn: (item: T) => U): List<T>;
+  /** Get rid of `Nothing` values. */
+  compress(): List<Just<T>>;
+  forEach(fn: (value: T) => void): void;
+}
 
-  private constructor(fn: IterableIteratorFunction<T>) {
-    this[Symbol.iterator] = fn;
-  }
-
-  /** Create `List` from values, array-like objects or iterables. */
-  static list<T>(
-    ...values: ReadonlyArray<T | ArrayLike<T> | Iterable<T>>
-  ): List<T> {
-    return new List<T>(function* () {
-      for (const value of values) {
-        if (typeof value === 'object' && value !== null) {
-          if (Symbol.iterator in value) {
-            yield* value as Iterable<T>;
-          } else if ('length' in value) {
-            yield* Array.from(value);
-          } else {
-            yield value as T;
-          }
-        } else {
-          yield value;
-        }
-      }
-    });
-  }
-
-  /** Create `List` from function that returns iterator. */
-  static iterate<T>(fn: IterableIteratorFunction<T>): List<T> {
-    return new List<T>(fn);
-  }
-
-  map<R>(fn: (value: T) => R): List<R> {
-    const self = this;
-    return new List<R>(function* () {
-      for (const item of self) {
+/** Create `List` from function that returns itarable iterator. */
+export const iterate = <T>(over: IterableIteratorFunction<T>): List<T> => ({
+  [Symbol.iterator]: over,
+  type: () => LIST_OBJECT_TYPE,
+  toJSON: () => ({
+    type: LIST_OBJECT_TYPE,
+    value: [...over()],
+  }),
+  map: (fn) =>
+    iterate(function* () {
+      for (const item of over()) {
         yield fn(item);
       }
-    });
-  }
-
-  chain<R>(fn: (value: T) => List<R>): List<R> {
-    const self = this;
-    return new List<R>(function* () {
-      for (const value of self) {
-        yield* fn(value);
+    }),
+  chain: (fn) =>
+    iterate(function* () {
+      for (const item of over()) {
+        yield* fn(item);
       }
-    });
-  }
-
-  join(...others: ReadonlyArray<ArrayLike<T> | Iterable<T>>): List<T> {
-    const iterables = [this, ...others];
-    return new List<T>(function* () {
-      for (const iterable of iterables) {
-        yield* Symbol.iterator in iterable
-          ? (iterable as Iterable<T>)
-          : Array.from<T>(iterable);
+    }),
+  apply: (other) =>
+    iterate(function* () {
+      for (const item of over()) {
+        yield other[Symbol.iterator]().next().value(item);
       }
-    });
-  }
-
-  filter(predicate: (value: T) => boolean): List<T> {
-    const self = this;
-    return new List<T>(function* () {
-      for (const item of self) {
+    }),
+  filter: (predicate) =>
+    iterate(function* () {
+      for (const item of over()) {
         if (predicate(item)) {
           yield item;
         }
       }
-    });
-  }
+    }),
+  reduce: (fn, accumulator) => {
+    for (const item of over()) {
+      accumulator = fn(accumulator, item);
+    }
 
-  append(...values: ReadonlyArray<T>): List<T> {
-    return this.join(values);
-  }
-
-  prepend(...values: ReadonlyArray<T>): List<T> {
-    const iterables = [values, this];
-    return new List<T>(function* () {
-      for (const iterable of iterables) {
-        yield* iterable;
+    return accumulator;
+  },
+  concat: (other) =>
+    iterate(function* () {
+      for (const item of [over(), other]) {
+        yield* item;
       }
-    });
-  }
+    }),
+  all: (predicate) => {
+    for (const item of over()) {
+      if (!predicate(item)) {
+        return false;
+      }
+    }
 
-  uniqueBy<U>(fn: (item: T) => U): List<T> {
-    const self = this;
-    return new List<T>(function* () {
-      const uniqueValues = new Set<U>();
+    return true;
+  },
+  any: (predicate) => {
+    for (const item of over()) {
+      if (predicate(item)) {
+        return true;
+      }
+    }
 
-      for (const value of self) {
-        const key = fn(value);
-        if (!uniqueValues.has(key)) {
-          uniqueValues.add(key);
-          yield value;
+    return false;
+  },
+  append: (...values) =>
+    iterate(function* () {
+      for (const item of [over(), values]) {
+        yield* item;
+      }
+    }),
+  prepend: (...values) =>
+    iterate(function* () {
+      for (const item of [values, over()]) {
+        yield* item;
+      }
+    }),
+  uniqueBy: (fn) =>
+    iterate(function* () {
+      const unique = new Set<ReturnType<typeof fn>>();
+
+      for (const item of over()) {
+        const key = fn(item);
+
+        if (!unique.has(key)) {
+          unique.add(key);
+          yield item;
         }
       }
-    });
-  }
-
-  sort(fn: (first: T, second: T) => number): List<T> {
-    const sortedSelf = Array.from<T>(this).sort(fn);
-    return new List<T>(function* () {
-      for (const item of sortedSelf) {
+    }),
+  sort: (fn) =>
+    iterate(function* () {
+      for (const item of [...over()].sort(fn)) {
         yield item;
       }
-    });
-  }
-
-  /** Get rid of `Nothing` values. */
-  compress(): List<Just<T>> {
-    const self = this;
-    return new List<Just<T>>(function* () {
-      for (const item of self) {
-        if (item !== null && item !== undefined) {
+    }),
+  compress: () =>
+    iterate(function* () {
+      for (const item of over()) {
+        if (!isNothing(item)) {
           yield item as Just<T>;
         }
       }
-    });
-  }
-
-  take(count: number): List<T> {
-    const self = this;
-    return new List<T>(function* () {
-      for (const item of self) {
+    }),
+  take: (count) =>
+    iterate(function* () {
+      for (const item of over()) {
         if (0 <= --count) {
           yield item;
         } else {
@@ -151,101 +165,66 @@ class List<T>
           return;
         }
       }
-    });
-  }
-
-  skip(count: number): List<T> {
-    const self = this;
-    return new List<T>(function* () {
-      for (const item of self) {
+    }),
+  skip: (count) =>
+    iterate(function* () {
+      for (const item of over()) {
         if (0 > --count) {
           yield item;
         }
       }
-    });
-  }
-
-  find(predicate: (item: T) => boolean): Maybe<T | null> {
-    for (const item of this) {
-      if (predicate(item)) {
-        return maybe<T>(item);
-      }
+    }),
+  forEach: (fn) => {
+    for (const item of over()) {
+      fn(item);
     }
-
-    return nothing<T>();
-  }
-
-  forEach(fn: (value: T) => void): void {
-    for (const value of this) {
-      fn(value);
-    }
-  }
-
-  has(value: T): boolean {
-    return this.any((item) => Object.is(item, value));
-  }
-
-  size(): number {
-    return Array.from<T>(this).length;
-  }
-
-  isEmpty(): boolean {
-    return this.take(1).size() === 0;
-  }
-
-  fold<R>(fn: (accumulator: R, value: T) => R, accumulator: R): R {
-    for (const item of this) {
-      accumulator = fn(accumulator, item);
-    }
-
-    return accumulator;
-  }
-
-  /**
-   * Check if at least one value of `List` passes _predicate_ function.
-   * If list is empty, then method returns `false`.
-   */
-  any(predicate: (value: T) => boolean): boolean {
-    for (const item of this) {
-      if (predicate(item)) {
+  },
+  has: (value) => {
+    for (const item of over()) {
+      if (Object.is(value, item)) {
         return true;
       }
     }
-    return false;
-  }
 
-  /**
-   * Check if all values of `List` pass _predicate_ function.
-   * If list is empty, then method returns `true`.
-   */
-  all(predicate: (value: T) => boolean): boolean {
-    for (const item of this) {
-      if (!predicate(item)) {
-        return false;
+    return false;
+  },
+  find: (predicate) => {
+    for (const item of over()) {
+      if (predicate(item)) {
+        return some(item);
       }
     }
-    return true;
-  }
 
-  /** Convert `List` to `Array`. */
-  asArray(): ReadonlyArray<T> {
-    // Here must be freezing array operation,
-    // but due to [this Chromium bug](https://bugs.chromium.org/p/chromium/issues/detail?id=980227)
-    // it is very slow operation and this action is not performed.
-    return Array.from<T>(this);
-  }
+    return none;
+  },
+  size: () => [...over()].length,
+  isEmpty: () => over().next().done === true,
+  asArray: () => [...over()],
+});
 
-  toJSON(): SerializabledObject<ReadonlyArray<T>> {
-    return {
-      type: 'List',
-      value: Array.from<T>(this),
-    };
-  }
-}
-
-export type { List };
-export const { list, iterate } = List;
+/** Create `List` from values, array-like objects or iterables. */
+export const list = <T>(
+  ...values: ReadonlyArray<T | ArrayLike<T> | Iterable<T>>
+): List<T> =>
+  iterate(function* () {
+    for (const value of values) {
+      if (isObject(value)) {
+        if (Symbol.iterator in value) {
+          yield* value as Iterable<T>;
+        } else if ('length' in value) {
+          yield* Array.from(value);
+        } else {
+          // T type may be itself an object.
+          yield (value as unknown) as T;
+        }
+      } else {
+        yield value;
+      }
+    }
+  });
 
 /** Check if _value_ is instance of `List`. */
 export const isList = <T>(value: unknown): value is List<T> =>
-  value instanceof List;
+  isObject(value) &&
+  isFunction((value as Typeable).type) &&
+  (value as Typeable).type() === LIST_OBJECT_TYPE;

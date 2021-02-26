@@ -150,6 +150,20 @@ const y1 /*: boolean */ = isNothing(false);
 const y2 /*: boolean */ = isNothing(0);
 ```
 
+### isJust
+
+```typescript
+function isJust<T>(value: T): value is Just<T>;
+```
+
+Checks if value is not `null` and `undefined`.
+
+```typescript
+const y /*: boolean */ = isJust(null);
+const y1 /*: boolean */ = isJust(false);
+const y2 /*: boolean */ = isJust(0);
+```
+
 ### isError
 
 ```typescript
@@ -246,7 +260,7 @@ const deepFrozenObject /*: DeepReadonly<{ hello: () => void }> */ = freeze(
 ### wrap
 
 ```typescript
-function wrap<T>(value: T | Container<T>): Container<T>;
+function wrap<T>(value: T): Container<T>;
 ```
 
 Wraps value in `Container` monad and allow perform on it operations in chainable way.
@@ -262,7 +276,7 @@ wrap(1)
 ### isContainer
 
 ```typescript
-function isContainer<T>(value: any): value is Container<T>;
+function isContainer<T>(value: unknown): value is Container<T>;
 ```
 
 Check if value is instance of Container.
@@ -284,64 +298,61 @@ Monad that contains value and allow perform operation on it by set of methods.
 
 4. `extract(): T` - expose inner value to outside.
 
-> These methods have also `Maybe` and `Either` monads.
+> These methods have also `Option` and `Either` monads.
 
-### isMaybe
+### isOption
 
 ```typescript
-function isMaybe<T>(value: any): value is Maybe<T>;
+function isOption<T>(value: any): value is Option<T>;
 ```
 
-Checks if value is instance of `Maybe` monad.
+Checks if value is instance of `Option` monad.
 
 ```typescript
-isMaybe(8); // false
-isMaybe(maybe(8)); // true
+isOption(8); // false
+isOption(maybe(8)); // true
 ```
 
 ### maybe
 
 ```typescript
-function maybe<T>(
-  value: T | Maybe<T>
-): HasNothing<T> extends true ? Maybe<Just<T> | null> : Maybe<T>;
+function maybe<T>(value: T): Option<Just<T>>;
 ```
 
-Wraps value with `Maybe` monad. Function detects state (**Just** or **Nothing**) of `Maybe` by yourself.
+Wraps value with `Option` monad. Function detects state (**Just** or **Nothing**) of `Option` by yourself.
 
 ```typescript
-maybe(8); // Maybe<number>
+maybe(8); // Option<number>
+maybe(null); // Option<never>
 ```
 
-### just
+### some
 
 ```typescript
-function just<T>(value: Just<T>): Maybe<T>;
+function some<T>(value: T): Some<T>;
 ```
 
-Creates `Maybe` monad instance with **Just** state.
+Creates `Option` monad instance with **Just** state.
 
 ```typescript
-just(2); // Maybe<number>
+some(2); // Some<number>
 ```
 
-### nothing
+### none
 
 ```typescript
-function nothing<T = null>(): Maybe<T | null>;
+const none: None;
 ```
 
-Creates `Maybe` monad instance with **Nothing** state.
+`Option`' monad's instance with **Nothing** state.
 
 ```typescript
-nothing(); // Maybe<null>
-nothing<number>(); // Maybe<number | null>
+const a /*: None */ = none;
 ```
 
-#### Maybe
+#### Option
 
-Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract`). Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
-Has the same methods as `Container` monad.
+Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract` and `fill`). Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
 
 ### isEither
 
@@ -356,50 +367,34 @@ isEither(8); // false
 isEither(either(8)); // true
 ```
 
-### either
-
-```typescript
-function either<L extends Error, R>(value: L | R | Either<L, R>): Either<L, R>;
-```
-
-Wraps value with `Either` monad. Function detects state (**Right** or **Left**) of `Either` by yourself.
-
-```typescript
-either(8); // Either<Error, number>
-```
-
 ### right
 
 ```typescript
-function right<L extends Error, R>(value: R): Either<L, R>;
+function right<R>(value: R): Right<R>;
 ```
 
 Wraps value with `Either` monad with **Right** state.
 
 ```typescript
 // We are sure that 8 is not "left" value.
-right(8); // Either<Error, number>
+right(8); // Right<number>
 ```
 
 ### left
 
 ```typescript
-function left<L extends Error, R>(value: L): Either<L, R>;
+function left<L>(value: L): Left<L>;
 ```
 
 Creates `Either` monad instance with **Left** state.
 
 ```typescript
-left<Error, number>(new Error('Error is occured!')); // Either<Error, number>
+left<Error>(new Error('Error is occured!')); // Left<Error>
 ```
 
 #### Either
 
-Monad that can contain value or `Error`. Allow handles errors in functional way.
-Has the same methods as `Container` monad and `mapLeft`, `mapRight`:
-
-- `mapLeft<E extends Error>(fn: (value: L) => E | R): Either<E, R>` - maps inner value if it is an `Error` instance.
-- `mapRight<A>(fn: (value: R) => A): Either<L, A>` - maps inner value if it is not an `Error` instance. Same as `map`.
+Monad that can contain success value or failure value. Allow handle errors in functional way.
 
 ### task
 
@@ -626,19 +621,17 @@ function reviver(
   value: JSONValueTypes | SerializabledObject<unknown>
 ):
   | JSONValueTypes
-  | Error
   | List<unknown>
-  | Maybe<unknown>
-  | Tuple<[unknown]>
+  | Idle<unknown>
+  | Option<unknown>
   | Container<unknown>
-  | Either<Error, unknown>;
+  | Either<Error, unknown>
+  | Tuple<ReadonlyArray<unknown>>;
 ```
 
-Add recognition of `Container`, `Tuple`, `Maybe`, `List`, `Either` and `Error` data structures for `JSON.parse`.
-
-**Note**: constructing an `Error` is supported only from `SerializabledObject<string>` structure.
+Add recognition of `Container`, `Idle`, `Tuple`, `Option`, `List`, `Either` data structures for `JSON.parse`.
 
 ```typescript
-const obj = JSON.parse('{"type":"Maybe","value":1}', reviver);
-// obj will be instance of Maybe.
+const obj = JSON.parse('{"type":"Some","value":1}', reviver);
+// obj will be instance of Option type.
 ```

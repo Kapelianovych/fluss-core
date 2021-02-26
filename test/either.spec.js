@@ -1,10 +1,9 @@
-import { either, isEither, right, left } from '../build';
+import { isEither, right, left } from '../build';
 
 describe('Either', () => {
-  test('isEither check if value is instance of Either', () => {
+  test('isEither check if value is instance of Either type', () => {
     expect(isEither(right(9))).toBe(true);
     expect(isEither(left(new Error()))).toBe(true);
-    expect(isEither(either(9))).toBe(true);
   });
 
   test('right function creates Either with Right state', () => {
@@ -13,16 +12,6 @@ describe('Either', () => {
 
   test('left function creates Either with Left state', () => {
     expect(left(new Error()).isLeft()).toBe(true);
-  });
-
-  test('either function creates Either with Left or Right state depending of value.', () => {
-    expect(either(0).isRight()).toBe(true);
-    expect(either('0').isRight()).toBe(true);
-    expect(either({}).isRight()).toBe(true);
-    expect(either(new Error()).isLeft()).toBe(true);
-    expect(either(new Error()).isLeft()).toBe(true);
-    expect(either(right(8)).extract()).toBe(8);
-    expect(either(left(new Error())).extract()).toEqual(new Error());
   });
 
   test('extract method return inner value of Either', () => {
@@ -72,15 +61,22 @@ describe('Either', () => {
     expect(result2).toEqual(4);
   });
 
+  test('handle method should transform Left state into Right state', () => {
+    expect(
+      left(8)
+        .handle(() => '')
+        .type()
+    ).toBe('Right');
+  });
+
   test('should be serializable', () => {
     const e1 = JSON.stringify(right(1));
-    const e2 = JSON.stringify(left(new TypeError('Wrong type!')));
+    const e2 = JSON.stringify(left('Wrong type!'));
 
-    expect(e1).toMatch('"type":"Either"');
+    expect(e1).toMatch('"type":"Right"');
     expect(e1).toMatch('"value":1');
 
-    expect(e2).toMatch('"type":"Either"');
-    expect(e2).toMatch('"type":"Error"');
+    expect(e2).toMatch('"type":"Left"');
     expect(e2).toMatch('"value":"Wrong type!"');
   });
 });

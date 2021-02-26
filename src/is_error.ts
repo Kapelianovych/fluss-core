@@ -5,6 +5,6 @@ import type { Constructor } from './utilities';
  * or (optionally) its child classes.
  */
 export const isError = <E extends Error>(
-  value: any,
+  value: unknown,
   childClass?: Constructor<E>
 ): value is E => value instanceof (childClass ?? Error);

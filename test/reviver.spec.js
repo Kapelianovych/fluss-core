@@ -1,21 +1,22 @@
 import {
   isList,
-  isMaybe,
+  isIdle,
   isTuple,
   reviver,
   isEither,
+  isOption,
   isContainer,
 } from '../build';
 
 describe('reviver', () => {
-  test('should skip values that are not Maybe, Either and List', () => {
+  test('should skip values that are not Option, Either and List', () => {
     const json = '{"h":1}';
     expect(JSON.parse(json, reviver)).toBeInstanceOf(Object);
   });
 
-  test('should create Maybe instance', () => {
-    const json = '{"type":"Maybe","value":1}';
-    expect(isMaybe(JSON.parse(json, reviver))).toBe(true);
+  test('should create Option instance', () => {
+    const json = '{"type":"Some","value":1}';
+    expect(isOption(JSON.parse(json, reviver))).toBe(true);
   });
 
   test('should create List instance', () => {
@@ -23,15 +24,14 @@ describe('reviver', () => {
     expect(isList(JSON.parse(json, reviver))).toBe(true);
   });
 
-  test('should create Either instance with Just state', () => {
-    const json = '{"type":"Either","value":1}';
+  test('should create Either instance with Right state', () => {
+    const json = '{"type":"Right","value":1}';
     expect(isEither(JSON.parse(json, reviver))).toBe(true);
     expect(JSON.parse(json, reviver).isRight()).toBe(true);
   });
 
   test('should create Either instance with Left state', () => {
-    const json =
-      '{"type":"Either","value":{"type":"Error","value":"Message!"}}';
+    const json = '{"type":"Left","value":"Message!"}';
     expect(isEither(JSON.parse(json, reviver))).toBe(true);
     expect(JSON.parse(json, reviver).isLeft()).toBe(true);
   });
@@ -44,5 +44,10 @@ describe('reviver', () => {
   test('should create Tuple instance', () => {
     const json = '{"type":"Tuple","value":[5]}';
     expect(isTuple(JSON.parse(json, reviver))).toBe(true);
+  });
+
+  test('should create an Idle instance', () => {
+    const json = '{"type":"Idle","value":7}';
+    expect(isIdle(JSON.parse(json, reviver))).toBe(true);
   });
 });

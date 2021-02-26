@@ -1,12 +1,12 @@
 import { isPromise } from './is_promise';
-import { isNothing } from './is_nothing';
-import { either, Either, left, right } from './either';
+import { isNothing } from './is_just_nothing';
+import { Either, left, Right, right } from './either';
 
 const wrapResultWithEither = <L extends Error, R>(
   result: R
-): R extends Promise<infer U> ? Promise<Either<L, U>> : Either<L, R> => {
-  //@ts-ignore
-  return isPromise(result) ? result.then(right, left) : either(result);
+): R extends Promise<infer U> ? Promise<Either<L, U>> : Right<R> => {
+  // @ts-ignore
+  return isPromise<R>(result) ? result.then(right, left) : right(result);
 };
 
 /**
@@ -26,7 +26,7 @@ export const tryCatch = <T extends ReadonlyArray<unknown>, L extends Error, R>(
       return wrapResultWithEither<L, R>(tryFn(...inputs));
     } catch (error) {
       return isNothing(catchFn)
-        ? left<L, R>(error)
+        ? left<L>(error)
         : wrapResultWithEither<L, R>(catchFn(error));
     }
   };

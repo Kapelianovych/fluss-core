@@ -1,74 +1,67 @@
+import { isObject } from './is_object';
 import { isPromise } from './is_promise';
-import type { Monad } from './types';
+import { isFunction } from './is_function';
+import type { Typeable } from './types';
 
 export type DoneFunction<T> = (value: T) => void;
-export type FailFunction<E extends Error> = (value: E) => void;
+export type FailFunction<E extends Error = Error> = (value: E) => void;
 
-export type ForkFunction<T, E extends Error> = (
+export type ForkFunction<T, E extends Error = Error> = (
   done: DoneFunction<T>,
   fail: FailFunction<E>
 ) => void;
+
+export const TASK_OBJECT_TYPE = 'Task';
 
 /**
  * Monad that allow to perform some actions asynchronously and deferred
  * in time (in opposite `Promise` that start doing job immediately
  * after definition).
  */
-class Task<T, E extends Error = Error> implements Monad<T> {
-  private constructor(
-    /** Starts `Task`. */ readonly start: ForkFunction<T, E>
-  ) {}
-
-  /** Defines `Task` or copies fork function from another `Task` or `Promise`. */
-  static task<T, E extends Error = Error>(
-    fork: ForkFunction<T, E> | Task<T, E> | Promise<T>
-  ): Task<T, E> {
-    return new Task<T, E>(
-      isTask<T, E>(fork)
-        ? fork.start
-        : isPromise<T>(fork)
-        ? (done, fail) => fork.then(done, fail)
-        : fork
-    );
-  }
-
-  /** Wraps value to process as `Task`. */
-  static done<T, E extends Error = Error>(value: T): Task<T, E> {
-    return new Task<T, E>((done) => done(value));
-  }
-
-  /** Create failed `Task`. */
-  static fail<T, E extends Error = Error>(value: E): Task<T, E> {
-    return new Task<T, E>((_, fail) => fail(value));
-  }
-
-  map<R>(fn: (value: T) => R): Task<R, E> {
-    return new Task<R, E>((done, fail) => {
-      this.start((value) => done(fn(value)), fail);
-    });
-  }
-
-  chain<R>(fn: (value: T) => Task<R, E>): Task<R, E> {
-    return new Task<R, E>((done, fail) => {
-      this.start((value) => fn(value).start(done, fail), fail);
-    });
-  }
-
-  apply<R>(other: Task<(value: T) => R, E>): Task<R, E> {
-    return new Task<R, E>((done, fail) => {
-      this.start((value) => other.start((fn) => done(fn(value)), fail), fail);
-    });
-  }
-
-  /** Starts `Task` and return result in `Promise`. */
-  asPromise(): Promise<T> {
-    return new Promise<T>(this.start);
-  }
+export interface Task<T, E extends Error = Error> extends Typeable {
+  start: ForkFunction<T, E>;
+  map<R>(fn: (value: T) => R): Task<R, E>;
+  chain<R>(fn: (value: T) => Task<R, E>): Task<R, E>;
+  apply<R>(other: Task<(value: T) => R, E>): Task<R, E>;
+  asPromise(): Promise<T>;
 }
 
-export type { Task };
-export const { task, done, fail } = Task;
+export const task = <T, E extends Error = Error>(
+  fork: ForkFunction<T, E> | Task<T, E> | Promise<T>
+): Task<T, E> => {
+  const start = isTask(fork)
+    ? fork.start
+    : isPromise(fork)
+    ? (done: DoneFunction<T>, fail: FailFunction<E>) => fork.then(done, fail)
+    : fork;
+
+  return {
+    start,
+    type: () => TASK_OBJECT_TYPE,
+    map: (fn) =>
+      task((done, fail) => start((value: T) => done(fn(value)), fail)),
+    chain: (fn) =>
+      task((done, fail) =>
+        start((value: T) => fn(value).start(done, fail), fail)
+      ),
+    apply: (other) =>
+      task((done, fail) => {
+        start((value) => other.start((fn) => done(fn(value)), fail), fail);
+      }),
+    asPromise: () => new Promise(start),
+  };
+};
+
+export const done = <T, E extends Error = Error>(value: T): Task<T, E> =>
+  task((done, _) => done(value));
+
+export const fail = <T, E extends Error = Error>(value: E): Task<T, E> =>
+  task((_, fail) => fail(value));
 
 /** Check if _value_ is instance of `Task` monad. */
-export const isTask = <T, E extends Error>(value: unknown): value is Task<T, E> =>
-  value instanceof Task;
+export const isTask = <T, E extends Error = Error>(
+  value: unknown
+): value is Task<T, E> =>
+  isObject(value) &&
+  isFunction((value as Typeable).type) &&
+  (value as Typeable).type() === TASK_OBJECT_TYPE;

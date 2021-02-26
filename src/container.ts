@@ -1,51 +1,35 @@
-import type {
-  Monad,
-  Comonad,
-  Serializable,
-  SerializabledObject,
-} from './types';
+import { isObject } from './is_object';
+import { isFunction } from './is_function';
+import type { Typeable, Serializable } from './types';
+
+export const CONTAINER_OBJECT_TYPE = 'Container';
 
 /** Monad that contains value and allow perform operation on it by set of methods. */
-class Container<T> implements Comonad<T>, Monad<T>, Serializable<T> {
-  // TODO: review this when ECMAScript's private class fields will be
-  // widely spread in browsers.
-  private constructor(private readonly _value: T) {}
-
-  /**
-   * Wraps value in `Container` monad and allow perform on it operations in chainable way.
-   * If value is `Container`, then its copy will be returned.
-   */
-  static wrap<U>(value: U | Container<U>): Container<U> {
-    return new Container<U>(isContainer<U>(value) ? value.extract() : value);
-  }
-
-  map<R>(fn: (value: T) => R): Container<R> {
-    return new Container<R>(fn(this._value));
-  }
-
-  apply<R>(other: Container<(value: T) => R>): Container<R> {
-    return this.map(other.extract());
-  }
-
-  chain<R>(fn: (value: T) => Container<R>): Container<R> {
-    return fn(this._value);
-  }
-
-  extract(): T {
-    return this._value;
-  }
-
-  toJSON(): SerializabledObject<T> {
-    return {
-      type: 'Container',
-      value: this._value,
-    };
-  }
+export interface Container<T> extends Typeable, Serializable<T> {
+  map<R>(fn: (value: T) => R): Container<R>;
+  chain<R>(fn: (value: T) => Container<R>): Container<R>;
+  apply<R>(other: Container<(value: T) => R>): Container<R>;
+  extract(): T;
 }
 
-export type { Container };
-export const { wrap } = Container;
+/**
+ * Wraps value in `Container` monad and allow
+ * to perform on it operations in chainable way.
+ */
+export const wrap = <T>(value: T): Container<T> => ({
+  type: () => CONTAINER_OBJECT_TYPE,
+  extract: () => value,
+  toJSON: () => ({
+    type: CONTAINER_OBJECT_TYPE,
+    value,
+  }),
+  map: (fn) => wrap(fn(value)),
+  chain: (fn) => fn(value),
+  apply: (other) => other.map((fn) => fn(value)),
+});
 
-/** Check if value is instance of Container. */
+/** Check if value is instance of `Container`. */
 export const isContainer = <T>(value: unknown): value is Container<T> =>
-  value instanceof Container;
+  isObject(value) &&
+  isFunction((value as Typeable).type) &&
+  (value as Typeable).type() === CONTAINER_OBJECT_TYPE;

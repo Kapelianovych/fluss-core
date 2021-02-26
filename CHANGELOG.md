@@ -3,6 +3,28 @@
 ### Added
 
 - `Idle` monad and `isIdle` function.
+- `isJust` function.
+- `isObject` function.
+- `isFunction` function.
+- `Typeable`, `Sizeable`, `Semogroupoid`, `Semigroup` and `Compressable` interfaces.
+- `apply` method to `Stream`.
+
+### Changed
+
+- `Comonad` interface extends now `Functor`.
+- Rename `fold` method of `Foldable` interface to `reduce` due to match [Fantasy Land specification](https://github.com/fantasyland/fantasy-land).
+- Rename `Maybe` type to `Option`, `just` to `some`, `nothing` function to `none` constant.
+- Rename `join` method of `List` to `concat`.
+- Rename `join` method of `Stream` to `concat`.
+- `on`, `freeze`, `resume`, `send` and `destroy` methods of `Stream` return now _undefined_ value.
+
+### Fixed
+
+- Destructure value in `reviver` for constructing `tuple`.
+
+### Removed
+
+- `either` function.
 
 ## [0.18.0] - 2021-02-16
 

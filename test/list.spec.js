@@ -1,4 +1,4 @@
-import { list, iterate, isList, isMaybe } from '../build';
+import { list, iterate, isList, isOption } from '../build';
 
 describe('List data structure', () => {
   test('list and iterate functions create List container', () => {
@@ -40,12 +40,8 @@ describe('List data structure', () => {
     expect(list(1, 2, 3).chain(list).asArray()).toEqual([1, 2, 3]);
   });
 
-  test('join concat iterables and array-like objects', () => {
-    expect(
-      list(0)
-        .join([1], new Set([2]), list(3), { 0: 4, length: 1 })
-        .asArray()
-    ).toEqual([0, 1, 2, 3, 4]);
+  test('concat method joins this list with another one', () => {
+    expect(list(0).concat(list(1)).asArray()).toEqual([0, 1]);
   });
 
   test('filter skip values that do not pass predicate function', () => {
@@ -90,12 +86,12 @@ describe('List data structure', () => {
     expect(list().isEmpty()).toBe(true);
   });
 
-  test('fold method reduce values of List to one value', () => {
-    expect(list(1, 2, 3).fold((a, v) => a + v, 0)).toBe(6);
+  test('reduce method reduce values of List to one value', () => {
+    expect(list(1, 2, 3).reduce((a, v) => a + v, 0)).toBe(6);
   });
 
-  test('fold method must return accumulator value if list is empty', () => {
-    expect(list().fold((a, v) => a + v, 0)).toBe(0);
+  test('reduce method must return accumulator value if list is empty', () => {
+    expect(list().reduce((a, v) => a + v, 0)).toBe(0);
   });
 
   test('any method check if at least one value pass predicate', () => {
@@ -166,7 +162,7 @@ describe('List data structure', () => {
   });
 
   test('find method returns Maybe and gets value from List', () => {
-    expect(isMaybe(list(1).find((item) => item === 1))).toBe(true);
+    expect(isOption(list(1).find((item) => item === 1))).toBe(true);
     expect(
       list(1)
         .find((item) => item === 1)

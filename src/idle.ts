@@ -1,5 +1,7 @@
-import { isNothing } from './is_nothing';
-import type { Comonad, Monad } from './types';
+import { isObject } from './is_object';
+import { isNothing } from './is_just_nothing';
+import { isFunction } from './is_function';
+import type { Serializable, Typeable } from './types';
 
 type IdleCallbackHandle = unknown;
 
@@ -30,50 +32,48 @@ declare global {
 const deferCallback = globalThis.requestIdleCallback ?? globalThis.setTimeout;
 const cancelCallback = globalThis.cancelIdleCallback ?? globalThis.clearTimeout;
 
+export const IDLE_OBJECT_TYPE = 'Idle';
+
 /** Monad that allow to defer data initialization. */
-class Idle<T> implements Comonad<T>, Monad<T> {
-  private _fn: () => T;
-  private _value: T | undefined;
-  private _handle: IdleCallbackHandle;
-
-  private constructor(fn: () => T) {
-    this._fn = fn;
-    this._handle = deferCallback(() => (this._value = fn()));
-  }
-
-  /**
-   * Queues a data returned by `fn` to be evaluated
-   * at interpretator's idle period.
-   */
-  static idle<T>(fn: () => T): Idle<T> {
-    return new Idle<T>(fn);
-  }
-
-  map<R>(fn: (value: T) => R): Idle<R> {
-    return new Idle<R>(() => fn(this.extract()));
-  }
-
-  chain<R>(fn: (value: T) => Idle<R>): Idle<R> {
-    return fn(this.extract());
-  }
-
-  apply<R>(other: Idle<(value: T) => R>): Idle<R> {
-    return new Idle<R>(() => other.extract()(this.extract()));
-  }
-
-  extract(): T {
-    if (isNothing(this._value)) {
-      cancelCallback(this._handle);
-      this._value = this._fn();
-    }
-
-    return this._value;
-  }
+export interface Idle<T> extends Typeable, Serializable<T> {
+  map<R>(fn: (value: T) => R): Idle<R>;
+  chain<R>(fn: (value: T) => Idle<R>): Idle<R>;
+  apply<R>(other: Idle<(value: T) => R>): Idle<R>;
+  extract(): T;
 }
 
-export type { Idle };
-export const { idle } = Idle;
+/**
+ * Queues a data returned by `fn` to be evaluated
+ * at interpretator's idle period.
+ */
+export const idle = <T>(fn: () => T): Idle<T> => {
+  let value: T | undefined;
+  const handle = deferCallback(() => (value = fn()));
+
+  const extract = (): T => {
+    if (isNothing(value)) {
+      cancelCallback(handle);
+      value = fn();
+    }
+
+    return value;
+  };
+
+  return {
+    extract,
+    type: () => IDLE_OBJECT_TYPE,
+    map: (fn) => idle(() => fn(extract())),
+    chain: (fn) => fn(extract()),
+    apply: (other) => other.map((fn) => fn(extract())),
+    toJSON: () => ({
+      type: IDLE_OBJECT_TYPE,
+      value: extract(),
+    }),
+  };
+};
 
 /** Check if _value_ is idle. */
 export const isIdle = <T>(value: unknown): value is Idle<T> =>
-  value instanceof Idle;
+  isObject(value) &&
+  isFunction((value as Typeable).type) &&
+  (value as Typeable).type() === IDLE_OBJECT_TYPE;

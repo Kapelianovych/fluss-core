@@ -1,3 +1,5 @@
+import type { Just } from './utilities';
+
 export interface Functor<T> {
   /** Maps inner value and returns new monad instance with new value. */
   map<R>(fn: (value: T) => R): Functor<R>;
@@ -8,29 +10,38 @@ export interface Apply<T> extends Functor<T> {
    * Maps value by using value of `other` monad.
    * Value of other monad must be a **function type**.
    */
-  apply<R>(other: Apply<(value: any) => R>): Apply<R>;
+  apply<R>(other: Apply<(value: T) => R>): Apply<R>;
 }
 
-export interface Chain<T> extends Functor<T> {
+export interface Chain<T> extends Apply<T> {
   /** Maps inner value and returns new monad instance with new value. */
   chain<R>(fn: (value: T) => Chain<R>): Chain<R>;
 }
 
-export interface Comonad<T> {
+export interface Comonad<T> extends Functor<T> {
   /** Expose inner value to outside. */
   extract(): T;
 }
 
-export interface Monad<T> extends Apply<T>, Chain<T> {}
+export interface Monad<T> extends Chain<T> {}
 
 export interface Foldable<T> {
   /** Reduce iterable to some value. */
-  fold<R>(fn: (accumulator: R, value: T) => R, accumulator: R): R;
+  reduce<R>(fn: (accumulator: R, value: T) => R, accumulator: R): R;
 }
 
 export interface Filterable<T> {
   /** Filter data based on the _predicate_ function. */
   filter(predicate: (value: T) => boolean): Filterable<T>;
+}
+
+export interface Semigroup<T> {
+  /** Join values together. */
+  concat(other: Semigroup<T>): Semigroup<T>;
+}
+
+export interface Semigroupoid<A, B> {
+  compose<C>(other: Semigroupoid<B, C>): Semigroupoid<A, C>;
 }
 
 export interface SerializabledObject<T> {
@@ -46,4 +57,20 @@ export interface Serializable<T> {
 /** Function that returns iterable iterator. */
 export interface IterableIteratorFunction<T> {
   (): IterableIterator<T>;
+}
+
+export interface Typeable {
+  /** Return type name of a object. */
+  type(): string;
+}
+
+export interface Sizeable {
+  /** Return amount of a aggregated values. */
+  size(): number;
+  isEmpty(): boolean;
+}
+
+export interface Compressable<T> {
+  /** Get rid of `Nothing` values. */
+  compress(): Compressable<Just<T>>;
 }

@@ -87,7 +87,9 @@ describe('stream', () => {
 
   test('should invoke destroyed listener before self destroying', () => {
     let value;
-    const s = stream().on(StreamEvent.DESTROY, () => (value = 'destroyed'));
+    const s = stream();
+
+    s.on(StreamEvent.DESTROY, () => (value = 'destroyed'));
 
     s.destroy();
 
@@ -108,7 +110,9 @@ describe('stream', () => {
 
   test('should invoke frozen listener before self freezing', () => {
     let value;
-    const s = stream().on(StreamEvent.FREEZE, () => (value = 'frozen'));
+    const s = stream();
+
+    s.on(StreamEvent.FREEZE, () => (value = 'frozen'));
 
     s.freeze();
 
@@ -131,7 +135,9 @@ describe('stream', () => {
 
   test('should invoke resumed listener before self resume', () => {
     let value;
-    const s = stream().on(StreamEvent.RESUME, () => (value = 'resumed'));
+    const s = stream();
+
+    s.on(StreamEvent.RESUME, () => (value = 'resumed'));
 
     s.freeze();
     s.resume();
@@ -139,7 +145,7 @@ describe('stream', () => {
     expect(value).toMatch('resumed');
   });
 
-  test('join method should merge sterams into one stream', () => {
+  test('concat method should merge this stream with another one', () => {
     let value;
 
     const f = stream();
@@ -147,7 +153,7 @@ describe('stream', () => {
     const c = stream();
     const d = stream();
 
-    const n = f.join(b, c, d);
+    const n = f.concat(b).concat(c).concat(d);
 
     n.listen((v) => (value = v));
 

@@ -7,7 +7,6 @@ describe('Container', () => {
 
   test('wrap function wraps value into Container and extract it', () => {
     expect(wrap(4).extract()).toBe(4);
-    expect(wrap(wrap(4)).extract()).toBe(4);
   });
 
   test('wrap function wraps value into Container and can map it', () => {
