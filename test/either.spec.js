@@ -1,4 +1,4 @@
-import { isEither, right, left } from '../build';
+import { isEither, right, left, either } from '../build';
 
 describe('Either', () => {
   test('isEither check if value is instance of Either type', () => {
@@ -13,6 +13,21 @@ describe('Either', () => {
   test('left function creates Either with Left state', () => {
     expect(left(new Error()).isLeft()).toBe(true);
   });
+
+  test(
+    'either function returns instance of Left or Right state based ' +
+      'on isRight predicate function',
+    () => {
+      expect(either((value) => typeof value === 'string', '').isRight()).toBe(
+        true
+      );
+      expect(either((value) => typeof value === 'string', '').isLeft()).toBe(
+        false
+      );
+      expect(either(Array.isArray, '').isLeft()).toBe(true);
+      expect(either(Array.isArray, '').isRight()).toBe(false);
+    }
+  );
 
   test('extract method return inner value of Either', () => {
     expect(right(8).extract()).toBe(8);

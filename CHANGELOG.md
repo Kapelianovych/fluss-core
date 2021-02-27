@@ -17,14 +17,11 @@
 - Rename `join` method of `List` to `concat`.
 - Rename `join` method of `Stream` to `concat`.
 - `on`, `freeze`, `resume`, `send` and `destroy` methods of `Stream` return now _undefined_ value.
+- Signature of `either` function: it now accept _isRight_ function as first parameter.
 
 ### Fixed
 
 - Destructure value in `reviver` for constructing `tuple`.
-
-### Removed
-
-- `either` function.
 
 ## [0.18.0] - 2021-02-16
 

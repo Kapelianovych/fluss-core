@@ -61,6 +61,16 @@ export const left = <A>(value: A): Left<A> => ({
   apply: () => left(value),
 });
 
+/**
+ * Lift _value_ into `Either` monad.
+ * _isRight_ parameter helps find out if
+ * _value_ must belong to `Right` or `Left` type.
+ */
+export const either = <A, B>(
+  isRight: (value: A | B) => value is B,
+  value: A | B
+): Either<A, B> => (isRight(value) ? right(value) : left(value));
+
 /** Checks if value is instance of `Either` monad. */
 export const isEither = <A, B>(value: unknown): value is Either<A, B> =>
   isObject(value) &&

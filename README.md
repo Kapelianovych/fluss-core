@@ -392,6 +392,24 @@ Creates `Either` monad instance with **Left** state.
 left<Error>(new Error('Error is occured!')); // Left<Error>
 ```
 
+### either
+
+```typescript
+function either<A, B>(
+  isRight: (value: A | B) => value is B,
+  value: A | B
+): Either<A, B>;
+```
+
+Lift _value_ into `Either` monad. _isRight_ parameter helps find out if _value_ must belong to `Right` or `Left` type.
+
+```typescript
+const result /*: Either<Error, string> */ = either(
+  isString,
+  new Error('I am a value')
+);
+```
+
 #### Either
 
 Monad that can contain success value or failure value. Allow handle errors in functional way.
