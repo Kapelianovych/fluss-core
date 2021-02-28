@@ -59,4 +59,8 @@ describe('tuple', () => {
   test('should be serializable', () => {
     expect(tuple(6).toJSON()).toEqual({ type: 'Tuple', value: [6] });
   });
+
+  test('should concat another tuple', () => {
+    expect(tuple(1).concat(tuple(2)).size()).toBe(2);
+  });
 });

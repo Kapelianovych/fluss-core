@@ -15,6 +15,9 @@ export interface Tuple<T extends ReadonlyArray<unknown>>
   item<P extends number>(position: P): T[P];
   shift<C extends number = 1>(count?: C): Tuple<Shift<C, T>>;
   append<V extends ReadonlyArray<unknown>>(...values: V): Tuple<[...T, ...V]>;
+  concat<V extends ReadonlyArray<unknown>>(
+    other: Tuple<V>
+  ): Tuple<[...T, ...V]>;
   prepend<V extends ReadonlyArray<unknown>>(...values: V): Tuple<[...V, ...T]>;
   position<V extends T[number]>(value: V): number;
   transform<P extends number, R>(
@@ -48,6 +51,8 @@ export const tuple = <T extends ReadonlyArray<unknown>>(
   position: (value) => values.indexOf(value),
   append: <V extends ReadonlyArray<unknown>>(...items: V) =>
     tuple(...(values.concat(items) as [...T, ...V])),
+  concat: <V extends ReadonlyArray<unknown>>(other: Tuple<V>) =>
+    tuple<[...T, ...V]>(...(values.concat([...other]) as [...T, ...V])),
   prepend: <V extends ReadonlyArray<unknown>>(...items: V) =>
     tuple(...(items.concat(values) as [...V, ...T])),
   shift: <C extends number = 1>(count = 1) =>
