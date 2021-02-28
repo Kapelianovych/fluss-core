@@ -24,6 +24,7 @@ export interface Tuple<T extends ReadonlyArray<unknown>>
     position: P,
     fn: (value: T[P]) => R
   ): Tuple<Transform<P, R, T>>;
+  asArray(): T;
 }
 
 /** Creates `Tuple` based on given values. */
@@ -60,6 +61,7 @@ export const tuple = <T extends ReadonlyArray<unknown>>(
   pop: <C extends number = 1>(count = 1) =>
     tuple<Pop<C, T>>(...(values.slice(0, values.length - count) as Pop<C, T>)),
   isEmpty: () => values.length === 0,
+  asArray: () => values,
 });
 
 /** Check if value is instance of `Tuple`. */

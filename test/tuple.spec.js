@@ -63,4 +63,8 @@ describe('tuple', () => {
   test('should concat another tuple', () => {
     expect(tuple(1).concat(tuple(2)).size()).toBe(2);
   });
+
+  test('asArray method should return values of tuple', () => {
+    expect(tuple(4).asArray()).toEqual([4]);
+  });
 });

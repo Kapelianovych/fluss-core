@@ -8,7 +8,7 @@
 - `isFunction` function.
 - `Typeable`, `Sizeable`, `Semogroupoid`, `Semigroup` and `Compressable` interfaces.
 - `apply` method to `Stream`.
-- `concat` method to `Tuple`.
+- `concat` and `asArray` method to `Tuple`.
 
 ### Changed
 
