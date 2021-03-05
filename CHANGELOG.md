@@ -6,7 +6,7 @@
 - `isJust` function.
 - `isObject` function.
 - `isFunction` function.
-- `Typeable`, `Sizeable`, `Semogroupoid`, `Semigroup` and `Compressable` interfaces.
+- `Typeable`, `Sizeable`, `Semigroupoid`, `Semigroup` and `Compressable` interfaces.
 - `apply` method to `Stream`.
 - `concat` and `asArray` method to `Tuple`.
 

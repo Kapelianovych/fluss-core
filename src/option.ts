@@ -11,7 +11,7 @@ export interface Some<T> extends Typeable, Serializable<T> {
   map<R>(fn: (value: T) => R): Some<R>;
   fill(): Some<T>;
   chain<R>(fn: (value: T) => Some<R>): Some<R>;
-  apply<R>(fn: Some<(value: T) => R>): Some<R>;
+  apply<R>(other: Some<(value: T) => R>): Some<R>;
   isSome(): this is Some<T>;
   isNone(): this is None;
   extract(): T;
