@@ -76,6 +76,23 @@ const fn /*: (str: string) => string */ = pipe(
 const result /*: '123' */ = fn('1');
 ```
 
+### once
+
+```typescript
+function once<T extends ReadonlyArray<unknown>>(
+  fn: (...args: T) => void,
+  after?: (...args: T) => void
+): (...args: T) => void;
+```
+
+Execute _fn_ only once. And then _after_ function if it is provided.
+
+```typescript
+const doOnlyOnce = once(() => {
+  /* Initialize something. */
+});
+```
+
 ### curry
 
 ```typescript

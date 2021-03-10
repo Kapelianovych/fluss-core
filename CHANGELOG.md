@@ -9,6 +9,7 @@
 - `Typeable`, `Sizeable`, `Semigroupoid`, `Semigroup` and `Compressable` interfaces.
 - `apply` method to `Stream`.
 - `concat` and `asArray` method to `Tuple`.
+- `once` function.
 
 ### Changed
 
