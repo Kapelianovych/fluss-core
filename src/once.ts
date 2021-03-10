@@ -8,12 +8,5 @@ export const once = <T extends ReadonlyArray<unknown>>(
   after: (...args: T) => void = () => {}
 ) => {
   let done = false;
-  return (...args: T) => {
-    if (!done) {
-      done = true;
-      fn(...args);
-    } else {
-      after(...args);
-    }
-  };
+  return (...args: T) => (done ? after(...args) : ((done = true), fn(...args)));
 };
