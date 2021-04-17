@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { once } from '../build/index.js';
+import { isOption, once } from '../build/index.js';
 
 describe('once', () => {
   let func;
@@ -40,5 +40,26 @@ describe('once', () => {
     onced();
     expect(func).toHaveBeenCalledTimes(1);
     expect(after).toHaveBeenCalledTimes(2);
+  });
+
+  test('should return result of function as Option if only first argument is provided', () => {
+    const onced = once(() => '');
+    const result = onced();
+
+    expect(isOption(result)).toBe(true);
+    expect(result.extract()).toBe('');
+    expect(onced().isNone()).toBe(true);
+    expect(onced().isNone()).toBe(true);
+  });
+
+  test('should return always the result of second function after second invocation', () => {
+    const onced = once(
+      () => 'f',
+      () => 's'
+    );
+
+    expect(onced()).toBe('f');
+    expect(onced()).toBe('s');
+    expect(onced()).toBe('s');
   });
 });

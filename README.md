@@ -79,10 +79,15 @@ const result /*: '123' */ = fn('1');
 ### once
 
 ```typescript
-function once<T extends ReadonlyArray<unknown>>(
-  fn: (...args: T) => void,
-  after?: (...args: T) => void
-): (...args: T) => void;
+interface OnceFunction {
+  <T extends ReadonlyArray<unknown>, R>(fn: (...args: T) => R): (
+    ...args: T
+  ) => Option<Just<R>>;
+  <T extends ReadonlyArray<unknown>, R>(
+    fn: (...args: T) => R,
+    after: (...args: T) => R
+  ): (...args: T) => R;
+}
 ```
 
 Execute _fn_ only once. And then _after_ function if it is provided.

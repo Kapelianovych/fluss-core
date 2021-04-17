@@ -1,12 +1,34 @@
+import { Just } from './utilities';
+import { isNothing } from './is_just_nothing';
+import { maybe, none, Option } from './option';
+
+interface OnceFunction {
+  <T extends ReadonlyArray<unknown>, R>(fn: (...args: T) => R): (
+    ...args: T
+  ) => Option<Just<R>>;
+  <T extends ReadonlyArray<unknown>, R>(
+    fn: (...args: T) => R,
+    after: (...args: T) => R
+  ): (...args: T) => R;
+}
+
 /**
- * Invoke _fn_ only once.
+ * Invokes _fn_ only once.
  * If _after_ function is provided, then
  * it will be called after _fn_ has been executed.
  */
-export const once = <T extends ReadonlyArray<unknown>>(
-  fn: (...args: T) => void,
-  after: (...args: T) => void = () => {}
+export const once: OnceFunction = <T extends ReadonlyArray<unknown>, R>(
+  fn: (...args: T) => R,
+  after?: (...args: T) => R
 ) => {
   let done = false;
-  return (...args: T) => (done ? after(...args) : ((done = true), fn(...args)));
+
+  return (...args: T) => {
+    if (done) {
+      return isNothing(after) ? none : after(...args);
+    } else {
+      done = true;
+      return isNothing(after) ? maybe(fn(...args)) : fn(...args);
+    }
+  };
 };
