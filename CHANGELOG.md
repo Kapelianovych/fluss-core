@@ -1,4 +1,4 @@
-# [0.19.0]
+# [0.19.0] - 2021-04-18
 
 ### Added
 
@@ -20,6 +20,7 @@
 - Rename `join` method of `Stream` to `concat`.
 - `on`, `freeze`, `resume`, `send` and `destroy` methods of `Stream` return now _undefined_ value.
 - Signature of `either` function: it now accept _isRight_ function as first parameter.
+- Rename `sequence` function to `sequentially` and now it can handle asynchronous functions.
 
 ### Fixed
 

@@ -134,25 +134,35 @@ const y /*: (a: Array<number>) => number */ = fork(
 );
 ```
 
-### sequence
+### sequentially
 
 ```typescript
-function sequence<V extends ReadonlyArray<unknown>>(
-  ...fns: ReadonlyArray<(...values: V) => unknown>
-): (...values: V) => void;
+function sequentially<
+  V extends ReadonlyArray<(...values: ReadonlyArray<any>) => unknown>
+>(
+  ...fns: V
+): (
+  ...values: IsParametersEqual<V> extends true
+    ? Parameters<First<V>>
+    : ReadonlyArray<unknown>
+) => HasPromise<ExtractReturnTypes<V>> extends true ? Promise<void> : void;
 ```
 
-Lets invoke independent functions with the same value in order that they are declared.
+Lets invoke independently functions with the same value in order that they are declared. Can handle asynchronous functions.
 
 ```typescript
-function sendOverNetwork(error: Error) {
-  // send error to some url
+function sendOverNetwork(error: Error): Promise<void> {
+  // sends error to some url
 }
 
-const errorLogger /*: (value: Error) => void */ = sequence(
-  console.log, // 1
+function logIntoFile(error: Error): Promise<void> {
+  // writes error to file
+}
+
+const errorLogger /*: (value: Error) => Promise<void> */ = sequentially(
+  sendOverNetwork // 1
   logIntoFile, // 2
-  sendOverNetwork // 3
+  console.log, // 3
 );
 
 errorLogger(someError);
