@@ -1,11 +1,10 @@
-import { Just } from './utilities';
 import { isNothing } from './is_just_nothing';
 import { maybe, none, Option } from './option';
 
 interface OnceFunction {
   <T extends ReadonlyArray<unknown>, R>(fn: (...args: T) => R): (
     ...args: T
-  ) => Option<Just<R>>;
+  ) => Option<R>;
   <T extends ReadonlyArray<unknown>, R>(
     fn: (...args: T) => R,
     after: (...args: T) => R

@@ -82,7 +82,7 @@ const result /*: '123' */ = fn('1');
 interface OnceFunction {
   <T extends ReadonlyArray<unknown>, R>(fn: (...args: T) => R): (
     ...args: T
-  ) => Option<Just<R>>;
+  ) => Option<R>;
   <T extends ReadonlyArray<unknown>, R>(
     fn: (...args: T) => R,
     after: (...args: T) => R
@@ -348,14 +348,16 @@ isOption(maybe(8)); // true
 ### maybe
 
 ```typescript
-function maybe<T>(value: T): Option<Just<T>>;
+function maybe<T>(
+  value: T
+): unknown extends T ? Option<T> : T extends Just<T> ? Some<T> : None;
 ```
 
 Wraps value with `Option` monad. Function detects state (**Just** or **Nothing**) of `Option` by yourself.
 
 ```typescript
-maybe(8); // Option<number>
-maybe(null); // Option<never>
+maybe(8); // Some<number>
+maybe(null); // None
 ```
 
 ### some
