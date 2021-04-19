@@ -1,4 +1,4 @@
-import { freeze } from '../build';
+import { freeze } from '../src/freeze';
 
 describe('freeze', () => {
   test('freeze makes shallow freezing of object', () => {
@@ -7,7 +7,7 @@ describe('freeze', () => {
         return '';
       },
       b: {
-        c() {
+        c(): string {
           return '';
         },
       },
@@ -34,6 +34,7 @@ describe('freeze', () => {
     );
 
     expect(Object.isFrozen(frozenObject)).toBe(true);
+    // @ts-expect-error
     expect(() => (frozenObject.b.c = () => 'new')).toThrow();
   });
 });

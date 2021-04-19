@@ -1,4 +1,4 @@
-import { some, isOption, none, maybe } from '../build';
+import { some, isOption, none, maybe } from '../src/option';
 
 describe('Option', () => {
   test('isOption checks if value is instance of Option', () => {
@@ -28,6 +28,7 @@ describe('Option', () => {
   });
 
   test('map method of Option invokes only if Option has Some state', () => {
+    // @ts-expect-error
     const result = none.map((u) => u * u).extract();
 
     expect(result).toBe(null);
@@ -40,18 +41,20 @@ describe('Option', () => {
   });
 
   test('apply method of Option invokes only if this Option and other has Some state', () => {
+    // @ts-expect-error
     const result = none.apply(some((u) => u * u)).extract();
 
     expect(result).toBe(null);
 
     const result2 = some(2)
-      .apply(some((u) => u * u))
+      .apply(some((u: number) => u * u))
       .extract();
 
     expect(result2).toBe(4);
   });
 
   test('chain method of Option invokes only if Option has Some state', () => {
+    // @ts-expect-error
     const result = none.chain((u) => some(u * u)).extract();
 
     expect(result).toBe(null);

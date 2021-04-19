@@ -1,10 +1,10 @@
-import { sequentially } from '../build';
+import { sequentially } from '../src/sequentially';
 
 describe('sequentially', () => {
   test('sequentially function executes functions with same input value', () => {
     let stringValue = '';
     const concatNumberAsString = sequentially(
-      (n) => (stringValue += n),
+      (n: number) => (stringValue += n),
       (b) => (stringValue += b),
       (u) => (stringValue += u)
     );
@@ -16,7 +16,7 @@ describe('sequentially', () => {
   test('should be able to handle asynchronous functions and return promise', async () => {
     let text = '';
     const s = sequentially(
-      async (num) => (text += num),
+      async (num: number) => (text += num),
       (num) => (text += num + 1),
       async (num) => (text += num + 2)
     );

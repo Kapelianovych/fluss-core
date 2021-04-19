@@ -1,4 +1,4 @@
-import { tryCatch } from '../build';
+import { tryCatch } from '../src/try_catch';
 
 describe('tryCatch', () => {
   test('tryCatch function without catch function and with right case returns Either with Right state', () => {

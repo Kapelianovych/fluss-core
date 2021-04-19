@@ -1,4 +1,4 @@
-import { stream, isStream, StreamEvent } from '../build';
+import { stream, isStream, StreamEvent } from '../src/stream';
 
 describe('stream', () => {
   test('should creates stream object', () => {
@@ -51,14 +51,14 @@ describe('stream', () => {
   });
 
   test('should filter values', () => {
-    let value;
-    const s = stream();
+    let value: number = 0;
+    const s = stream<number>();
 
     s.filter((value) => value > 5).listen((v) => (value = v));
 
     s.send(1);
 
-    expect(value).toBeUndefined();
+    expect(value).toBe(0);
 
     s.send(8);
 
@@ -185,13 +185,15 @@ describe('stream', () => {
 
   test('compress method should filter null and undefined values', () => {
     let value = 1;
-    const s = stream();
+    const s = stream<number>();
 
     s.compress().listen((v) => (value = v));
 
+    // @ts-ignore
     s.send(null);
     expect(value).toBe(1);
 
+    // @ts-ignore
     s.send(undefined);
     expect(value).toBe(1);
   });

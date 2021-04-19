@@ -1,4 +1,4 @@
-import { array } from '../build';
+import { array } from '../src/array';
 
 describe('array', () => {
   test('array creates an array from iterables and array-like objects', () => {

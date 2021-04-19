@@ -1,4 +1,4 @@
-import { isError } from '../build';
+import { isError } from '../src/is_error';
 
 describe('isError', () => {
   test('isError with only error value must return true', () => {

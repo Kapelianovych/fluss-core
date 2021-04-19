@@ -6,7 +6,7 @@ import {
   isEither,
   isOption,
   isContainer,
-} from '../build';
+} from '../src';
 
 describe('reviver', () => {
   test('should skip values that are not Option, Either and List', () => {

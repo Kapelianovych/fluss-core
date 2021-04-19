@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
-import { isOption, once } from '../build/index.js';
+import { isOption, once } from '../src';
 
 describe('once', () => {
-  let func;
+  let func: (...args: unknown[]) => unknown;
 
   beforeEach(() => (func = jest.fn()));
 

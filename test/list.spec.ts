@@ -1,4 +1,4 @@
-import { list, iterate, isList, isOption } from '../build';
+import { list, iterate, isList, isOption } from '../src';
 
 describe('List data structure', () => {
   test('list and iterate functions create List container', () => {
@@ -64,7 +64,7 @@ describe('List data structure', () => {
     'forEach method execute function for each value of List ' +
       'and does not return value',
     () => {
-      let array = [];
+      let array: number[] = [];
 
       expect(list(1, 2, 3).forEach(array.push.bind(array))).toBe(undefined);
 
@@ -91,7 +91,7 @@ describe('List data structure', () => {
   });
 
   test('reduce method must return accumulator value if list is empty', () => {
-    expect(list().reduce((a, v) => a + v, 0)).toBe(0);
+    expect(list<number>().reduce((a, v) => a + v, 0)).toBe(0);
   });
 
   test('any method check if at least one value pass predicate', () => {
@@ -103,7 +103,7 @@ describe('List data structure', () => {
   test('all method checks if all values pass predicate', () => {
     expect(list(1, 2, 3).all((num) => num > 0)).toBe(true);
     expect(list(1, 2, 3).all((num) => num < 0)).toBe(false);
-    expect(list().all((num) => num > 0)).toBe(true);
+    expect(list<number>().all((num) => num > 0)).toBe(true);
   });
 
   test('sort method sorts list of numbers in ascending order', () => {

@@ -1,4 +1,4 @@
-import { isFunction } from '../build/index.js';
+import { isFunction } from '../src/is_function';
 
 describe('isFunction', () => {
   test('should return true if value is function', () => {

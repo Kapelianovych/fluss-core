@@ -1,15 +1,17 @@
 # @fluss/core
 
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
 Library for functional coding in modern environment.
 
 ## Design goals
 
-- Manual annotation should never be required, TypeScript should infer everything by self.
+- Get the most from TypeScript's inference power.
 - The implementation of each function should be as minimal as possible.
 - All functions are immutable, and there are no side-effects.
 - All functions must be safe as much as possible.
 - Do not override native methods, if function will make same work and produce result same as native method.
-- Each function is maximally independent module (we try our best, though there can be some dependencies).
+- Each function is maximally independent module (I try my best, though there can be some dependencies).
 
 ## Example use
 
@@ -23,12 +25,8 @@ const result /*: string */ = curriedFn2('');
 
 ## @fluss/core's advantages
 
-- TypeScript included
-
-TypeScript definitions are included in the library.
-
+- TypeScript included out the box
 - Small size
-
 - Separated modules. You can import only needed functions into your code.
 
 ## Install
@@ -687,3 +685,7 @@ Add recognition of `Container`, `Idle`, `Tuple`, `Option`, `List`, `Either` data
 const obj = JSON.parse('{"type":"Some","value":1}', reviver);
 // obj will be instance of Option type.
 ```
+
+## Word from author
+
+Have fun ✌️

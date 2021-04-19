@@ -42,15 +42,13 @@ export const sequentially = <
   V extends ReadonlyArray<(...values: ReadonlyArray<any>) => unknown>
 >(
   ...fns: V
-) => {
-  return (
-    ...values: IsParametersEqual<V> extends true
-      ? Parameters<First<V>>
-      : ReadonlyArray<unknown>
-  ): HasPromise<ExtractReturnTypes<V>> extends true ? Promise<void> : void =>
-    fns.reduce(
-      (result, fn) =>
-        isPromise(result) ? result.then(() => fn(...values)) : fn(...values),
-      undefined as any
-    );
-};
+) => (
+  ...values: IsParametersEqual<V> extends true
+    ? Parameters<First<V>>
+    : ReadonlyArray<unknown>
+): HasPromise<ExtractReturnTypes<V>> extends true ? Promise<void> : void =>
+  fns.reduce(
+    (result, fn) =>
+      isPromise(result) ? result.then(() => fn(...values)) : fn(...values),
+    undefined as any
+  );

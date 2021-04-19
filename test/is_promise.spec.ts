@@ -1,4 +1,4 @@
-import { isPromise } from '../build';
+import { isPromise } from '../src/is_promise';
 
 describe('isPromise', () => {
   test('isPromise function check if value is instance of Promise', () => {

@@ -1,4 +1,4 @@
-import { wrap, isContainer } from '../build';
+import { wrap, isContainer } from '../src/container';
 
 describe('Container', () => {
   test('wrap function wraps value into Container', () => {

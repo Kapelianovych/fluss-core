@@ -1,4 +1,4 @@
-import { pipe } from '../build';
+import { pipe } from '../src/pipe';
 
 describe('pipe', () => {
   test(
@@ -33,6 +33,7 @@ describe('pipe', () => {
     'if pipe function has not arguments it must return ' +
       'array of provided arguments of composed function.',
     () => {
+      // @ts-expect-error
       const composedFn = pipe();
 
       expect(composedFn(6, 5, 4)).toEqual([6, 5, 4]);

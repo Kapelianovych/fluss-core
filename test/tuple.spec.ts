@@ -1,4 +1,4 @@
-import { tuple, isTuple } from '../build';
+import { tuple, isTuple } from '../src/tuple';
 
 describe('tuple', () => {
   test('should create tuple from set of values', () => {

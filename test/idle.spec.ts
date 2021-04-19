@@ -1,4 +1,4 @@
-import { idle, isIdle } from '../build/index.js';
+import { idle, isIdle } from '../src/idle';
 
 describe('idle', () => {
   test('should not immediately invoke function', () => {

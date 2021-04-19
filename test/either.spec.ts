@@ -1,4 +1,4 @@
-import { isEither, right, left, either } from '../build';
+import { isEither, right, left, either } from '../src/either';
 
 describe('Either', () => {
   test('isEither check if value is instance of Either type', () => {
@@ -18,9 +18,11 @@ describe('Either', () => {
     'either function returns instance of Left or Right state based ' +
       'on isRight predicate function',
     () => {
+      // @ts-ignore
       expect(either((value) => typeof value === 'string', '').isRight()).toBe(
         true
       );
+      // @ts-ignore
       expect(either((value) => typeof value === 'string', '').isLeft()).toBe(
         false
       );
@@ -36,6 +38,7 @@ describe('Either', () => {
 
   test('map method of Either invokes only if Either has Right state', () => {
     const result = left(new Error())
+      // @ts-expect-error
       .map((u) => u * u)
       .extract();
 
@@ -50,6 +53,7 @@ describe('Either', () => {
 
   test('apply method of Either invokes only if Either has Right state', () => {
     const result = left(new Error())
+      // @ts-expect-error
       .apply(right((u) => u * u))
       .extract();
 
@@ -64,6 +68,7 @@ describe('Either', () => {
 
   test('chain method of Either invokes only if Either has Right state', () => {
     const result = left(new Error())
+      // @ts-expect-error
       .chain((u) => right(u * u))
       .extract();
 

@@ -1,4 +1,4 @@
-import { isObject } from '../build/index.js';
+import { isObject } from '../src/is_object';
 
 describe('isObject', () => {
   test('should return true on object value', () => {

@@ -4,15 +4,9 @@
     "target": "ES2018",
     "rootDir": "src",
     "declaration": true,
-    "noImplicitAny": true,
     "declarationDir": "build",
-    "noImplicitThis": true,
-    "moduleResolution": "node",
-    "strictNullChecks": true,
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true
+    "moduleResolution": "node"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["node_modules"]
 }

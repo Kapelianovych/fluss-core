@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals';
-import { done, isTask, task, fail } from '../build';
+import { done, isTask, task, fail } from '../src/task';
 
 describe('Task monad', () => {
   test('isTask checks if value is Task monad.', () => {
-    expect(isTask(task(console.log, console.error))).toBe(true);
+    expect(isTask(task(console.log))).toBe(true);
   });
 
   test('Task define action, but does not start it.', () => {
@@ -27,7 +27,7 @@ describe('Task monad', () => {
     task(promise)
       .map((num) => num + 3)
       .map((num) => num - 4)
-      .start((num) => expect(num).toBe(6));
+      .start((num) => expect(num).toBe(6), console.error);
   });
 
   test('done creates Task with value', () => {
@@ -41,27 +41,29 @@ describe('Task monad', () => {
   });
 
   test('Task can map value', () => {
-    const someTask = task((done, _) => setTimeout(() => done(5), 1000));
+    const someTask = task<number>((done, _) => setTimeout(() => done(5), 1000));
 
     someTask
       .map((num) => num + 9)
       .map((num) => num - 6)
-      .start((num) => expect(num).toBe(8));
+      .start((num) => expect(num).toBe(8), console.error);
   });
 
   test('Task can chain other tasks', () => {
-    const someTask = task((done, _) => setTimeout(() => done(5), 1000));
+    const someTask = task<number>((done, _) => setTimeout(() => done(5), 1000));
 
     someTask
       .chain((num) => done(num + 7))
       .chain((num) => done(num - 2))
-      .start((num) => expect(num).toBe(10));
+      .start((num) => expect(num).toBe(10), console.error);
   });
 
   test('Task can apply other tasks', () => {
-    const someTask = task((done, _) => setTimeout(() => done(5), 1000));
+    const someTask = task<number>((done, _) => setTimeout(() => done(5), 1000));
 
-    someTask.apply(done((num) => num * 2)).start((num) => expect(num).toBe(10));
+    someTask
+      .apply(done((num) => num * 2))
+      .start((num) => expect(num).toBe(10), console.error);
   });
 
   test('Task can return result wrapped in Promise', async () => {

@@ -1,7 +1,7 @@
-import { lazy, isLazy } from '../build/lazy.js';
+import { lazy, isLazy } from '../src/lazy';
 
 describe('lazy', () => {
-  const container = lazy((number) => number);
+  const container = lazy((number: number) => number);
 
   test('should creates wrapper over function', () => {
     expect(isLazy(container)).toBe(true);
