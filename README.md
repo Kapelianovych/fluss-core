@@ -78,6 +78,12 @@ const fn /*: (str: string) => string */ = pipe(
   (str: string) => str + 3
 );
 const result /*: '123' */ = fn('1');
+
+const composed /* Promise<number> */ = pipe(
+  async (str: string) => str + 2,
+  parseInt
+);
+const asyncResult /* Promise<number> */ = composed('1');
 ```
 
 ### once
