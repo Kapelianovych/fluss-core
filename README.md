@@ -59,12 +59,18 @@ function pipe<
   ]
 >(
   ...fns: T
-): PipeCheck<T> extends never
+) => (
+  ...args: Parameters<First<T>>
+): IsComposable<T> extends false
   ? unknown
-  : (...args: Parameters<T[0]>) => ReturnType<Last<T>>;
+  : HasPromise<ReturnTypesOf<T>> extends true
+  ? ReturnType<Last<T>> extends Promise<infer U>
+    ? Promise<U>
+    : Promise<ReturnType<Last<T>>>
+  : ReturnType<Last<T>>;
 ```
 
-Compose functions from left to right.
+Compose functions from left to right. Can handle asynchronous functions along with synchronous ones.
 
 ```typescript
 const fn /*: (str: string) => string */ = pipe(

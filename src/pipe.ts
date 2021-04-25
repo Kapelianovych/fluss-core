@@ -1,19 +1,35 @@
-import type { Last, Length, Tail } from './utilities';
+import { isPromise } from './is_promise';
+import type {
+  Tail,
+  Last,
+  First,
+  Length,
+  HasPromise,
+  ReturnTypesOf,
+} from './utilities';
 
-type PipeCheck<
+type IsComposable<
   T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
-  R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any> = []
+  R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any> = [],
+  U extends boolean = false
 > = Length<T> extends 0
-  ? R
-  : PipeCheck<
+  ? U
+  : IsComposable<
       Tail<T>,
-      // Function can return only one type, so we do not
-      // need to check of all parameters of next function,
-      // but only first.
-      ReturnType<Last<R>> extends Parameters<T[0]>[0] ? [...R, T[0]] : never
+      [First<T>, ...R],
+      Length<R> extends 0
+        ? false
+        : ReturnType<First<R>> extends
+            | First<Parameters<First<T>>>
+            | Promise<First<Parameters<First<T>>>>
+        ? true
+        : false
     >;
 
-/** Performs left-to-right function composition. */
+/**
+ * Performs left-to-right function composition.
+ * Can handle asynchronous functions.
+ */
 export const pipe = <
   T extends readonly [
     (...args: ReadonlyArray<any>) => any,
@@ -21,18 +37,21 @@ export const pipe = <
   ]
 >(
   ...fns: T
-): PipeCheck<T> extends never
-  ? // If function returns _never_ type, then TS will not
-    // warn users about incompatible function chain in pipe.
-    // So we return _unknown_ for sound type error checking.
-    unknown
-  : (...args: Parameters<T[0]>) => ReturnType<Last<T>> => {
-  // @ts-ignore
-  return (...args) => {
-    const firstFn = fns[0] ?? ((...x) => x);
-
-    return fns
-      .slice(1)
-      .reduce((currentArgs, fn) => fn(currentArgs), firstFn(...args));
-  };
-};
+) => (
+  ...args: Parameters<First<T>>
+): IsComposable<T> extends false
+  ? unknown
+  : HasPromise<ReturnTypesOf<T>> extends true
+  ? ReturnType<Last<T>> extends Promise<infer U>
+    ? Promise<U>
+    : Promise<ReturnType<Last<T>>>
+  : ReturnType<Last<T>> =>
+  fns.reduce(
+    (result, fn, index) =>
+      index === 0
+        ? (fn as T[0])(...result)
+        : isPromise(result)
+        ? result.then(fn)
+        : fn(result),
+    args as any
+  );

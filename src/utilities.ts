@@ -144,3 +144,21 @@ export type Position<
 
 /** Widen `T` to `W` if `T` is subtype of `W`. */
 export type Widen<T, W = never> = T extends W ? W : T;
+
+/** Detects if array has at least one `Promise`. */
+export type HasPromise<
+  R extends ReadonlyArray<unknown>,
+  A extends boolean = false
+> = A extends true
+  ? A
+  : Length<R> extends 0
+  ? A
+  : HasPromise<Tail<R>, First<R> extends Promise<unknown> ? true : false>;
+
+/** Converts array of function into array with their return types. */
+export type ReturnTypesOf<
+  F extends ReadonlyArray<(...args: ReadonlyArray<unknown>) => unknown>,
+  R extends ReadonlyArray<unknown> = []
+> = Length<F> extends 0
+  ? R
+  : ReturnTypesOf<Tail<F>, [...R, ReturnType<First<F>>]>;

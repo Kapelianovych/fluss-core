@@ -1,4 +1,10 @@
-# [0.19.0] - 2021-04-19
+# Unreleased
+
+### Changed
+
+- `pipe` function can now compose asynchronous functions along with syncronous ones.
+
+## [0.19.0] - 2021-04-19
 
 ### Added
 

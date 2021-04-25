@@ -1,33 +1,14 @@
 import { pipe } from '../src/pipe';
 
 describe('pipe', () => {
-  test(
-    'pipe function must compose two functions and return function ' +
-      'which input equals to input parameters of last function and output - output first function.',
-    () => {
-      const composedFn = pipe(
-        (n) => `${n} is number`,
-        (n) => n + '!'
-      );
+  test('should compose two functions and return function.', () => {
+    const composedFn = pipe(
+      (n) => `${n} is number`,
+      (n) => n + '!'
+    );
 
-      expect(composedFn(9)).toBe('9 is number!');
-    }
-  );
-
-  test(
-    'pipe function must compose two functions and return function ' +
-      ' which input equals to input parameters of last function and output - output first function.',
-    () => {
-      const composedFn = pipe(
-        (n) => `${n} is number`,
-        (n) => n + '!',
-        (n) => n + '!',
-        (n) => n + '!'
-      );
-
-      expect(composedFn(9)).toBe('9 is number!!!');
-    }
-  );
+    expect(composedFn(9)).toBe('9 is number!');
+  });
 
   test(
     'if pipe function has not arguments it must return ' +
@@ -39,4 +20,19 @@ describe('pipe', () => {
       expect(composedFn(6, 5, 4)).toEqual([6, 5, 4]);
     }
   );
+
+  test('should compose asynchronous functions.', async () => {
+    const composed = pipe(
+      async (s: string) => s,
+      async (s) => parseInt(s)
+    );
+
+    expect(await composed('1')).toBe(1);
+  });
+
+  test('should compose synchronous and asynchronous functions.', async () => {
+    const composed = pipe(async (s: string) => s, parseInt);
+
+    expect(await composed('1')).toBe(1);
+  });
 });
