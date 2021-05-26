@@ -54,4 +54,19 @@ describe('throttle', () => {
       }
     }, 1)();
   });
+
+  it('should be invoked less than 2 times in multiple invocation', () => {
+    let count = 0;
+
+    const throttledFunction = throttle(() => count++);
+
+    throttledFunction();
+    throttledFunction();
+    throttledFunction();
+    throttledFunction();
+    throttledFunction();
+    throttledFunction();
+
+    expect(count).toBeLessThan(2);
+  });
 });
