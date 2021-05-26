@@ -17,14 +17,17 @@ export const throttle = <F extends (...args: ReadonlyArray<unknown>) => void>(
   fn: F,
   frames: number = 2
 ): F => {
+  const time = frames * FRAME_TIME;
+  const delayFunction = delay(frames === 0 || frames === 1);
+
   let busy = false;
 
   return ((...args: Parameters<F>): void => {
     if (!busy) {
-      delay(frames === 0 || frames === 1)(() => {
+      delayFunction(() => {
         fn(...args);
         busy = false;
-      }, frames * FRAME_TIME);
+      }, time);
 
       busy = true;
     }

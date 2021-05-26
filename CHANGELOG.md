@@ -1,8 +1,12 @@
-# [0.20.0]
+# [0.20.0] - 2021-05-26
 
 ### Added
 
 - `throttle` function.
+
+### Changed
+
+- Return type of `chain` method of `Right` monad depends on return value of _fn_ parameter now.
 
 ## [0.19.1] - 2021-04-25
 
