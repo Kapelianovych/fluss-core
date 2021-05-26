@@ -14,10 +14,10 @@ const delay = (
 export const throttle = <F extends (...args: ReadonlyArray<unknown>) => void>(
   fn: F,
   frames: number = 2
-): F =>
-  ((...args: Parameters<F>): void => {
-    let busy = false;
+): F => {
+  let busy = false;
 
+  return ((...args: Parameters<F>): void => {
     if (!busy) {
       delay(frames === 0 || frames === 1)(() => {
         fn(...args);
@@ -27,3 +27,4 @@ export const throttle = <F extends (...args: ReadonlyArray<unknown>) => void>(
       busy = true;
     }
   }) as F;
+};
