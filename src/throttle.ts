@@ -10,6 +10,8 @@ const delay = (
 /**
  * Delay function invocation based on amount of frames.
  * It ensures that after this time function will be invoked.
+ * If _frames_ is set to `0` or `1`, then, if present, `requestAnimationFrame`
+ * is used. Otherwise, `setTimeout` function is in use.
  */
 export const throttle = <F extends (...args: ReadonlyArray<unknown>) => void>(
   fn: F,
