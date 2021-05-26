@@ -15,6 +15,7 @@ export * from './stream';
 export * from './freeze';
 export * from './reviver';
 export * from './is_error';
+export * from './throttle';
 export * from './is_object';
 export * from './utilities';
 export * from './container';

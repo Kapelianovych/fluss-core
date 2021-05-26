@@ -237,6 +237,25 @@ const y /*: false */ = isPromise(false);
 const y1 /*: true */ = isPromise(Promise.resolve(9));
 ```
 
+### throttle
+
+```ts
+function throttle<F extends (...args: ReadonlyArray<unknown>) => void>(
+  fn: F,
+  frames?: number
+): F;
+```
+
+Delays function invocation based on number of frames (one frame is about _16.67ms_). It ensures that function will be executed after this time. By default, it delays function with two frames.
+
+```ts
+const cpuHeavyFunction = throttle(() => {
+  /* Do some heavy stuff. */
+}, 4);
+
+document.addEventListener('scroll', cpuHeavyFunction);
+```
+
 ### array
 
 ```typescript
