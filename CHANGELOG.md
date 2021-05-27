@@ -1,8 +1,9 @@
-# Unreleased
+# [0.21.0] - 2021-05-27
 
 ### Changed
 
 - `send`, `resume`, `freeze` and `destroy` methods of `Stream` object return `Stream` object now.
+- `throttle` function try to use `requestAnimationFrame` when _frames_ argument is **1** or less.
 
 ## [0.20.0] - 2021-05-26
 
@@ -18,7 +19,7 @@
 
 ### Changed
 
-- `pipe` function can now compose asynchronous functions along with syncronous ones.
+- `pipe` function can now compose asynchronous functions along with synchronous ones.
 
 ## [0.19.0] - 2021-04-19
 
