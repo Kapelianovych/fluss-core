@@ -1,4 +1,10 @@
-# [0.20.0] - 2021-05-26
+# Unreleased
+
+### Changed
+
+- `send`, `resume`, `freeze` and `destroy` methods of `Stream` object return `Stream` object now.
+
+## [0.20.0] - 2021-05-26
 
 ### Added
 

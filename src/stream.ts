@@ -26,7 +26,7 @@ export interface Stream<T> extends Typeable {
   on(event: StreamEvent, listener: VoidFunction): VoidFunction;
   map<R>(fn: (value: T) => R): Stream<R>;
   /** Send _value_ to stream. */
-  send(value: T): void;
+  send(value: T): Stream<T>;
   concat(other: Stream<T>): Stream<T>;
   /**
    * Listen to every value that is passed through stream.
@@ -40,7 +40,7 @@ export interface Stream<T> extends Typeable {
    * In contrary of `destroy` method, this method does not remove
    * old listeners.
    */
-  freeze(): void;
+  freeze(): Stream<T>;
   /**
    * Creates new (**derived**) stream that depends on current stream.
    * Allow to create custom transform methods that maps over values
@@ -51,7 +51,7 @@ export interface Stream<T> extends Typeable {
    * Return to stream ability to accept listeners, values
    * and processing them.
    */
-  resume(): void;
+  resume(): Stream<T>;
   /**
    * Destroys stream. Stream gets rid of all listeners and
    * will be uncapable to accept new values and listeners.
@@ -59,14 +59,13 @@ export interface Stream<T> extends Typeable {
    * Stream can be resumed by `resume` method, but listeners
    * need to be attached to stream again.
    */
-  destroy(): void;
+  destroy(): Stream<T>;
   uniqueBy<F>(fn: (value: T) => F): Stream<T>;
   /** Get rid of `Nothing` values. */
   compress(): Stream<Just<T>>;
 }
 
-/** Creates live stream. */
-export const stream = <T>(): Stream<T> => {
+interface StreamCreationOptions<T> {
   /**
    * Flag that tells if Stream has been able to pass
    * through itself values.
@@ -75,17 +74,29 @@ export const stream = <T>(): Stream<T> => {
    * value listeners, destroy listeners and any derived streams
    * will never recieve values from destroyed stream.
    */
-  let _isActive: boolean = true;
-  let _valueListeners: Array<StreamListener<T>> = [];
-  let _freezeListeners: Array<VoidFunction> = [];
-  let _resumeListeners: Array<VoidFunction> = [];
-  let _destroyListeners: Array<VoidFunction> = [];
+  _isActive: boolean;
+  _valueListeners: Array<StreamListener<T>>;
+  _freezeListeners: Array<VoidFunction>;
+  _resumeListeners: Array<VoidFunction>;
+  _destroyListeners: Array<VoidFunction>;
+}
 
+const createStream = <T>(
+  options: StreamCreationOptions<T> = {
+    _isActive: true,
+    _valueListeners: [],
+    _destroyListeners: [],
+    _freezeListeners: [],
+    _resumeListeners: [],
+  }
+): Stream<T> => {
   const listen = (listener: StreamListener<T>): VoidFunction => {
-    if (_isActive) {
-      _valueListeners.push(listener);
+    if (options._isActive) {
+      options._valueListeners.push(listener);
       return () => {
-        _valueListeners = _valueListeners.filter((fn) => fn !== listener);
+        options._valueListeners = options._valueListeners.filter(
+          (fn) => fn !== listener
+        );
       };
     } else {
       return () => {};
@@ -95,33 +106,33 @@ export const stream = <T>(): Stream<T> => {
   const derive = <R>(
     fn: (derived: Stream<R>) => StreamListener<T>
   ): Stream<R> => {
-    const derived = stream<R>();
+    const derived = createStream<R>();
     derived.on(StreamEvent.DESTROY, listen(fn(derived)));
     return derived;
   };
 
   return {
     on: (event, listener) => {
-      if (_isActive) {
+      if (options._isActive) {
         switch (event) {
           case StreamEvent.FREEZE:
-            _freezeListeners.push(listener);
+            options._freezeListeners.push(listener);
             return () => {
-              _freezeListeners = _freezeListeners.filter(
+              options._freezeListeners = options._freezeListeners.filter(
                 (fn) => fn !== listener
               );
             };
           case StreamEvent.RESUME:
-            _resumeListeners.push(listener);
+            options._resumeListeners.push(listener);
             return () => {
-              _resumeListeners = _resumeListeners.filter(
+              options._resumeListeners = options._resumeListeners.filter(
                 (fn) => fn !== listener
               );
             };
           case StreamEvent.DESTROY:
-            _destroyListeners.push(listener);
+            options._destroyListeners.push(listener);
             return () => {
-              _destroyListeners = _destroyListeners.filter(
+              options._destroyListeners = options._destroyListeners.filter(
                 (fn) => fn !== listener
               );
             };
@@ -134,9 +145,11 @@ export const stream = <T>(): Stream<T> => {
     },
     map: (fn) => derive((derived) => (value) => derived.send(fn(value))),
     send: (value) => {
-      if (_isActive) {
-        _valueListeners.forEach((fn) => fn(value));
+      if (options._isActive) {
+        options._valueListeners.forEach((fn) => fn(value));
       }
+
+      return createStream(options);
     },
     filter: (predicate) =>
       derive((derived) => (value) => {
@@ -162,33 +175,42 @@ export const stream = <T>(): Stream<T> => {
         }
       }),
     concat: (other) => {
-      const concatenated = stream<T>();
+      const concatenated = createStream<T>();
       concatenated.on(StreamEvent.DESTROY, listen(concatenated.send));
       concatenated.on(StreamEvent.DESTROY, other.listen(concatenated.send));
       return concatenated;
     },
     freeze: () => {
-      _isActive = false;
-      _freezeListeners.forEach((fn) => fn());
+      options._freezeListeners.forEach((fn) => fn());
+      options._isActive = false;
+
+      return createStream(options);
     },
     resume: () => {
-      _isActive = true;
-      _resumeListeners.forEach((fn) => fn());
+      options._isActive = true;
+      options._resumeListeners.forEach((fn) => fn());
+
+      return createStream(options);
     },
     destroy: () => {
-      _isActive = false;
-      _destroyListeners.forEach((fn) => fn());
+      options._destroyListeners.forEach((fn) => fn());
 
-      _valueListeners = [];
-      _freezeListeners = [];
-      _resumeListeners = [];
-      _destroyListeners = [];
+      options._isActive = false;
+      options._valueListeners = [];
+      options._freezeListeners = [];
+      options._resumeListeners = [];
+      options._destroyListeners = [];
+
+      return createStream(options);
     },
     derive,
     listen,
     type: () => STREAM_OBJECT_TYPE,
   };
 };
+
+/** Creates live stream. */
+export const stream = <T>(): Stream<T> => createStream<T>();
 
 /** Check if _value_ is instance of `Stream` monad. */
 export const isStream = <T>(value: unknown): value is Stream<T> =>

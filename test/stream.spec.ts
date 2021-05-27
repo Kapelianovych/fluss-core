@@ -78,9 +78,7 @@ describe('stream', () => {
     const s = stream();
     s.listen((v) => (value = v));
 
-    s.destroy();
-
-    s.send(5);
+    s.destroy().send(5);
 
     expect(value).toBeUndefined();
   });
@@ -101,9 +99,7 @@ describe('stream', () => {
     const s = stream();
     s.listen((v) => (value = v));
 
-    s.freeze();
-
-    s.send(1);
+    s.freeze().send(1);
 
     expect(value).toBeUndefined();
   });
@@ -124,11 +120,7 @@ describe('stream', () => {
     const s = stream();
     s.listen((v) => (value = v));
 
-    s.freeze();
-
-    s.resume();
-
-    s.send(1);
+    s.freeze().resume().send(1);
 
     expect(value).toBe(1);
   });
@@ -139,8 +131,7 @@ describe('stream', () => {
 
     s.on(StreamEvent.RESUME, () => (value = 'resumed'));
 
-    s.freeze();
-    s.resume();
+    s.freeze().resume();
 
     expect(value).toMatch('resumed');
   });
@@ -178,8 +169,7 @@ describe('stream', () => {
 
     s.send(1);
     expect(value).toBe(1);
-    s.send(2);
-    s.send(1);
+    s.send(2).send(1);
     expect(value).toBe(2);
   });
 
