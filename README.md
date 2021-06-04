@@ -256,6 +256,28 @@ const cpuHeavyFunction = throttle(() => {
 document.addEventListener('scroll', cpuHeavyFunction);
 ```
 
+### memoize
+
+```ts
+interface MemoizeFunction {
+  <F extends (...args: ReadonlyArray<any>) => any>(
+    fn: F,
+    keyFrom?: (...args: Parameters<F>) => unknown
+  ): F;
+}
+```
+
+Wraps function and cache all execution results. Allows to customize key for cache. By default, it is first function's argument.
+
+```ts
+const fn = (num: number) => Math.random() * num;
+const memoizedFn = memoize(fn);
+
+const result1 = memoizedFn(1); // Function is executed
+const result2 = memoizedFn(1); // Value from cache will be returned
+const result3 = memoizedFn(4); // Function is executed
+```
+
 ### array
 
 ```typescript

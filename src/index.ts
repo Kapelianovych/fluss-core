@@ -13,6 +13,7 @@ export * from './option';
 export * from './either';
 export * from './stream';
 export * from './freeze';
+export * from './memoize';
 export * from './reviver';
 export * from './is_error';
 export * from './throttle';
