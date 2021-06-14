@@ -246,7 +246,7 @@ function throttle<F extends (...args: ReadonlyArray<unknown>) => void>(
 ): F;
 ```
 
-Defines interval of function invocation based on number of frames (one frame is about _16.67ms_). It ensures that function will be executed after this time. By default, it delays function with two frames. If _frames_ argument is equal to `1` or less, then, if present, `requestAnimationFrame` is used. Otherwise, `setTimeout` function is in use.
+Defines an interval of a function invocation based on number of frames (one frame is about _16.67ms_(**FRAME_TIME** constant)). It ensures that the function will be executed after this time. By default, it delays function with two frames. If _frames_ argument is equal to `1` or less, then, if present, `requestAnimationFrame` is used. Otherwise, `setTimeout` function is in use.
 
 ```ts
 const cpuHeavyFunction = throttle(() => {

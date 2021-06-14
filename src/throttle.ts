@@ -1,4 +1,5 @@
-const FRAME_TIME = 16.67;
+/** Time of one frame: **~16.67ms.** */
+export const FRAME_TIME = 16.67;
 
 const delay = (
   everyFrame: boolean

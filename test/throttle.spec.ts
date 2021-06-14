@@ -1,4 +1,4 @@
-import { throttle } from '../src';
+import { throttle, FRAME_TIME } from '../src';
 
 describe('throttle', () => {
   it('should delay function execution for 2 frames', (done) => {
@@ -68,5 +68,15 @@ describe('throttle', () => {
     throttledFunction();
 
     expect(count).toBeLessThan(2);
+  });
+});
+
+describe('FRAME_TIME', () => {
+  it('should be exported', () => {
+    expect(FRAME_TIME).toBeDefined();
+  });
+
+  it('should be close to 16.67', () => {
+    expect(FRAME_TIME).toBeCloseTo(16.67);
   });
 });

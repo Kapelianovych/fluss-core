@@ -1,4 +1,10 @@
-# [0.22.0] - 2021-06-04
+# Unreleased
+
+### Added
+
+- Export `FRAME_TIME` constant from library.
+
+## [0.22.0] - 2021-06-04
 
 ### Added
 
