@@ -402,7 +402,7 @@ function tryCatch<T, L extends Error, R>(
 ): (input: T) => Either<L, R>;
 ```
 
-Wraps code into `try/catch` and returns `Either` monad with result. If `catchFn` is not `undefined`, then `Either` with result will be returned, otherwise - `Either` with error. Asyncronous version is also existed.
+Wraps code into `try/catch` and returns `Either` monad with result. If `catchFn` is not `undefined`, then `Either` with result will be returned, otherwise - `Either` with error. Asynchronous version is also existed.
 
 ```typescript
 const getUser /*: (id: string) => Either<NoUserError, User> */ = tryCatch(
@@ -527,7 +527,7 @@ some(2); // Some<number>
 const none: None;
 ```
 
-`Option`' monad's instance with **Nothing** state.
+`Option`' monads instance with **Nothing** state.
 
 ```typescript
 const a /*: None */ = none;
@@ -572,7 +572,7 @@ function left<L>(value: L): Left<L>;
 Creates `Either` monad instance with **Left** state.
 
 ```typescript
-left<Error>(new Error('Error is occured!')); // Left<Error>
+left<Error>(new Error('Error is occurred!')); // Left<Error>
 ```
 
 ### either
@@ -734,7 +734,7 @@ const result /*: boolean */ = isList(list());
 
 #### List
 
-Monad that represents lazy `Array`. It can decrease computation step comparingly to `Array`. Actual execution of `List`'s methods starts when one of _terminating method_ (method that do not return List instance) is called.
+Monad that represents lazy `Array`. It can decrease computation step comparably to `Array`. Actual execution of `List`'s methods starts when one of _terminating method_ (method that do not return List instance) is called.
 
 ### lazy
 
@@ -802,7 +802,7 @@ Structure that makes operations with values over time in live mode.
 function idle<T>(fn: () => T): Idle<T>;
 ```
 
-Queues a data returned by `fn` to be evaluated at interpretator's idle period.
+Queues a data returned by `fn` to be evaluated at interpreter's idle period.
 
 ```typescript
 const value /*: Idle<boolean> */ = idle(() => 1).map((num) => num > 7);
