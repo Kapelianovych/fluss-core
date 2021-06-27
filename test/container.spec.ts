@@ -1,4 +1,4 @@
-import { wrap, isContainer } from '../src/container';
+import { wrap, isContainer, CONTAINER_OBJECT_TYPE } from '../src/container';
 
 describe('Container', () => {
   test('wrap function wraps value into Container', () => {
@@ -35,6 +35,6 @@ describe('Container', () => {
   });
 
   test('should be serializable', () => {
-    expect(wrap(5).toJSON()).toEqual({ type: 'Container', value: 5 });
+    expect(wrap(5).toJSON()).toEqual({ type: CONTAINER_OBJECT_TYPE, value: 5 });
   });
 });

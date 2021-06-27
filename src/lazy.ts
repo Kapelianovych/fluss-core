@@ -2,7 +2,7 @@ import { isObject } from './is_object';
 import { isFunction } from './is_function';
 import type { Typeable } from './types';
 
-export const LAZY_OBJECT_TYPE = 'Lazy';
+export const LAZY_OBJECT_TYPE = '$Lazy';
 
 /**
  * Monad that constructs and compose operations over value.

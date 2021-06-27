@@ -17,7 +17,7 @@ type IdleDeadline = {
 };
 
 declare global {
-  /** Queues a function to be called during a interpretator's idle periods. */
+  /** Queues a function to be called during a interpreter's idle periods. */
   function requestIdleCallback(
     callback: (deadline: IdleDeadline) => void,
     opts?: RequestIdleCallbackOptions
@@ -32,7 +32,7 @@ declare global {
 const deferCallback = globalThis.requestIdleCallback ?? globalThis.setTimeout;
 const cancelCallback = globalThis.cancelIdleCallback ?? globalThis.clearTimeout;
 
-export const IDLE_OBJECT_TYPE = 'Idle';
+export const IDLE_OBJECT_TYPE = '$Idle';
 
 /** Monad that allow to defer data initialization. */
 export interface Idle<T> extends Typeable, Serializable<T> {

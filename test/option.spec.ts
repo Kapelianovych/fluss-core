@@ -1,4 +1,11 @@
-import { some, isOption, none, maybe } from '../src/option';
+import {
+  some,
+  none,
+  maybe,
+  isOption,
+  OPTION_SOME_OBJECT_TYPE,
+  OPTION_NONE_OBJECT_TYPE,
+} from '../src/option';
 
 describe('Option', () => {
   test('isOption checks if value is instance of Option', () => {
@@ -74,10 +81,10 @@ describe('Option', () => {
     const s1 = JSON.stringify(some(1));
     const s2 = JSON.stringify(none);
 
-    expect(s1).toMatch('"type":"Some"');
+    expect(s1).toMatch(`"type":"${OPTION_SOME_OBJECT_TYPE}"`);
     expect(s1).toMatch('"value":1');
 
-    expect(s2).toMatch('"type":"None"');
+    expect(s2).toMatch(`"type":"${OPTION_NONE_OBJECT_TYPE}"`);
     expect(s2).toMatch('"value":null');
   });
 });

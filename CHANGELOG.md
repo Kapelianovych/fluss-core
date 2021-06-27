@@ -10,6 +10,7 @@
 
 - By default, `throttle`'s interval is **0** frames now.
 - `throttle` function will execute a function immediately at first invocation.
+- All type names of monads are prepended with `$` sign.
 
 ## [0.22.0] - 2021-06-04
 

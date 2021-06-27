@@ -1,4 +1,11 @@
-import { isEither, right, left, either } from '../src/either';
+import {
+  left,
+  right,
+  either,
+  isEither,
+  EITHER_LEFT_OBJECT_TYPE,
+  EITHER_RIGHT_OBJECT_TYPE,
+} from '../src';
 
 describe('Either', () => {
   test('isEither check if value is instance of Either type', () => {
@@ -86,17 +93,17 @@ describe('Either', () => {
       left(8)
         .handle(() => '')
         .type()
-    ).toBe('Right');
+    ).toBe(EITHER_RIGHT_OBJECT_TYPE);
   });
 
   test('should be serializable', () => {
     const e1 = JSON.stringify(right(1));
     const e2 = JSON.stringify(left('Wrong type!'));
 
-    expect(e1).toMatch('"type":"Right"');
+    expect(e1).toMatch(`"type":"${EITHER_RIGHT_OBJECT_TYPE}"`);
     expect(e1).toMatch('"value":1');
 
-    expect(e2).toMatch('"type":"Left"');
+    expect(e2).toMatch(`"type":"${EITHER_LEFT_OBJECT_TYPE}"`);
     expect(e2).toMatch('"value":"Wrong type!"');
   });
 });

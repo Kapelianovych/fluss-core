@@ -2,8 +2,8 @@ import { isObject } from './is_object';
 import { isFunction } from './is_function';
 import type { Typeable, Serializable } from './types';
 
-export const EITHER_LEFT_OBJECT_TYPE = 'Left';
-export const EITHER_RIGHT_OBJECT_TYPE = 'Right';
+export const EITHER_LEFT_OBJECT_TYPE = '$Left';
+export const EITHER_RIGHT_OBJECT_TYPE = '$Right';
 
 export interface Right<B> extends Typeable, Serializable<B> {
   map<R>(fn: (value: B) => R): Right<R>;

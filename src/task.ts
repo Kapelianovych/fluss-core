@@ -11,7 +11,7 @@ export type ForkFunction<T, E extends Error = Error> = (
   fail: FailFunction<E>
 ) => void;
 
-export const TASK_OBJECT_TYPE = 'Task';
+export const TASK_OBJECT_TYPE = '$Task';
 
 /**
  * Monad that allow to perform some actions asynchronously and deferred

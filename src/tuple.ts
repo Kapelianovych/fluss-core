@@ -3,7 +3,7 @@ import { isFunction } from './is_function';
 import type { Pop, Shift, Transform } from './utilities';
 import type { Typeable, Sizeable, Serializable } from './types';
 
-export const TUPLE_OBJECT_TYPE = 'Tuple';
+export const TUPLE_OBJECT_TYPE = '$Tuple';
 
 /** Immutable container for fixed sequence of values. */
 export interface Tuple<T extends ReadonlyArray<unknown>>

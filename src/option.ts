@@ -4,8 +4,8 @@ import { isFunction } from './is_function';
 import type { Just, Nothing } from './utilities';
 import type { Typeable, Serializable } from './types';
 
-export const OPTION_NONE_OBJECT_TYPE = 'None';
-export const OPTION_SOME_OBJECT_TYPE = 'Some';
+export const OPTION_NONE_OBJECT_TYPE = '$None';
+export const OPTION_SOME_OBJECT_TYPE = '$Some';
 
 export interface Some<T> extends Typeable, Serializable<T> {
   map<R>(

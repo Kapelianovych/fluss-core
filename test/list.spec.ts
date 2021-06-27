@@ -1,4 +1,4 @@
-import { list, iterate, isList, isOption } from '../src';
+import { list, iterate, isList, isOption, LIST_OBJECT_TYPE } from '../src';
 
 describe('List data structure', () => {
   test('list and iterate functions create List container', () => {
@@ -151,9 +151,7 @@ describe('List data structure', () => {
 
   test('compress method should get rid of null and undefined values', () => {
     expect(list(1, null, 2, undefined, 3).compress().asArray()).toEqual([
-      1,
-      2,
-      3,
+      1, 2, 3,
     ]);
   });
 
@@ -172,7 +170,7 @@ describe('List data structure', () => {
 
   test('should be serializable and return information about self', () => {
     const serializabledObject = JSON.stringify(list(1, 2, 3));
-    expect(serializabledObject).toMatch('"type":"List"');
+    expect(serializabledObject).toMatch(`"type":"${LIST_OBJECT_TYPE}"`);
     expect(serializabledObject).toMatch('"value":[1,2,3]');
   });
 });

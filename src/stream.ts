@@ -14,7 +14,7 @@ export enum StreamEvent {
   DESTROY = 'destroy',
 }
 
-export const STREAM_OBJECT_TYPE = 'Stream';
+export const STREAM_OBJECT_TYPE = '$Stream';
 
 /** Structure that makes operations with values over time in live mode. */
 export interface Stream<T> extends Typeable {

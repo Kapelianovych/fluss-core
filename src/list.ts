@@ -11,7 +11,7 @@ import type {
   IterableIteratorFunction,
 } from './types';
 
-export const LIST_OBJECT_TYPE = 'List';
+export const LIST_OBJECT_TYPE = '$List';
 
 /** Monad that represents lazy Array. */
 export interface List<T>

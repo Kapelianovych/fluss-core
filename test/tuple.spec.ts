@@ -1,4 +1,4 @@
-import { tuple, isTuple } from '../src/tuple';
+import { tuple, isTuple, TUPLE_OBJECT_TYPE } from '../src/tuple';
 
 describe('tuple', () => {
   test('should create tuple from set of values', () => {
@@ -51,13 +51,13 @@ describe('tuple', () => {
     expect(tuple().size()).toBe(0);
   });
 
-  test('should be itarable and convertable to array', () => {
+  test('should be iterable and convertible to array', () => {
     expect(Symbol.iterator in tuple()).toBe(true);
     expect(Array.from(tuple(4))).toEqual([4]);
   });
 
   test('should be serializable', () => {
-    expect(tuple(6).toJSON()).toEqual({ type: 'Tuple', value: [6] });
+    expect(tuple(6).toJSON()).toEqual({ type: TUPLE_OBJECT_TYPE, value: [6] });
   });
 
   test('should concat another tuple', () => {

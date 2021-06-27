@@ -1,4 +1,4 @@
-import { idle, isIdle } from '../src/idle';
+import { idle, IDLE_OBJECT_TYPE, isIdle } from '../src/idle';
 
 describe('idle', () => {
   test('should not immediately invoke function', () => {
@@ -40,5 +40,13 @@ describe('idle', () => {
         .apply(idle(() => (num) => Math.pow(num, 3)))
         .extract()
     ).toBe(8);
+  });
+
+  it('should be serializable', () => {
+    const res = idle(() => 9);
+
+    expect(JSON.stringify(res)).toBe(
+      `{"type":"${IDLE_OBJECT_TYPE}","value":9}`
+    );
   });
 });

@@ -25,7 +25,7 @@ describe('delay', () => {
     delay(() => {
       try {
         // It is not precise test.
-        expect(Date.now() - now).toBeLessThan(FRAME_TIME * 2 + 5);
+        expect(Date.now() - now).toBeLessThan(FRAME_TIME * 3);
         done();
       } catch (error) {
         done(error);

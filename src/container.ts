@@ -2,7 +2,7 @@ import { isObject } from './is_object';
 import { isFunction } from './is_function';
 import type { Typeable, Serializable } from './types';
 
-export const CONTAINER_OBJECT_TYPE = 'Container';
+export const CONTAINER_OBJECT_TYPE = '$Container';
 
 /** Monad that contains value and allow perform operation on it by set of methods. */
 export interface Container<T> extends Typeable, Serializable<T> {
