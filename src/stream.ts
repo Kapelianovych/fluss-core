@@ -54,7 +54,7 @@ export interface Stream<T> extends Typeable {
   resume(): Stream<T>;
   /**
    * Destroys stream. Stream gets rid of all listeners and
-   * will be uncapable to accept new values and listeners.
+   * will be incapable to accept new values and listeners.
    *
    * Stream can be resumed by `resume` method, but listeners
    * need to be attached to stream again.
@@ -72,7 +72,7 @@ interface StreamCreationOptions<T> {
    *
    * If value is `false`, then stream cannot accept new values,
    * value listeners, destroy listeners and any derived streams
-   * will never recieve values from destroyed stream.
+   * will never receive values from destroyed stream.
    */
   _isActive: boolean;
   _valueListeners: Array<StreamListener<T>>;

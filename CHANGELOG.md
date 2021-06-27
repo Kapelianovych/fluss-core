@@ -1,8 +1,15 @@
-# Unreleased
+# [0.23.0] - 2021-06-27
 
 ### Added
 
 - Export `FRAME_TIME` constant from library.
+- Generic type of a function to `isFunction` function.
+- `debounce`, `consequent`, `delay`, `cancelDelay` functions.
+
+### Changed
+
+- By default, `throttle`'s interval is **0** frames now.
+- `throttle` function will execute a function immediately at first invocation.
 
 ## [0.22.0] - 2021-06-04
 

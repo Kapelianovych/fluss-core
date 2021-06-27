@@ -237,6 +237,22 @@ const y /*: false */ = isPromise(false);
 const y1 /*: true */ = isPromise(Promise.resolve(9));
 ```
 
+### isFunction
+
+```ts
+function isFunction<F extends Function>(value: unknown): value is F;
+```
+
+Check if _value_ is a function.
+
+```ts
+const f: unknown = () => 2;
+
+if (isFunction<() => number>(f)) {
+  // `f` will be type of () => number here.
+}
+```
+
 ### throttle
 
 ```ts
@@ -246,7 +262,7 @@ function throttle<F extends (...args: ReadonlyArray<unknown>) => void>(
 ): F;
 ```
 
-Defines an interval of a function invocation based on number of frames (one frame is about _16.67ms_(**FRAME_TIME** constant)). It ensures that the function will be executed after this time. By default, it delays function with two frames. If _frames_ argument is equal to `1` or less, then, if present, `requestAnimationFrame` is used. Otherwise, `setTimeout` function is in use.
+Makes function be executed once per _frames_ count. If _frames_ argument is equal to `0` or less, then, if present, `requestAnimationFrame` is used. Otherwise, `setTimeout` function is in use.
 
 ```ts
 const cpuHeavyFunction = throttle(() => {
@@ -254,6 +270,88 @@ const cpuHeavyFunction = throttle(() => {
 }, 4);
 
 document.addEventListener('scroll', cpuHeavyFunction);
+```
+
+### consequent
+
+```ts
+interface ConsequentFunction<
+  F extends (...args: ReadonlyArray<unknown>) => unknown
+> {
+  /** Signals if this function is executing now. */
+  readonly busy: boolean;
+  (...args: Parameters<F>): Option<ReturnType<F>>;
+}
+
+function consequent<F extends (...args: ReadonlyArray<unknown>) => unknown>(
+  fn: F
+): ConsequentFunction<F>;
+```
+
+Executes function while it is not in process. It can handle asynchronous functions.
+
+```ts
+const consequentFunction = consequent((...args) => {
+  /* Some work here */
+});
+
+// It returns an `Option` monad as result.
+const result = consequentFunction(); // Start doing the job.
+consequentFunction(); // If previous invocation is not completed then this is ignored.
+```
+
+### debounce
+
+```ts
+function debounce<
+  F extends (...args: ReadonlyArray<unknown>) => void | Promise<void>
+>(fn: F, frames = 0): F;
+```
+
+Delays function invocation for _frames_ from last invocation of debounced function. If interval between invocations will be less than _frames_ time, then original function won't be executed.
+
+```ts
+const debouncedFunction = debounce((event: ScrollEvent) => {
+  /* Some work here */
+}, 2);
+
+// It starts job when you finish scrolling.
+window.addEventListener('scroll', debouncedFunction);
+```
+
+### delay
+
+```ts
+function delay<F extends (...args: ReadonlyArray<unknown> => void)>((fn: F, frames?: number): DelayId;
+```
+
+Lengthens function invocation at some frames. If _frames_ equals to zero or less, then `requestAnimationFrame` function is used.
+
+```ts
+delay(() => {
+  /* Some work here. */
+}); // Will use `requestAnimationFrame` in browser.
+delay(() => {
+  /* Some another work here. */
+}, 2); // Will use `setTimeout`.
+```
+
+### cancelDelay
+
+```ts
+function cancelDelay(stamp: DelayId): void;
+```
+
+Cancels invocation of delayed function.
+
+```ts
+const id = delay(() => {
+  /* Some job. */
+}, 3);
+
+// Somewhere in the code...
+
+cancelDelay(id);
 ```
 
 ### memoize
