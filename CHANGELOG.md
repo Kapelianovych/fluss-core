@@ -2,7 +2,7 @@
 
 ### Added
 
-- `demethodize` function.
+- `demethodize`, `binary` function.
 
 ## [0.23.0] - 2021-06-27
 

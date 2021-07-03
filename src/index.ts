@@ -10,6 +10,7 @@ export * from './array';
 export * from './tuple';
 export * from './delay';
 export * from './types';
+export * from './binary';
 export * from './option';
 export * from './either';
 export * from './stream';

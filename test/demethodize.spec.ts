@@ -15,7 +15,7 @@ describe('demethodize', () => {
   it('should accept "this" as first parameter and then arguments to the method', () => {
     const g = demethodize(obj.g);
 
-    expect((() => g(7, 1))()).toThrow();
+    expect(g(7, 1)).toBe(NaN);
 
     expect(g(obj, 1)).toBe(2);
   });
