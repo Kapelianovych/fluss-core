@@ -144,6 +144,25 @@ const y /*: (a: Array<number>) => number */ = fork(
 );
 ```
 
+### demethodize
+
+```ts
+function demethodize<
+  T,
+  F extends (this: T, ...args: ReadonlyArray<any>) => any
+>(fn: F): (target: T, ...args: Parameters<F>) => ReturnType<F>;
+```
+
+Extracts method from object.
+
+```ts
+const createElement = demethodize(document.createElement);
+
+// ...
+
+const div = createElement(document, 'div');
+```
+
 ### sequentially
 
 ```typescript

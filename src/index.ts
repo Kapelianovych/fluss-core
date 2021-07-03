@@ -26,5 +26,6 @@ export * from './try_catch';
 export * from './consequent';
 export * from './is_promise';
 export * from './is_function';
+export * from './demethodize';
 export * from './sequentially';
 export * from './is_just_nothing';

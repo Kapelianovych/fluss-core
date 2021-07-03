@@ -1,4 +1,10 @@
-# [0.23.0] - 2021-06-27
+# Unreleased
+
+### Added
+
+- `demethodize` function.
+
+## [0.23.0] - 2021-06-27
 
 ### Added
 
