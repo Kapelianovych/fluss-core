@@ -44,7 +44,7 @@ export interface Idle<T> extends Typeable, Serializable<T> {
 
 /**
  * Queues a data returned by `fn` to be evaluated
- * at interpretator's idle period.
+ * at interpreter's idle period.
  */
 export const idle = <T>(fn: () => T): Idle<T> => {
   let value: T | undefined;
