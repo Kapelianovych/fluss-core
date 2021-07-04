@@ -14,7 +14,7 @@ export const curry = <P extends ReadonlyArray<unknown>, R>(
   return (...args) =>
     // @ts-ignore
     args.length >= fn.length
-      ? fn(...((args as unknown) as P))
+      ? fn(...(args as unknown as P))
       : // @ts-ignore
         curry((...rest: Partial<P>) => fn(...args, ...rest));
 };
