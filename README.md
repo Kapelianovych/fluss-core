@@ -16,10 +16,9 @@ Library for functional coding in modern environment.
 ## Example use
 
 ```typescript
-const curriedFn /*: Curried<[left: string, right: string], string> */ = curry(
-  (left: string, right: string) => left + right
-);
-const curriedFn2 /*: Curried<[right: string], string> */ = curriedFn('');
+const curriedFn /*: Curry<(args_0: string, args_1: string) => string, 2> */ =
+  curry((left: string, right: string) => left + right);
+const curriedFn2 /*: Curry<(args_0: string) => string, 1> */ = curriedFn('');
 const result /*: string */ = curriedFn2('');
 ```
 
@@ -111,15 +110,16 @@ const doOnlyOnce = once(() => {
 ### curry
 
 ```typescript
-function curry<P extends ReadonlyArray<unknown>, R>(
-  fn: (...args: P) => R
-): Curried<P, R>;
+function curry<
+  F extends (...args: ReadonlyArray<any>) => unknown,
+  A extends number = FixedParametersCount<Parameters<F>>
+>(fn: F, arity?: A): Curry<F, A>;
 ```
 
-Create curried version of function with optional partial application.
+Create curried version of function with optional partial application. If function accepts variadic arguments (...rest), then you can apparently define function's _arity_.
 
 ```typescript
-const fn /*: Curried<[str1: string, str2: string], string> */ = curry(
+const fn /*: Curry<(arg_0: string, arg_1: string) => string, 2> */ = curry(
   (str1: string, str2: string) => str1 + str2 + 3
 );
 ```

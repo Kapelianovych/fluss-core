@@ -162,3 +162,45 @@ export type ReturnTypesOf<
 > = Length<F> extends 0
   ? R
   : ReturnTypesOf<Tail<F>, [...R, ReturnType<First<F>>]>;
+
+/**
+ * Creates function with fixed number of parameters.
+ * Where `A` is arity of a function.
+ * `T` is desired types of parameters.
+ * `R` is a return type of the final function.
+ */
+export type CreateFunction<
+  A extends number,
+  T extends ReadonlyArray<unknown>,
+  R,
+  P extends ReadonlyArray<unknown> = []
+> = Length<P> extends A
+  ? (...args: P) => R
+  : CreateFunction<A, Tail<T> extends [] ? T : Tail<T>, R, [...P, First<T>]>;
+
+/**
+ * Creates iterable from count of desired
+ * values count.
+ */
+export type Counter<
+  A extends number,
+  V extends ReadonlyArray<unknown> = []
+> = Length<V> extends A ? V : Counter<A, [unknown, ...V]>;
+
+/** Subtracts two numbers. Result cannot be lower than `0`. */
+export type MinusOrZero<F extends number, S extends number> = Length<
+  Shift<S, Counter<F>>
+>;
+
+/** Adds two numbers. */
+export type Plus<F extends number, S extends number> = Length<
+  [...Counter<F>, ...Counter<S>]
+>;
+
+/** Counts fixed parameters of a function. */
+export type FixedParametersCount<
+  P extends ReadonlyArray<unknown>,
+  A extends number = 0
+> = P extends [any, ...infer R]
+  ? FixedParametersCount<R, Cast<Plus<A, 1>, number>>
+  : A;
