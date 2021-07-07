@@ -107,6 +107,26 @@ const doOnlyOnce = once(() => {
 });
 ```
 
+### flip
+
+```ts
+function flip<F extends (...args: ReadonlyArray<any>) => any>(
+  fn: F
+): (...args: Reverse<Parameters<F>>) => ReturnType<F>;
+```
+
+Reverses function's parameters.
+
+```ts
+const fn = (s: string, n: number) => Number(s) + n;
+
+const flipped /* (args_0: number, args_1: string) => number */ = flip(fn);
+
+// ...
+
+flipped(1, '2'); // -> 3
+```
+
 ### curry
 
 ```typescript

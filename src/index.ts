@@ -5,6 +5,7 @@ export * from './pipe';
 export * from './list';
 export * from './lazy';
 export * from './idle';
+export * from './flip';
 export * from './curry';
 export * from './array';
 export * from './tuple';

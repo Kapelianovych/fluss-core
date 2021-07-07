@@ -204,3 +204,13 @@ export type FixedParametersCount<
 > = P extends [any, ...infer R]
   ? FixedParametersCount<R, Cast<Plus<A, 1>, number>>
   : A;
+
+/** Reverses array. */
+export type Reverse<
+  P extends ReadonlyArray<unknown>,
+  R extends ReadonlyArray<unknown> = []
+> = number extends Length<P>
+  ? P
+  : Length<P> extends 0
+  ? R
+  : Reverse<Tail<P>, [First<P>, ...R]>;
