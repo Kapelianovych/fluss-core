@@ -4,12 +4,13 @@
 
 - `demethodize`, `binary`, `flip` function.
 - Placeholder value (`_`) to preserve place for argument.
-- `Reverse` type.
+- `Reverse`, `Nth` type.
 
 ### Changed
 
 - `curry` function can now preserve places for arguments.
 - `Curry` type was rewritten. Thanks to [that great article from Pierre-Antoine Mills](https://www.freecodecamp.org/news/typescript-curry-ramda-types-f747e99744ab/).
+- If functions passed to `pipe` function cannot be composed then return type of result function is `never`.
 
 ## [0.23.0] - 2021-06-27
 

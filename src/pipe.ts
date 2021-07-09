@@ -30,28 +30,31 @@ type IsComposable<
  * Performs left-to-right function composition.
  * Can handle asynchronous functions.
  */
-export const pipe = <
-  T extends readonly [
-    (...args: ReadonlyArray<any>) => any,
-    ...ReadonlyArray<(arg: any) => any>
-  ]
->(
-  ...fns: T
-) => (
-  ...args: Parameters<First<T>>
-): IsComposable<T> extends false
-  ? unknown
-  : HasPromise<ReturnTypesOf<T>> extends true
-  ? ReturnType<Last<T>> extends Promise<infer U>
-    ? Promise<U>
-    : Promise<ReturnType<Last<T>>>
-  : ReturnType<Last<T>> =>
-  fns.reduce(
-    (result, fn, index) =>
-      index === 0
-        ? (fn as T[0])(...result)
-        : isPromise(result)
-        ? result.then(fn)
-        : fn(result),
-    args as any
-  );
+export const pipe =
+  <
+    T extends readonly [
+      (...args: ReadonlyArray<any>) => any,
+      ...ReadonlyArray<(arg: any) => any>
+    ]
+  >(
+    ...fns: T
+  ): IsComposable<T> extends false
+    ? never
+    : (
+        ...args: Parameters<First<T>>
+      ) => HasPromise<ReturnTypesOf<T>> extends true
+        ? ReturnType<Last<T>> extends Promise<infer U>
+          ? Promise<U>
+          : Promise<ReturnType<Last<T>>>
+        : ReturnType<Last<T>> =>
+  //@ts-ignore
+  (...args) =>
+    fns.reduce(
+      (result, fn, index) =>
+        index === 0
+          ? (fn as T[0])(...result)
+          : isPromise(result)
+          ? result.then(fn)
+          : fn(result),
+      args
+    );

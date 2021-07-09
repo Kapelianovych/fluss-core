@@ -66,11 +66,14 @@ export type Head<T extends ReadonlyArray<unknown>> = T extends [
   ? U
   : [];
 
+/** Get type of _nth_ element of `T`. */
+export type Nth<T extends ReadonlyArray<unknown>, P extends number> = T[P];
+
 /** Get type of last element of `T`. */
 export type Last<T extends ReadonlyArray<unknown>> = T[Length<Tail<T>>];
 
 /** Get type of first element of `T`. */
-export type First<T extends ReadonlyArray<unknown>> = T[0];
+export type First<T extends ReadonlyArray<unknown>> = Nth<T, 0>;
 
 /** Checks if type `T` has `null` or `undefined` types. */
 export type HasNothing<T> = Extract<T, Nothing> extends never ? false : true;
@@ -155,7 +158,7 @@ export type HasPromise<
   ? A
   : HasPromise<Tail<R>, First<R> extends Promise<unknown> ? true : false>;
 
-/** Converts array of function into array with their return types. */
+/** Converts array of function into an array with their return types. */
 export type ReturnTypesOf<
   F extends ReadonlyArray<(...args: ReadonlyArray<unknown>) => unknown>,
   R extends ReadonlyArray<unknown> = []
