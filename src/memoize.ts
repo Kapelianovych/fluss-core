@@ -1,27 +1,49 @@
-export interface MemoizeFunction {
-  <F extends (...args: ReadonlyArray<any>) => any>(
-    fn: F,
-    keyFrom?: (...args: Parameters<F>) => unknown
-  ): F;
-}
+import { First } from './utilities';
+
+type WithCache<
+  F extends (...args: ReadonlyArray<any>) => unknown,
+  K extends (...args: Parameters<F>) => any = (
+    ...args: Parameters<F>
+  ) => First<Parameters<F>>
+> = F & {
+  readonly cache: Map<ReturnType<K>, ReturnType<F>>;
+};
 
 /**
  * Wraps function and cache all execution results.
  * Allows to customize key for cache. By default, it
  * is first function's argument.
  */
-export const memoize = ((fn, keyFrom = (...args) => args[0]) => {
-  const cache = new Map();
+export const memoize = <
+  F extends (...args: ReadonlyArray<any>) => unknown,
+  K extends (...args: Parameters<F>) => unknown = (
+    ...args: Parameters<F>
+  ) => First<Parameters<F>>
+>(
+  fn: F,
+  keyFrom: K = ((...args: Parameters<F>) => args[0]) as K
+): WithCache<F, K> => {
+  const cache = new Map<ReturnType<K>, ReturnType<F>>();
 
-  return (...args: Parameters<typeof fn>) => {
-    const key = keyFrom(...args);
+  const _memoWrapper: WithCache<F, K> = ((
+    ...args: Parameters<F>
+  ): ReturnType<F> => {
+    const key = keyFrom(...args) as ReturnType<K>;
 
     if (cache.has(key)) {
-      return cache.get(key);
+      return cache.get(key)!;
     } else {
-      const result = fn(...args);
+      const result = fn(...args) as ReturnType<F>;
       cache.set(key, result);
       return result;
     }
-  };
-}) as MemoizeFunction;
+  }) as WithCache<F, K>;
+
+  Reflect.defineProperty(_memoWrapper, 'cache', {
+    get: () => cache,
+    enumerable: false,
+    configurable: false,
+  });
+
+  return _memoWrapper;
+};

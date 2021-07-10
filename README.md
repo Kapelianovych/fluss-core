@@ -58,15 +58,15 @@ function pipe<
   ]
 >(
   ...fns: T
-) => (
-  ...args: Parameters<First<T>>
 ): IsComposable<T> extends false
-  ? unknown
-  : HasPromise<ReturnTypesOf<T>> extends true
-  ? ReturnType<Last<T>> extends Promise<infer U>
-    ? Promise<U>
-    : Promise<ReturnType<Last<T>>>
-  : ReturnType<Last<T>>;
+  ? never
+  : (
+      ...args: Parameters<First<T>>
+    ) => HasPromise<ReturnTypesOf<T>> extends true
+      ? ReturnType<Last<T>> extends Promise<infer U>
+        ? Promise<U>
+        : Promise<ReturnType<Last<T>>>
+      : ReturnType<Last<T>>;
 ```
 
 Compose functions from left to right. Can handle asynchronous functions along with synchronous ones.
@@ -419,15 +419,15 @@ cancelDelay(id);
 ### memoize
 
 ```ts
-interface MemoizeFunction {
-  <F extends (...args: ReadonlyArray<any>) => any>(
-    fn: F,
-    keyFrom?: (...args: Parameters<F>) => unknown
-  ): F;
-}
+function memoize<
+  F extends (...args: ReadonlyArray<any>) => unknown,
+  K extends (...args: Parameters<F>) => unknown = (
+    ...args: Parameters<F>
+  ) => First<Parameters<F>>
+>(fn: F, keyFrom?: K): WithCache<F, K>;
 ```
 
-Wraps function and cache all execution results. Allows to customize key for cache. By default, it is first function's argument.
+Wraps function and cache all execution results. Allows to customize key for cache. By default, it is first function's argument. Cache readable object is visible to outside.
 
 ```ts
 const fn = (num: number) => Math.random() * num;
@@ -436,6 +436,9 @@ const memoizedFn = memoize(fn);
 const result1 = memoizedFn(1); // Function is executed
 const result2 = memoizedFn(1); // Value from cache will be returned
 const result3 = memoizedFn(4); // Function is executed
+
+// Allows manually clear cache.
+memoizedFn.cache.clear();
 ```
 
 ### array

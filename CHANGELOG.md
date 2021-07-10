@@ -5,6 +5,7 @@
 - `demethodize`, `binary`, `flip` function.
 - Placeholder value (`_`) to preserve place for argument.
 - `Reverse`, `Nth` type.
+- `cache` key to memoized function.
 
 ### Changed
 

@@ -43,4 +43,28 @@ describe('memoize', () => {
     expect(keyFrom).nthReturnedWith(2, 2);
     expect(keyFrom).nthReturnedWith(3, 1);
   });
+
+  it('should expose cache object outside', () => {
+    const memo = memoize((n: number) => {});
+
+    expect(typeof memo.cache).toBe('object');
+    expect(memo.cache instanceof Map).toBe(true);
+  });
+
+  it('should allow clearing cache', () => {
+    const fn = jest.fn((n: number) => n);
+    const memoFn = memoize(fn);
+
+    memoFn(1);
+    expect(fn).toBeCalled();
+    fn.mockClear();
+
+    memoFn(1);
+    expect(fn).not.toBeCalled();
+    fn.mockClear();
+
+    memoFn.cache.clear();
+    memoFn(1);
+    expect(fn).toBeCalled();
+  });
 });
