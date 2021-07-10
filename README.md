@@ -144,6 +144,13 @@ const fn /*: Curry<(arg_0: string, arg_1: string) => string, 2> */ = curry(
 );
 ```
 
+There is a special value `_` that you can use with curried function to preserve place for an argument for the next function execution.
+
+```ts
+// _anotherFn_ will accept first parameter from original _fn_ function.
+const anotherFn /*: Curry<(arg_0: string) => string, 1> */ = fn(_, '2');
+```
+
 ### fork
 
 ```typescript
