@@ -1,4 +1,4 @@
-# Unreleased
+# [0.24.0] - 2021-07-10
 
 ### Added
 
@@ -12,6 +12,7 @@
 - `curry` function can now preserve places for arguments.
 - `Curry` type was rewritten. Thanks to [that great article from Pierre-Antoine Mills](https://www.freecodecamp.org/news/typescript-curry-ramda-types-f747e99744ab/).
 - If functions passed to `pipe` function cannot be composed then return type of result function is `never`.
+- Rewrite `once` function to return result without `Option`.
 
 ## [0.23.0] - 2021-06-27
 

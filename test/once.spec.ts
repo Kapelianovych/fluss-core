@@ -42,14 +42,13 @@ describe('once', () => {
     expect(after).toHaveBeenCalledTimes(2);
   });
 
-  test('should return result of function as Option if only first argument is provided', () => {
-    const onced = once(() => '');
+  test('if only first argument is provided then should return the same result of function', () => {
+    const onced = once(() => 'a');
     const result = onced();
+    const result1 = onced();
 
-    expect(isOption(result)).toBe(true);
-    expect(result.extract()).toBe('');
-    expect(onced().isNone()).toBe(true);
-    expect(onced().isNone()).toBe(true);
+    expect(result).toBe('a');
+    expect(result1).toBe('a');
   });
 
   test('should return always the result of second function after second invocation', () => {
