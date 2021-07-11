@@ -49,13 +49,13 @@ export interface List<T>
   forEach(fn: (value: T) => void): void;
 }
 
-/** Create `List` from function that returns itarable iterator. */
+/** Create `List` from function that returns iterable iterator. */
 export const iterate = <T>(over: IterableIteratorFunction<T>): List<T> => ({
   [Symbol.iterator]: over,
   type: () => LIST_OBJECT_TYPE,
   toJSON: () => ({
     type: LIST_OBJECT_TYPE,
-    value: [...over()],
+    value: Array.from(over()),
   }),
   map: (fn) =>
     iterate(function* () {
@@ -141,7 +141,7 @@ export const iterate = <T>(over: IterableIteratorFunction<T>): List<T> => ({
     }),
   sort: (fn) =>
     iterate(function* () {
-      for (const item of [...over()].sort(fn)) {
+      for (const item of Array.from(over()).sort(fn)) {
         yield item;
       }
     }),
@@ -197,9 +197,9 @@ export const iterate = <T>(over: IterableIteratorFunction<T>): List<T> => ({
 
     return none;
   },
-  size: () => [...over()].length,
+  size: () => Array.from(over()).length,
   isEmpty: () => over().next().done === true,
-  asArray: () => [...over()],
+  asArray: () => Array.from(over()),
 });
 
 /** Create `List` from values, array-like objects or iterables. */
@@ -215,7 +215,7 @@ export const list = <T>(
           yield* Array.from(value);
         } else {
           // T type may be itself an object.
-          yield (value as unknown) as T;
+          yield value as unknown as T;
         }
       } else {
         yield value;
