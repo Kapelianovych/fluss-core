@@ -85,6 +85,20 @@ const composed /* Promise<number> */ = pipe(
 const asyncResult /* Promise<number> */ = composed('1');
 ```
 
+### identity
+
+```ts
+function identity<T>(value: T): T;
+```
+
+Returns own argument back to the calling place.
+
+```ts
+const value = 5;
+
+const result /* 5 */ = identity(value);
+```
+
 ### once
 
 ```typescript

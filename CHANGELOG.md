@@ -1,4 +1,10 @@
-# [0.24.0] - 2021-07-10
+# Unreleased
+
+### Added
+
+- Return back `identity` function.
+
+## [0.24.0] - 2021-07-10
 
 ### Added
 

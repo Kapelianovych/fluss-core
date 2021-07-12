@@ -20,6 +20,7 @@ export * from './memoize';
 export * from './reviver';
 export * from './debounce';
 export * from './is_error';
+export * from './identity';
 export * from './throttle';
 export * from './is_object';
 export * from './utilities';
