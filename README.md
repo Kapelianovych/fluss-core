@@ -62,7 +62,7 @@ function pipe<
   ? never
   : (
       ...args: Parameters<First<T>>
-    ) => HasPromise<ReturnTypesOf<T>> extends true
+    ) => HasPromise<T> extends true
       ? ReturnType<Last<T>> extends Promise<infer U>
         ? Promise<U>
         : Promise<ReturnType<Last<T>>>
@@ -235,30 +235,57 @@ function sequentially<
 >(
   ...fns: V
 ): (
-  ...values: IsParametersEqual<V> extends true
-    ? Parameters<First<V>>
-    : ReadonlyArray<unknown>
-) => HasPromise<ExtractReturnTypes<V>> extends true ? Promise<void> : void;
+  ...values: IsParametersEqual<V> extends true ? Parameters<First<V>> : never
+) => HasPromise<V> extends true ? Promise<ReturnTypesOf<V>> : ReturnTypesOf<V>;
 ```
 
 Lets invoke independently functions with the same value in order that they are declared. Can handle asynchronous functions.
 
 ```typescript
-function sendOverNetwork(error: Error): Promise<void> {
+async function sendOverNetwork(error: Error): Promise<void> {
   // sends error to some url
 }
 
-function logIntoFile(error: Error): Promise<void> {
+async function logIntoFile(error: Error): Promise<void> {
   // writes error to file
 }
 
-const errorLogger /*: (value: Error) => Promise<void> */ = sequentially(
+const errorLogger /*: (value: Error) => Promise<[void, void, void]> */ = sequentially(
   sendOverNetwork // 1
   logIntoFile, // 2
   console.log, // 3
 );
 
 errorLogger(someError);
+```
+
+### concurrently
+
+```ts
+function concurrently<
+  F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>
+>(
+  ...fns: F
+): (
+  ...args: IsParametersEqual<F> extends true ? Parameters<First<F>> : never
+) => Promise<ReturnTypesOf<F>>;
+```
+
+Executes functions that accepts same parameters in parallel.
+
+```ts
+const fn = concurrently(
+  (n: number) => {
+    /* Do some work */
+  },
+  (n: number) => {
+    /* Do some other work */
+  }
+);
+
+fn(9).then(() => {
+  /* handle */
+});
 ```
 
 ### isNothing

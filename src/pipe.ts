@@ -42,7 +42,7 @@ export const pipe =
     ? never
     : (
         ...args: Parameters<First<T>>
-      ) => HasPromise<ReturnTypesOf<T>> extends true
+      ) => HasPromise<T> extends true
         ? ReturnType<Last<T>> extends Promise<infer U>
           ? Promise<U>
           : Promise<ReturnType<Last<T>>>

@@ -3,6 +3,14 @@
 ### Added
 
 - Return back `identity` function.
+- `concurrently` function.
+
+### Changed
+
+- `ReturnTypesOf` now can get inner value of the `Promise`.
+- `HasPromise` type accepts a tuple of functions now.
+- if functions passed to `sequentially` vary by parameters then returned function has `never` type for them.
+- `sequentially` can return results from all functions as plain array or Promise of array now.
 
 ## [0.24.0] - 2021-07-10
 

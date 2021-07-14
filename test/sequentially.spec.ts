@@ -29,4 +29,26 @@ describe('sequentially', () => {
 
     expect(text).toBe('123');
   });
+
+  it('should return result of synchronous functions as array', () => {
+    const fn = sequentially(
+      (n: number) => n,
+      (n: number) => n ** 2
+    );
+
+    const result = fn(2);
+
+    expect(result).toEqual([2, 4]);
+  });
+
+  it('should return result of mixed functions as Promise of array', async () => {
+    const fn = sequentially(
+      (n: number) => n,
+      async (n: number) => n ** 2
+    );
+
+    const result = await fn(2);
+
+    expect(result).toEqual([2, 4]);
+  });
 });

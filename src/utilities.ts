@@ -150,13 +150,16 @@ export type Widen<T, W = never> = T extends W ? W : T;
 
 /** Detects if array has at least one `Promise`. */
 export type HasPromise<
-  R extends ReadonlyArray<unknown>,
+  R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
   A extends boolean = false
 > = A extends true
   ? A
   : Length<R> extends 0
   ? A
-  : HasPromise<Tail<R>, First<R> extends Promise<unknown> ? true : false>;
+  : HasPromise<
+      Tail<R>,
+      ReturnType<First<R>> extends Promise<unknown> ? true : false
+    >;
 
 /** Converts array of function into an array with their return types. */
 export type ReturnTypesOf<
@@ -164,7 +167,30 @@ export type ReturnTypesOf<
   R extends ReadonlyArray<unknown> = []
 > = Length<F> extends 0
   ? R
-  : ReturnTypesOf<Tail<F>, [...R, ReturnType<First<F>>]>;
+  : ReturnTypesOf<
+      Tail<F>,
+      [
+        ...R,
+        ReturnType<First<F>> extends Promise<infer U> ? U : ReturnType<First<F>>
+      ]
+    >;
+
+/** Checks if all functions have the same parameters set. */
+export type IsParametersEqual<
+  F extends ReadonlyArray<(...values: ReadonlyArray<any>) => unknown>,
+  R = []
+> = Length<F> extends 0
+  ? R extends false
+    ? false
+    : true
+  : IsParametersEqual<
+      Tail<F>,
+      R extends []
+        ? Parameters<First<F>>
+        : R extends Parameters<First<F>>
+        ? R
+        : false
+    >;
 
 /**
  * Creates function with fixed number of parameters.

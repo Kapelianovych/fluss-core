@@ -30,5 +30,6 @@ export * from './consequent';
 export * from './is_promise';
 export * from './is_function';
 export * from './demethodize';
+export * from './concurrently';
 export * from './sequentially';
 export * from './is_just_nothing';
