@@ -434,7 +434,7 @@ window.addEventListener('scroll', debouncedFunction);
 ### delay
 
 ```ts
-function delay<F extends (...args: ReadonlyArray<unknown> => void)>((fn: F, frames?: number): DelayId;
+function delay<T>(fn: () => T, frames?: number): Delay<T>;
 ```
 
 Lengthens function invocation at some frames. If _frames_ equals to zero or less, then `requestAnimationFrame` function is used.
@@ -451,7 +451,7 @@ delay(() => {
 ### cancelDelay
 
 ```ts
-function cancelDelay(stamp: DelayId): void;
+function cancelDelay(value: unknown): void;
 ```
 
 Cancels invocation of delayed function.

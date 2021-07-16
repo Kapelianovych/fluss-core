@@ -33,12 +33,13 @@ describe('delay', () => {
     }, 2);
   });
 
-  it('should return delay id object', () => {
+  it('should return delay object', () => {
     const id = delay(() => {});
 
     expect(id).toMatchObject({
-      type: expect.any(Symbol),
-      id: expect.anything(),
+      result: expect.any(Promise),
+      _$id: expect.any(Symbol),
+      _$clear: expect.any(Function),
     });
   });
 
@@ -72,5 +73,13 @@ describe('cancelDelay', () => {
         done(error);
       }
     }, 3 * FRAME_TIME);
+  });
+
+  it('should return result from delayed function', async () => {
+    const fn = () => 7;
+
+    const { result } = delay(fn, 2);
+
+    expect(await result).toBe(7);
   });
 });

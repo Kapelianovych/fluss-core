@@ -1,4 +1,10 @@
-# [0.26.1] - 2021-07-16
+# Unreleased
+
+### Changed
+
+- `delay` function can now return result of delayed function.
+
+## [0.26.1] - 2021-07-16
 
 ### Fixed
 
