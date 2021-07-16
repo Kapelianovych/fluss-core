@@ -6,7 +6,7 @@ import type { Typeable, Sizeable, Serializable } from './types';
 export const TUPLE_OBJECT_TYPE = '$Tuple';
 
 /** Immutable container for fixed sequence of values. */
-export interface Tuple<T extends ReadonlyArray<unknown>>
+export interface Tuple<T extends ReadonlyArray<any>>
   extends Iterable<T[number]>,
     Typeable,
     Sizeable,
@@ -28,7 +28,7 @@ export interface Tuple<T extends ReadonlyArray<unknown>>
 }
 
 /** Creates `Tuple` based on given values. */
-export const tuple = <T extends ReadonlyArray<unknown>>(
+export const tuple = <T extends ReadonlyArray<any>>(
   ...values: T
 ): Tuple<T> => ({
   type: () => TUPLE_OBJECT_TYPE,
@@ -65,7 +65,7 @@ export const tuple = <T extends ReadonlyArray<unknown>>(
 });
 
 /** Check if value is instance of `Tuple`. */
-export const isTuple = <T extends ReadonlyArray<unknown>>(
+export const isTuple = <T extends ReadonlyArray<any>>(
   value: unknown
 ): value is Tuple<T> =>
   isObject(value) &&

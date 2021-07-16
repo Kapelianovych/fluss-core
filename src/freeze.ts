@@ -6,7 +6,7 @@ import type { DeepReadonly } from './utilities';
  */
 export const freeze = <T extends object, D extends boolean = false>(
   value: T,
-  // @ts-ignore - TS cannot assing false to boolean :(
+  // @ts-ignore - TS cannot assign false to boolean :(
   deep: D = false
 ): D extends true ? DeepReadonly<T> : Readonly<T> => {
   if (deep) {

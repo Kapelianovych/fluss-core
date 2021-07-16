@@ -10,31 +10,31 @@ import type {
 
 declare namespace Gaps {
   type Preserve<
-    A extends ReadonlyArray<unknown>,
-    P extends ReadonlyArray<unknown>,
-    R extends ReadonlyArray<unknown> = []
+    A extends ReadonlyArray<any>,
+    P extends ReadonlyArray<any>,
+    R extends ReadonlyArray<any> = []
   > = Length<A> extends 0
     ? [...R, ...P]
     : First<A> extends typeof _
     ? Preserve<Tail<A>, Tail<P>, [First<P>, ...R]>
     : Preserve<Tail<A>, Tail<P>, R>;
 
-  type With<P extends ReadonlyArray<unknown>> = {
+  type With<P extends ReadonlyArray<any>> = {
     [K in keyof P]?: P[K] | typeof _;
   };
 
-  type Cleared<P extends ReadonlyArray<unknown>> = {
+  type Cleared<P extends ReadonlyArray<any>> = {
     [K in keyof P]: NonNullable<P[K]>;
   };
 
-  type AddTo<P extends ReadonlyArray<unknown>> = Cast<
+  type AddTo<P extends ReadonlyArray<any>> = Cast<
     Cleared<With<P>>,
-    ReadonlyArray<unknown>
+    ReadonlyArray<any>
   >;
 
   type Exclude<
-    A extends With<ReadonlyArray<unknown>>,
-    R extends ReadonlyArray<unknown> = []
+    A extends With<ReadonlyArray<any>>,
+    R extends ReadonlyArray<any> = []
   > = Length<A> extends 0
     ? R
     : First<A> extends typeof _
@@ -46,7 +46,7 @@ declare namespace Gaps {
 export const _: unique symbol = Symbol('Placeholder');
 
 type Curry<
-  F extends (...args: any) => unknown,
+  F extends (...args: Array<any>) => any,
   A extends number = FixedParametersCount<Parameters<F>>
 > = <U extends Gaps.AddTo<Parameters<F>>>(
   ...args: U
@@ -70,7 +70,7 @@ type Curry<
  * you can apparently define function's _arity_.
  */
 export const curry = <
-  F extends (...args: ReadonlyArray<any>) => unknown,
+  F extends (...args: ReadonlyArray<any>) => any,
   A extends number = FixedParametersCount<Parameters<F>>
 >(
   fn: F,

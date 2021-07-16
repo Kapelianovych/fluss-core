@@ -1,6 +1,6 @@
 /** Gets constructor type from object type. */
 export type Constructor<T> = {
-  new (...args: ReadonlyArray<unknown>): T;
+  new (...args: ReadonlyArray<any>): T;
   prototype: T;
 };
 
@@ -23,19 +23,19 @@ export type StrictSomeRequired<T, P extends keyof T> = Partial<Omit<T, P>> &
 // Some types are inspired by
 // [this article](https://www.freecodecamp.org/news/typescript-curry-ramda-types-f747e99744ab/)
 /** Return tail elements of A except of X. */
-export type Rest<
-  A extends ReadonlyArray<unknown>,
-  X extends Partial<A>
-> = Shift<Cast<Length<X>, number>, A>;
+export type Rest<A extends ReadonlyArray<any>, X extends Partial<A>> = Shift<
+  Cast<Length<X>, number>,
+  A
+>;
 
 /** Get length of array. */
-export type Length<T extends ReadonlyArray<unknown>> = T['length'];
+export type Length<T extends ReadonlyArray<any>> = T['length'];
 
 /** Get rid of first `Index` elements from a `From` array. */
 export type Shift<
   Index extends number = 0,
-  From extends ReadonlyArray<unknown> = [],
-  I extends ReadonlyArray<unknown> = []
+  From extends ReadonlyArray<any> = [],
+  I extends ReadonlyArray<any> = []
 > = Length<I> extends Index
   ? From
   : Shift<Index, Tail<From>, [First<From>, ...I]>;
@@ -43,37 +43,31 @@ export type Shift<
 /** Get rid of last `Index` elements from a `From` array. */
 export type Pop<
   Index extends number = 0,
-  From extends ReadonlyArray<unknown> = [],
-  I extends ReadonlyArray<unknown> = []
+  From extends ReadonlyArray<any> = [],
+  I extends ReadonlyArray<any> = []
 > = Length<I> extends Index ? From : Pop<Index, Head<From>, [Last<From>, ...I]>;
 
 /** Cast `X` type to `Y` if `X` is not subtype of `Y`. */
 export type Cast<X, Y> = X extends Y ? X : Y;
 
 /** Get types of `T` elements except of first one. */
-export type Tail<T extends ReadonlyArray<unknown>> = T extends [
-  unknown,
-  ...infer U
-]
+export type Tail<T extends ReadonlyArray<any>> = T extends [any, ...infer U]
   ? U
   : [];
 
 /** Get types of `T` elements except of last one. */
-export type Head<T extends ReadonlyArray<unknown>> = T extends [
-  ...infer U,
-  unknown
-]
+export type Head<T extends ReadonlyArray<any>> = T extends [...infer U, any]
   ? U
   : [];
 
 /** Get type of _nth_ element of `T`. */
-export type Nth<T extends ReadonlyArray<unknown>, P extends number> = T[P];
+export type Nth<T extends ReadonlyArray<any>, P extends number> = T[P];
 
 /** Get type of last element of `T`. */
-export type Last<T extends ReadonlyArray<unknown>> = T[Length<Tail<T>>];
+export type Last<T extends ReadonlyArray<any>> = T[Length<Tail<T>>];
 
 /** Get type of first element of `T`. */
-export type First<T extends ReadonlyArray<unknown>> = Nth<T, 0>;
+export type First<T extends ReadonlyArray<any>> = Nth<T, 0>;
 
 /** Checks if type `T` has `null` or `undefined` types. */
 export type HasNothing<T> = Extract<T, Nothing> extends never ? false : true;
@@ -126,8 +120,8 @@ export type DeepReadonly<T> = {
 export type Transform<
   P extends number,
   R,
-  T extends ReadonlyArray<unknown>,
-  A extends ReadonlyArray<unknown> = []
+  T extends ReadonlyArray<any>,
+  A extends ReadonlyArray<any> = []
 > = Length<T> extends 0
   ? A
   : Length<A> extends P
@@ -137,13 +131,13 @@ export type Transform<
 /** Get position of `V` element from `T` array. */
 export type Position<
   V,
-  T extends ReadonlyArray<unknown>,
-  A extends ReadonlyArray<unknown> = []
+  T extends ReadonlyArray<any>,
+  A extends ReadonlyArray<any> = []
 > = Length<T> extends Length<A>
   ? -1
   : V extends T[Length<A>]
   ? Length<A>
-  : Position<V, T, [...A, unknown]>;
+  : Position<V, T, [...A, any]>;
 
 /** Widen `T` to `W` if `T` is subtype of `W`. */
 export type Widen<T, W = never> = T extends W ? W : T;
@@ -158,13 +152,13 @@ export type HasPromise<
   ? A
   : HasPromise<
       Tail<R>,
-      ReturnType<First<R>> extends Promise<unknown> ? true : false
+      ReturnType<First<R>> extends Promise<any> ? true : false
     >;
 
 /** Converts array of function into an array with their return types. */
 export type ReturnTypesOf<
-  F extends ReadonlyArray<(...args: ReadonlyArray<unknown>) => unknown>,
-  R extends ReadonlyArray<unknown> = []
+  F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
+  R extends ReadonlyArray<any> = []
 > = Length<F> extends 0
   ? R
   : ReturnTypesOf<
@@ -177,7 +171,7 @@ export type ReturnTypesOf<
 
 /** Checks if all functions have the same parameters set. */
 export type IsParametersEqual<
-  F extends ReadonlyArray<(...values: ReadonlyArray<any>) => unknown>,
+  F extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
   R = []
 > = Length<F> extends 0
   ? R extends false
@@ -200,9 +194,9 @@ export type IsParametersEqual<
  */
 export type CreateFunction<
   A extends number,
-  T extends ReadonlyArray<unknown>,
+  T extends ReadonlyArray<any>,
   R,
-  P extends ReadonlyArray<unknown> = []
+  P extends ReadonlyArray<any> = []
 > = Length<P> extends A
   ? (...args: P) => R
   : CreateFunction<A, Tail<T> extends [] ? T : Tail<T>, R, [...P, First<T>]>;
@@ -213,8 +207,8 @@ export type CreateFunction<
  */
 export type Counter<
   A extends number,
-  V extends ReadonlyArray<unknown> = []
-> = Length<V> extends A ? V : Counter<A, [unknown, ...V]>;
+  V extends ReadonlyArray<any> = []
+> = Length<V> extends A ? V : Counter<A, [any, ...V]>;
 
 /** Subtracts two numbers. Result cannot be lower than `0`. */
 export type MinusOrZero<F extends number, S extends number> = Length<
@@ -228,7 +222,7 @@ export type Plus<F extends number, S extends number> = Length<
 
 /** Counts fixed parameters of a function. */
 export type FixedParametersCount<
-  P extends ReadonlyArray<unknown>,
+  P extends ReadonlyArray<any>,
   A extends number = 0
 > = P extends [any, ...infer R]
   ? FixedParametersCount<R, Cast<Plus<A, 1>, number>>
@@ -236,8 +230,8 @@ export type FixedParametersCount<
 
 /** Reverses array. */
 export type Reverse<
-  P extends ReadonlyArray<unknown>,
-  R extends ReadonlyArray<unknown> = []
+  P extends ReadonlyArray<any>,
+  R extends ReadonlyArray<any> = []
 > = number extends Length<P>
   ? P
   : Length<P> extends 0

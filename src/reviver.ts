@@ -39,12 +39,12 @@ export const reviver = (
   value: JSONValueTypes | SerializabledObject<unknown>
 ):
   | JSONValueTypes
-  | Idle<unknown>
-  | List<unknown>
-  | Option<unknown>
-  | Container<unknown>
-  | Either<unknown, unknown>
-  | Tuple<ReadonlyArray<unknown>> => {
+  | Idle<any>
+  | List<any>
+  | Option<any>
+  | Container<any>
+  | Either<any, any>
+  | Tuple<ReadonlyArray<any>> => {
   if (isObject(value)) {
     // Check for both properties to match SerializabledObject interface.
     if ('type' in value && 'value' in value) {

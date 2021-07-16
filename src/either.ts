@@ -7,7 +7,7 @@ export const EITHER_RIGHT_OBJECT_TYPE = '$Right';
 
 export interface Right<B> extends Typeable, Serializable<B> {
   map<R>(fn: (value: B) => R): Right<R>;
-  chain<E extends Either<unknown, unknown>>(fn: (value: B) => E): E;
+  chain<E extends Either<any, any>>(fn: (value: B) => E): E;
   apply<R>(other: Right<(value: B) => R>): Right<R>;
   handle(): Right<B>;
   isLeft(): this is Right<never>;

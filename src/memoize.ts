@@ -1,7 +1,7 @@
 import { First } from './utilities';
 
 type WithCache<
-  F extends (...args: ReadonlyArray<any>) => unknown,
+  F extends (...args: ReadonlyArray<any>) => any,
   K extends (...args: Parameters<F>) => any = (
     ...args: Parameters<F>
   ) => First<Parameters<F>>
@@ -15,8 +15,8 @@ type WithCache<
  * is first function's argument.
  */
 export const memoize = <
-  F extends (...args: ReadonlyArray<any>) => unknown,
-  K extends (...args: Parameters<F>) => unknown = (
+  F extends (...args: ReadonlyArray<any>) => any,
+  K extends (...args: Parameters<F>) => any = (
     ...args: Parameters<F>
   ) => First<Parameters<F>>
 >(

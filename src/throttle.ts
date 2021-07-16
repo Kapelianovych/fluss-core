@@ -1,9 +1,7 @@
 import { delay } from './delay';
 
 /** Makes function be executed once per _frames_ count. */
-export const throttle = <
-  F extends (...args: ReadonlyArray<unknown>) => void | Promise<void>
->(
+export const throttle = <F extends (...args: ReadonlyArray<any>) => void>(
   fn: F,
   frames = 0
 ): F => {

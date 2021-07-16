@@ -1,4 +1,22 @@
-# [0.25.0] - 2021-07-14
+# [0.26.0] - 2021-07-16
+
+### Added
+
+- Exponentiation operator to `binary` function.
+
+### Changed
+
+- Return type of `debounce`'s, `throttle`'s parameter function should be `void`.
+- Replace `unknown` type in all utility types to `any`.
+
+### Fixed
+
+- Inferring function parameters in `throttle`, `consequent`, `curry`, `debounce`, `memoize`, `once`, `sequentially`, `tryCatch`, `tuple` functions.
+- Return valid number for number operator from `binary` function.
+- Inferring `chain` return type in `Right` monad.
+- Improve typing of `fork` function.
+
+## [0.25.0] - 2021-07-14
 
 ### Added
 

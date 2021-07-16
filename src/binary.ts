@@ -3,7 +3,7 @@ export interface BinaryOperation {
     f: O,
     s: O
   ) => O extends number ? number : string;
-  (operator: '-' | '/' | '%' | '*'): (f: number, s: number) => number;
+  (operator: '-' | '/' | '%' | '*' | '**'): (f: number, s: number) => number;
   (operator: '>' | '<' | '>=' | '<='): (f: number, s: number) => boolean;
   (operator: '==='): <O>(f: O, s: O) => boolean;
   (operator: '=='): <F, S>(f: F, s: S) => boolean;
@@ -21,15 +21,18 @@ export const binary: BinaryOperation = (
 ): ((f: any, s: any) => any) => {
   switch (operator) {
     case '+':
-      return (f, s) => f + s;
+      return (f, s) =>
+        typeof f === 'string' || typeof s === 'string' ? f + s : (f + s) | 0;
     case '-':
-      return (f, s) => f - s;
+      return (f, s) => (f - s) | 0;
     case '/':
-      return (f, s) => f / s;
+      return (f, s) => (f / s) | 0;
     case '%':
-      return (f, s) => f % s;
+      return (f, s) => f % s | 0;
     case '*':
-      return (f, s) => f * s;
+      return (f, s) => (f * s) | 0;
+    case '**':
+      return (f, s) => (f ** s) | 0;
     case '>':
       return (f, s) => f > s;
     case '<':

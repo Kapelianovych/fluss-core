@@ -145,7 +145,7 @@ flipped(1, '2'); // -> 3
 
 ```typescript
 function curry<
-  F extends (...args: ReadonlyArray<any>) => unknown,
+  F extends (...args: ReadonlyArray<any>) => any,
   A extends number = FixedParametersCount<Parameters<F>>
 >(fn: F, arity?: A): Curry<F, A>;
 ```
@@ -168,10 +168,14 @@ const anotherFn /*: Curry<(arg_0: string) => string, 1> */ = fn(_, '2');
 ### fork
 
 ```typescript
-function fork<T extends ReadonlyArray<unknown>, R>(
-  join: (...args: ReadonlyArray<any>) => R,
-  ...fns: ReadonlyArray<(...args: T) => unknown>
-): (...args: T) => R;
+function fork<F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>, R>(
+  join: (
+    ...args: IsParametersEqual<F> extends true ? ReturnTypesOf<F> : never
+  ) => R,
+  ...fns: F
+): (
+  ...args: IsParametersEqual<F> extends true ? Parameters<First<F>> : never
+) => R;
 ```
 
 Allow join output of two functions that get the same input and process it in a different way.
@@ -231,7 +235,7 @@ const sum = [1, 2, 3, 4, 5, 6].reduce(binary('+'), 0);
 
 ```typescript
 function sequentially<
-  V extends ReadonlyArray<(...values: ReadonlyArray<any>) => unknown>
+  V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>
 >(
   ...fns: V
 ): (
@@ -366,7 +370,7 @@ if (isFunction<() => number>(f)) {
 ### throttle
 
 ```ts
-function throttle<F extends (...args: ReadonlyArray<unknown>) => void>(
+function throttle<F extends (...args: ReadonlyArray<any>) => void>(
   fn: F,
   frames?: number
 ): F;
@@ -385,15 +389,13 @@ document.addEventListener('scroll', cpuHeavyFunction);
 ### consequent
 
 ```ts
-interface ConsequentFunction<
-  F extends (...args: ReadonlyArray<unknown>) => unknown
-> {
+interface ConsequentFunction<F extends (...args: ReadonlyArray<any>) => any> {
   /** Signals if this function is executing now. */
   readonly busy: boolean;
   (...args: Parameters<F>): Option<ReturnType<F>>;
 }
 
-function consequent<F extends (...args: ReadonlyArray<unknown>) => unknown>(
+function consequent<F extends (...args: ReadonlyArray<any>) => any>(
   fn: F
 ): ConsequentFunction<F>;
 ```
@@ -468,8 +470,8 @@ cancelDelay(id);
 
 ```ts
 function memoize<
-  F extends (...args: ReadonlyArray<any>) => unknown,
-  K extends (...args: Parameters<F>) => unknown = (
+  F extends (...args: ReadonlyArray<any>) => any,
+  K extends (...args: Parameters<F>) => any = (
     ...args: Parameters<F>
   ) => First<Parameters<F>>
 >(fn: F, keyFrom?: K): WithCache<F, K>;
@@ -932,15 +934,15 @@ Monad that allow to defer data initialization.
 ```typescript
 function reviver(
   key: string,
-  value: JSONValueTypes | SerializabledObject<unknown>
+  value: JSONValueTypes | SerializabledObject<any>
 ):
   | JSONValueTypes
-  | List<unknown>
-  | Idle<unknown>
-  | Option<unknown>
-  | Container<unknown>
-  | Either<Error, unknown>
-  | Tuple<ReadonlyArray<unknown>>;
+  | List<any>
+  | Idle<any>
+  | Option<any>
+  | Container<any>
+  | Either<Error, any>
+  | Tuple<ReadonlyArray<any>>;
 ```
 
 Add recognition of `Container`, `Idle`, `Tuple`, `Option`, `List`, `Either` data structures for `JSON.parse`.

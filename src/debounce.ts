@@ -7,9 +7,7 @@ import { cancelDelay, delay, DelayId } from './delay';
  * be less than _frames_, then original function won't be
  * executed.
  */
-export const debounce = <
-  F extends (...args: ReadonlyArray<unknown>) => void | Promise<void>
->(
+export const debounce = <F extends (...args: ReadonlyArray<any>) => void>(
   fn: F,
   frames = 0
 ): F => {

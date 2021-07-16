@@ -14,7 +14,7 @@ const wrapResultWithEither = <L extends Error, R>(
  * If `catchFn` is not `undefined`, then `Either` with result will
  * be returned, otherwise - `Either` with error.
  */
-export const tryCatch = <T extends ReadonlyArray<unknown>, L extends Error, R>(
+export const tryCatch = <T extends ReadonlyArray<any>, L extends Error, R>(
   tryFn: (...inputs: T) => R,
   catchFn?: (error: L) => R
 ): ((

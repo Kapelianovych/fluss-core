@@ -20,7 +20,7 @@ const concat = <V, A extends ReadonlyArray<V>>(
  * functions.
  */
 export const sequentially =
-  <V extends ReadonlyArray<(...values: ReadonlyArray<any>) => unknown>>(
+  <V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>>(
     ...fns: V
   ) =>
   (

@@ -2,7 +2,7 @@ import { isPromise } from './is_promise';
 import { maybe, none, Option, some } from './option';
 
 export interface ConsequentFunction<
-  F extends (...args: ReadonlyArray<unknown>) => unknown
+  F extends (...args: ReadonlyArray<any>) => any
 > {
   /** Signals if this function is executing now. */
   readonly busy: boolean;
@@ -13,9 +13,7 @@ export interface ConsequentFunction<
  * Executes function while it is not in process.
  * Also handles asynchronous functions.
  */
-export const consequent = <
-  F extends (...args: ReadonlyArray<unknown>) => unknown
->(
+export const consequent = <F extends (...args: ReadonlyArray<any>) => any>(
   fn: F
 ): ConsequentFunction<F> => {
   let busy = false;

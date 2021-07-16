@@ -1,12 +1,5 @@
 import { isPromise } from './is_promise';
-import type {
-  Tail,
-  Last,
-  First,
-  Length,
-  HasPromise,
-  ReturnTypesOf,
-} from './utilities';
+import type { Tail, Last, First, Length, HasPromise } from './utilities';
 
 type IsComposable<
   T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
