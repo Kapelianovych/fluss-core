@@ -1,4 +1,10 @@
-# [0.26.0] - 2021-07-16
+# [0.26.1] - 2021-07-16
+
+### Fixed
+
+- Executing functions one after another in `sequentially`.
+
+## [0.26.0] - 2021-07-16
 
 ### Added
 

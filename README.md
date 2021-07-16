@@ -216,7 +216,7 @@ interface BinaryOperation {
     f: O,
     s: O
   ) => O extends number ? number : string;
-  (operator: '-' | '/' | '%' | '*'): (f: number, s: number) => number;
+  (operator: '-' | '/' | '%' | '*' | '**): (f: number, s: number) => number;
   (operator: '>' | '<' | '>=' | '<='): (f: number, s: number) => boolean;
   (operator: '==='): <O>(f: O, s: O) => boolean;
   (operator: '=='): <F, S>(f: F, s: S) => boolean;

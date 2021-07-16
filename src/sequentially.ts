@@ -7,11 +7,11 @@ import {
 } from './utilities';
 
 const concat = <V, A extends ReadonlyArray<V>>(
-  aggregator: A | Promise<A>,
-  result: V
+  aggregator: A,
+  result: V | Promise<V>
 ) =>
-  isPromise<A>(aggregator)
-    ? aggregator.then((a) => a.concat(result))
+  isPromise<V>(result)
+    ? result.then((value) => aggregator.concat(value))
     : aggregator.concat(result);
 
 /**
@@ -28,10 +28,10 @@ export const sequentially =
   ): HasPromise<V> extends true
     ? Promise<ReturnTypesOf<V>>
     : ReturnTypesOf<V> =>
-    fns.reduce((aggregator, fn) => {
-      const result = fn(...values);
-
-      return isPromise(result)
-        ? result.then((value) => concat(aggregator, value))
-        : concat(aggregator, result);
-    }, [] as any);
+    fns.reduce(
+      (waiter, fn) =>
+        isPromise<ReadonlyArray<V>>(waiter)
+          ? waiter.then((results) => concat(results, fn(...values)))
+          : concat(waiter, fn(...values)),
+      [] as any
+    );
