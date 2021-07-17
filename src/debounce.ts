@@ -1,5 +1,5 @@
 import { isNothing } from './is_just_nothing';
-import { cancelDelay, delay, Delay } from './delay';
+import { delay, Delay } from './delay';
 
 /**
  * Delays function invocation for _frames_ from last invocation
@@ -11,12 +11,12 @@ export const debounce = <F extends (...args: ReadonlyArray<any>) => void>(
   fn: F,
   frames = 0
 ): F => {
-  let delayId: Delay<void> | undefined;
+  let delayStamp: Delay<void> | undefined;
 
   return ((...args: Parameters<F>) => {
-    if (!isNothing(delayId)) {
-      cancelDelay(delayId);
+    if (!isNothing(delayStamp)) {
+      delayStamp.cancel();
     }
-    delayId = delay(() => fn(...args), frames);
+    delayStamp = delay(() => fn(...args), frames);
   }) as F;
 };

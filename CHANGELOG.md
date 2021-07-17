@@ -1,8 +1,12 @@
-# Unreleased
+# [0.27.0] - 2021-07-17
 
 ### Changed
 
-- `delay` function can now return result of delayed function.
+- `delay` function can now return special object that has three properties: `canceled` - tells if a delay is canceled, `result` - holds return value of delayed function and `cancel` - function that cancels the delay.
+
+### Removed
+
+- `cancelDelay` function.
 
 ## [0.26.1] - 2021-07-16
 

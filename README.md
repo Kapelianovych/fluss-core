@@ -434,7 +434,7 @@ window.addEventListener('scroll', debouncedFunction);
 ### delay
 
 ```ts
-function delay<T>(fn: () => T, frames?: number): Delay<T>;
+function delay<T>(fn: () => T | Promise<T>, frames?: number): Delay<T>;
 ```
 
 Lengthens function invocation at some frames. If _frames_ equals to zero or less, then `requestAnimationFrame` function is used.
@@ -443,27 +443,13 @@ Lengthens function invocation at some frames. If _frames_ equals to zero or less
 delay(() => {
   /* Some work here. */
 }); // Will use `requestAnimationFrame` in browser.
-delay(() => {
+const stamp = delay(() => {
   /* Some another work here. */
 }, 2); // Will use `setTimeout`.
-```
 
-### cancelDelay
-
-```ts
-function cancelDelay(value: unknown): void;
-```
-
-Cancels invocation of delayed function.
-
-```ts
-const id = delay(() => {
-  /* Some job. */
-}, 3);
-
-// Somewhere in the code...
-
-cancelDelay(id);
+stamp.canceled; // -> false
+stamp.result; // -> Promise<T> holds result if delayed function.
+stamp.cancel(); // -> cancels delay.
 ```
 
 ### memoize

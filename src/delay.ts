@@ -1,4 +1,5 @@
-import { isObject } from './is_object';
+import { isError } from './is_error';
+import { isPromise } from './is_promise';
 
 interface InternalDelayId {
   readonly type: symbol;
@@ -17,9 +18,7 @@ interface DelayFunction {
 export const FRAME_TIME = 16.67;
 
 const TIME_TYPE = Symbol('time');
-const DELAY_SYMBOL = Symbol('Delay');
 const ANIMATION_TYPE = Symbol('animation');
-const CLEARING_SIGNAL = Symbol('Clear delay');
 
 const internalDelay: DelayFunction = ((fn, frames: number) =>
   'requestAnimationFrame' in globalThis && frames <= 0
@@ -34,47 +33,66 @@ const internalCancelDelay = (stamp: InternalDelayId): void =>
     ? globalThis.cancelAnimationFrame(stamp.id as number)
     : globalThis.clearTimeout(stamp.id as NodeJS.Timeout);
 
-export interface Delay<T> {
-  readonly _$id: symbol;
-  readonly _$clear: VoidFunction;
-
-  readonly result: Promise<T | void>;
+interface DelayBase {
+  /** Cancels invocation of delayed function. */
+  cancel: VoidFunction;
 }
+
+interface DelayResolved<T> extends DelayBase {
+  readonly canceled: false;
+  readonly result: Promise<T>;
+}
+
+interface DelayCanceled extends DelayBase {
+  readonly canceled: true;
+  readonly result: Promise<void>;
+}
+
+export type Delay<T> = DelayCanceled | DelayResolved<T>;
+
+const catchError = <T>(
+  result: T,
+  resolve: (value: T) => void,
+  reject: (error?: Error) => void
+) => (isError(result) ? reject(result) : resolve(result));
 
 /**
  * Lengthens function invocation at some frames.
  * If _frames_ equals to zero or less, then `requestAnimationFrame`
  * function is used.
  */
-export const delay = <T>(fn: () => T, frames = 0): Delay<T> => {
+export const delay = <T>(fn: () => T | Promise<T>, frames = 0): Delay<T> => {
   let _$clear: VoidFunction = () => {};
+  let _canceled = false;
 
-  const _internalTask = new Promise<T>((resolve, reject) => {
+  const _internalTask: Promise<any> = new Promise((resolve, reject) => {
     const delayId = internalDelay(() => {
       try {
-        resolve(fn());
+        const result = fn();
+        isPromise<T>(result)
+          ? result.then((value) => catchError(value, resolve, reject), reject)
+          : catchError(result, resolve, reject);
       } catch (error) {
         reject(error);
       }
     }, frames);
-    _$clear = () => (internalCancelDelay(delayId), reject(CLEARING_SIGNAL));
+
+    _$clear = () =>
+      void (
+        !_canceled &&
+        (internalCancelDelay(delayId), (_canceled = true), resolve(undefined))
+      );
   });
 
   return {
-    _$id: DELAY_SYMBOL,
-    _$clear,
-    result: _internalTask.catch((error) => {
-      if (error !== CLEARING_SIGNAL) {
-        throw error;
-      }
-    }),
+    get canceled() {
+      return _canceled;
+    },
+    get cancel() {
+      return _$clear;
+    },
+    get result() {
+      return _internalTask;
+    },
   };
 };
-
-/** Cancels invocation of delayed function. */
-export const cancelDelay = (value: unknown): void =>
-  void (
-    isObject(value) &&
-    (value as Delay<unknown>)._$id === DELAY_SYMBOL &&
-    (value as Delay<unknown>)._$clear()
-  );

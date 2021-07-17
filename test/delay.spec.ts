@@ -1,4 +1,4 @@
-import { cancelDelay, delay, FRAME_TIME } from '../src';
+import { delay, FRAME_TIME } from '../src';
 
 describe('FRAME_TIME', () => {
   it('should be exported', () => {
@@ -38,8 +38,8 @@ describe('delay', () => {
 
     expect(id).toMatchObject({
       result: expect.any(Promise),
-      _$id: expect.any(Symbol),
-      _$clear: expect.any(Function),
+      canceled: expect.any(Boolean),
+      cancel: expect.any(Function),
     });
   });
 
@@ -63,7 +63,7 @@ describe('cancelDelay', () => {
   it('should cancel delayed function execution', (done) => {
     const fn = jest.fn();
 
-    cancelDelay(delay(fn, 2));
+    delay(fn, 2).cancel();
 
     setTimeout(() => {
       try {
@@ -75,11 +75,29 @@ describe('cancelDelay', () => {
     }, 3 * FRAME_TIME);
   });
 
+  it('should signal if delay if canceled', () => {
+    const stamp = delay(() => {}, 2);
+
+    expect(stamp.canceled).toBe(false);
+
+    stamp.cancel();
+
+    expect(stamp.canceled).toBe(true);
+  });
+
   it('should return result from delayed function', async () => {
     const fn = () => 7;
 
     const { result } = delay(fn, 2);
 
     expect(await result).toBe(7);
+  });
+
+  it('should not throw an error on twice cancel execution', () => {
+    const stamp = delay(() => {}, 2);
+
+    expect(stamp.cancel).not.toThrow();
+    expect(stamp.cancel).not.toThrow();
+    expect(stamp.cancel).not.toThrow();
   });
 });
