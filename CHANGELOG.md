@@ -3,6 +3,7 @@
 ### Changed
 
 - `delay` function can now return special object that has three properties: `canceled` - tells if a delay is canceled, `result` - holds return value of delayed function and `cancel` - function that cancels the delay.
+- Separate `join` parameter from `fork` function into returned function. Now `fork`'s result is always `Promise`, because functions are executed in parallel.
 
 ### Removed
 

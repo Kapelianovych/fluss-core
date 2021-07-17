@@ -168,25 +168,23 @@ const anotherFn /*: Curry<(arg_0: string) => string, 1> */ = fn(_, '2');
 ### fork
 
 ```typescript
-function fork<F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>, R>(
-  join: (
-    ...args: IsParametersEqual<F> extends true ? ReturnTypesOf<F> : never
-  ) => R,
+function fork<F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
   ...fns: F
-): (
+): <R>(
+  join: (...args: ReturnTypesOf<F>) => R | Promise<R>
+) => (
   ...args: IsParametersEqual<F> extends true ? Parameters<First<F>> : never
-) => R;
+) => Promise<R>;
 ```
 
 Allow join output of two functions that get the same input and process it in a different way.
 
 ```typescript
 // Compute average.
-const y /*: (a: Array<number>) => number */ = fork(
-  (sum: number, count: number) => sum / count,
+const y /*: (a: Array<number>) => Promise<number> */ = fork(
   (a: Array<number>) => a.reduce((sum, num) => sum + num, 0),
   (a: Array<number>) => a.length
-);
+)((sum, count) => sum / count);
 ```
 
 ### demethodize
