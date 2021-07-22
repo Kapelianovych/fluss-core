@@ -1,33 +1,40 @@
 import { isPromise } from './is_promise';
 import { isNothing } from './is_just_nothing';
-import { Either, left, Right, right } from './either';
+import { Either, left, right } from './either';
 
-const wrapResultWithEither = <L extends Error, R>(
-  result: R
-): R extends Promise<infer U> ? Promise<Either<L, U>> : Right<R> => {
-  // @ts-ignore
-  return isPromise<R>(result) ? result.then(right, left) : right(result);
-};
+export interface TryCatchFunction {
+  <T extends ReadonlyArray<any>, L extends Error, R>(
+    tryFn: (...inputs: T) => R
+  ): (
+    ...args: T
+  ) => R extends Promise<infer U> ? Promise<Either<L, U>> : Either<L, R>;
+  <T extends ReadonlyArray<any>, L extends Error, R>(
+    tryFn: (...inputs: T) => R,
+    catchFn: (error: L) => R
+  ): (...args: T) => R;
+}
 
 /**
- * Wraps code into `try/catch` and returns `Either` monad with result.
- * If `catchFn` is not `undefined`, then `Either` with result will
- * be returned, otherwise - `Either` with error.
+ * Catches error that may occur in _tryFn_ function.
+ * If _catchFn_ is defined, then result will be returned.
+ * Otherwise, `Either` with an error or result.
  */
-export const tryCatch = <T extends ReadonlyArray<any>, L extends Error, R>(
-  tryFn: (...inputs: T) => R,
-  catchFn?: (error: L) => R
-): ((
-  ...inputs: T
-) => R extends Promise<infer U> ? Promise<Either<L, U>> : Either<L, R>) => {
-  // @ts-ignore
-  return (...inputs: T) => {
+export const tryCatch: TryCatchFunction =
+  <T extends ReadonlyArray<any>, L extends Error, R>(
+    tryFn: (...inputs: T) => R,
+    catchFn?: (error: L) => R
+  ) =>
+  (...inputs: T) => {
     try {
-      return wrapResultWithEither<L, R>(tryFn(...inputs));
+      const result = tryFn(...inputs);
+      return isPromise<R>(result)
+        ? isNothing(catchFn)
+          ? result.then(right, left)
+          : result.catch(catchFn)
+        : isNothing(catchFn)
+        ? right(result)
+        : result;
     } catch (error) {
-      return isNothing(catchFn)
-        ? left<L>(error)
-        : wrapResultWithEither<L, R>(catchFn(error));
+      return isNothing(catchFn) ? left<L>(error) : catchFn(error);
     }
   };
-};

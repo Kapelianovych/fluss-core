@@ -495,16 +495,23 @@ const y /*: ReadonlyArray<number> */ = array(9, new Set([6]), {
 ### tryCatch
 
 ```typescript
-function tryCatch<T, L extends Error, R>(
-  tryFn: (input: T) => R,
-  catchFn?: (error: L) => R
-): (input: T) => Either<L, R>;
+interface TryCatchFunction {
+  <T extends ReadonlyArray<any>, L extends Error, R>(
+    tryFn: (...inputs: T) => R
+  ): (
+    ...args: T
+  ) => R extends Promise<infer U> ? Promise<Either<L, U>> : Either<L, R>;
+  <T extends ReadonlyArray<any>, L extends Error, R>(
+    tryFn: (...inputs: T) => R,
+    catchFn: (error: L) => R
+  ): (...args: T) => R;
+}
 ```
 
-Wraps code into `try/catch` and returns `Either` monad with result. If `catchFn` is not `undefined`, then `Either` with result will be returned, otherwise - `Either` with error. Asynchronous version is also existed.
+Catches error that may occur in _tryFn_ function. If _catchFn_ is defined, then result will be returned. Otherwise, `Either` with an error or result.
 
 ```typescript
-const getUser /*: (id: string) => Either<NoUserError, User> */ = tryCatch(
+const getUser /*: (id: string) => User */ = tryCatch(
   (id: string) => getUserFromDbById(id),
   (error: NoUserError) => createUser()
 );

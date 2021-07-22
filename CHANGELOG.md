@@ -1,4 +1,10 @@
-# [0.27.0] - 2021-07-17
+# [0.28.0] - 2021-07-22
+
+### Changed
+
+- `tryCatch` function returns raw result if _catchFn_ is defined, otherwise `Either` with an error or result.
+
+## [0.27.0] - 2021-07-17
 
 ### Changed
 
