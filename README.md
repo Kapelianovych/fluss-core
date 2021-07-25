@@ -190,20 +190,22 @@ const y /*: (a: Array<number>) => Promise<number> */ = fork(
 ### demethodize
 
 ```ts
-function demethodize<
-  T,
-  F extends (this: T, ...args: ReadonlyArray<any>) => any
->(fn: F): (target: T, ...args: Parameters<F>) => ReturnType<F>;
+function demethodize<T extends object, K extends keyof FunctionKeys<T>>(
+  target: T,
+  name: K
+): (
+  ...args: Parameters<T[Cast<K, keyof T>]>
+) => ReturnType<T[Cast<K, keyof T>]>;
 ```
 
 Extracts method from object.
 
 ```ts
-const createElement = demethodize(document.createElement);
+const createElement = demethodize(document, 'createElement');
 
 // ...
 
-const div = createElement(document, 'div');
+const div /*: HTMLElement */ = createElement('div');
 ```
 
 ### binary

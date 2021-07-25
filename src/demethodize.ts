@@ -1,16 +1,14 @@
-export interface DemethodizeFunction {
-  <T, F extends (this: T, ...args: ReadonlyArray<any>) => any>(fn: F): (
-    target: T,
-    ...args: Parameters<F>
-  ) => ReturnType<F>;
-}
+import { Cast } from './utilities';
 
-/**
- * Extracts method from object.
- *
- * The idea is taken [here](http://intelligiblebabble.com/clever-way-to-demethodize-native-js-methods/).
- * Thanks to Leland Richardson.
- */
-export const demethodize: DemethodizeFunction = Function.prototype.bind.bind(
-  Function.prototype.call
-);
+type FunctionKeys<T extends object> = {
+  [K in keyof T as T[K] extends (...args: ReadonlyArray<any>) => any
+    ? K
+    : never]: T[K];
+};
+
+/** Extracts method from object. */
+export const demethodize =
+  <T extends object, K extends keyof FunctionKeys<T>>(target: T, name: K) =>
+  (...args: Parameters<T[Cast<K, keyof T>]>): ReturnType<T[Cast<K, keyof T>]> =>
+    // @ts-ignore
+    target[name](...args);

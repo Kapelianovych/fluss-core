@@ -1,4 +1,10 @@
-# [0.28.0] - 2021-07-22
+# Unreleased
+
+### Changed
+
+- `demethodize` function now accepts object and name of the function to be extracted and returned function just accepts arguments of the original method.
+
+## [0.28.0] - 2021-07-22
 
 ### Changed
 

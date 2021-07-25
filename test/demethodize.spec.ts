@@ -9,14 +9,13 @@ describe('demethodize', () => {
   };
 
   it('should extract method from object', () => {
-    expect(typeof demethodize(obj.g)).toBe('function');
+    expect(typeof demethodize(obj, 'g')).toBe('function');
   });
 
-  it('should accept "this" as first parameter and then arguments to the method', () => {
-    const g = demethodize(obj.g);
+  it('should properly execute function', () => {
+    const g = demethodize(obj, 'g');
 
-    expect(g(7, 1)).toBe(NaN);
-
-    expect(g(obj, 1)).toBe(2);
+    expect(() => g(4)).not.toThrow();
+    expect(g(1)).toBe(2);
   });
 });
