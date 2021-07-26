@@ -239,28 +239,20 @@ function sequentially<
 >(
   ...fns: V
 ): (
-  ...values: IsParametersEqual<V> extends true ? Parameters<First<V>> : never
+  ...values: SingleOrMany<TrimLastEmpty<ParametersOf<V>>>
 ) => HasPromise<V> extends true ? Promise<ReturnTypesOf<V>> : ReturnTypesOf<V>;
 ```
 
-Lets invoke independently functions with the same value in order that they are declared. Can handle asynchronous functions.
+Invokes independently functions with their parameters in order that they are declared. Can handle asynchronous functions.
 
 ```typescript
-async function sendOverNetwork(error: Error): Promise<void> {
-  // sends error to some url
-}
+const inSequence /*: (arg_0: number, arg_1: string) => [number, string] */ =
+  sequentially(
+    (n: number) => n ** 2,
+    (s: string) => s + '!'
+  );
 
-async function logIntoFile(error: Error): Promise<void> {
-  // writes error to file
-}
-
-const errorLogger /*: (value: Error) => Promise<[void, void, void]> */ = sequentially(
-  sendOverNetwork // 1
-  logIntoFile, // 2
-  console.log, // 3
-);
-
-errorLogger(someError);
+inSequence(1, 'Hello');
 ```
 
 ### concurrently

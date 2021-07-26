@@ -142,7 +142,7 @@ export type Position<
 /** Widen `T` to `W` if `T` is subtype of `W`. */
 export type Widen<T, W = never> = T extends W ? W : T;
 
-/** Detects if array has at least one `Promise`. */
+/** Detects if at least one among functions is asynchronous. */
 export type HasPromise<
   R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
   A extends boolean = false
@@ -168,6 +168,14 @@ export type ReturnTypesOf<
         ReturnType<First<F>> extends Promise<infer U> ? U : ReturnType<First<F>>
       ]
     >;
+
+/** Converts array of function into an array with their parameters. */
+export type ParametersOf<
+  V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
+  U extends ReadonlyArray<any> = []
+> = Length<V> extends 0
+  ? U
+  : ParametersOf<Tail<V>, [...U, Parameters<First<V>>]>;
 
 /** Checks if all functions have the same parameters set. */
 export type IsParametersEqual<
