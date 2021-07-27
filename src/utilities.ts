@@ -20,54 +20,8 @@ export type SomeRequired<T, P extends keyof T = keyof T> = Omit<T, P> &
 export type StrictSomeRequired<T, P extends keyof T> = Partial<Omit<T, P>> &
   Required<Pick<T, P>>;
 
-// Some types are inspired by
-// [this article](https://www.freecodecamp.org/news/typescript-curry-ramda-types-f747e99744ab/)
-/** Return tail elements of A except of X. */
-export type Rest<A extends ReadonlyArray<any>, X extends Partial<A>> = Shift<
-  Cast<Length<X>, number>,
-  A
->;
-
-/** Get length of array. */
-export type Length<T extends ReadonlyArray<any>> = T['length'];
-
-/** Get rid of first `Index` elements from a `From` array. */
-export type Shift<
-  Index extends number = 0,
-  From extends ReadonlyArray<any> = [],
-  I extends ReadonlyArray<any> = []
-> = Length<I> extends Index
-  ? From
-  : Shift<Index, Tail<From>, [First<From>, ...I]>;
-
-/** Get rid of last `Index` elements from a `From` array. */
-export type Pop<
-  Index extends number = 0,
-  From extends ReadonlyArray<any> = [],
-  I extends ReadonlyArray<any> = []
-> = Length<I> extends Index ? From : Pop<Index, Head<From>, [Last<From>, ...I]>;
-
 /** Cast `X` type to `Y` if `X` is not subtype of `Y`. */
 export type Cast<X, Y> = X extends Y ? X : Y;
-
-/** Get types of `T` elements except of first one. */
-export type Tail<T extends ReadonlyArray<any>> = T extends [any, ...infer U]
-  ? U
-  : [];
-
-/** Get types of `T` elements except of last one. */
-export type Head<T extends ReadonlyArray<any>> = T extends [...infer U, any]
-  ? U
-  : [];
-
-/** Get type of _nth_ element of `T`. */
-export type Nth<T extends ReadonlyArray<any>, P extends number> = T[P];
-
-/** Get type of last element of `T`. */
-export type Last<T extends ReadonlyArray<any>> = T[Length<Tail<T>>];
-
-/** Get type of first element of `T`. */
-export type First<T extends ReadonlyArray<any>> = Nth<T, 0>;
 
 /** Checks if type `T` has `null` or `undefined` types. */
 export type HasNothing<T> = Extract<T, Nothing> extends never ? false : true;
@@ -77,6 +31,9 @@ export type Just<T> = T extends Nothing ? never : T;
 
 /** Union of empty values. */
 export type Nothing = void | null | undefined;
+
+/** Widen `T` to `W` if `T` is subtype of `W`. */
+export type Widen<T, W = never> = T extends W ? W : T;
 
 /**
  * Represents addition to type in order to
@@ -116,132 +73,206 @@ export type DeepReadonly<T> = {
   readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P];
 };
 
-/** Transform type of item in `T` array with position `P` to `R`. */
-export type Transform<
-  P extends number,
-  R,
-  T extends ReadonlyArray<any>,
-  A extends ReadonlyArray<any> = []
-> = Length<T> extends 0
-  ? A
-  : Length<A> extends P
-  ? Transform<P, R, Tail<T>, [...A, R]>
-  : Transform<P, R, Tail<T>, [...A, First<T>]>;
+export namespace NArray {
+  /** Transform type of item in `T` array with position `P` to `R`. */
+  export type Transform<
+    P extends number,
+    R,
+    T extends ReadonlyArray<any>,
+    A extends ReadonlyArray<any> = []
+  > = Length<T> extends 0
+    ? A
+    : Length<A> extends P
+    ? Transform<P, R, Tail<T>, [...A, R]>
+    : Transform<P, R, Tail<T>, [...A, First<T>]>;
 
-/** Get position of `V` element from `T` array. */
-export type Position<
-  V,
-  T extends ReadonlyArray<any>,
-  A extends ReadonlyArray<any> = []
-> = Length<T> extends Length<A>
-  ? -1
-  : V extends T[Length<A>]
-  ? Length<A>
-  : Position<V, T, [...A, any]>;
+  /** Get position of `V` element from `T` array. */
+  export type Position<
+    V,
+    T extends ReadonlyArray<any>,
+    A extends ReadonlyArray<any> = []
+  > = Length<T> extends Length<A>
+    ? -1
+    : V extends T[Length<A>]
+    ? Length<A>
+    : Position<V, T, [...A, any]>;
 
-/** Widen `T` to `W` if `T` is subtype of `W`. */
-export type Widen<T, W = never> = T extends W ? W : T;
+  // Some types are inspired by
+  // [this article](https://www.freecodecamp.org/news/typescript-curry-ramda-types-f747e99744ab/)
+  /** Return tail elements of A except of X. */
+  export type Rest<A extends ReadonlyArray<any>, X extends Partial<A>> = Shift<
+    Cast<Length<X>, number>,
+    A
+  >;
 
-/** Detects if at least one among functions is asynchronous. */
-export type HasPromise<
-  R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
-  A extends boolean = false
-> = A extends true
-  ? A
-  : Length<R> extends 0
-  ? A
-  : HasPromise<
-      Tail<R>,
-      ReturnType<First<R>> extends Promise<any> ? true : false
-    >;
+  /** Reverses array. */
+  export type Reverse<
+    P extends ReadonlyArray<any>,
+    R extends ReadonlyArray<any> = []
+  > = number extends Length<P>
+    ? P
+    : Length<P> extends 0
+    ? R
+    : Reverse<Tail<P>, [First<P>, ...R]>;
 
-/** Converts array of function into an array with their return types. */
-export type ReturnTypesOf<
-  F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
-  R extends ReadonlyArray<any> = []
-> = Length<F> extends 0
-  ? R
-  : ReturnTypesOf<
-      Tail<F>,
-      [
-        ...R,
-        ReturnType<First<F>> extends Promise<infer U> ? U : ReturnType<First<F>>
-      ]
-    >;
+  /** Get length of array. */
+  export type Length<T extends ReadonlyArray<any>> = T['length'];
 
-/** Converts array of function into an array with their parameters. */
-export type ParametersOf<
-  V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
-  U extends ReadonlyArray<any> = []
-> = Length<V> extends 0
-  ? U
-  : ParametersOf<Tail<V>, [...U, Parameters<First<V>>]>;
+  /** Get rid of first `Index` elements from a `From` array. */
+  export type Shift<
+    Index extends number = 0,
+    From extends ReadonlyArray<any> = [],
+    I extends ReadonlyArray<any> = []
+  > = Length<I> extends Index
+    ? From
+    : Shift<Index, Tail<From>, [First<From>, ...I]>;
 
-/** Checks if all functions have the same parameters set. */
-export type IsParametersEqual<
-  F extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
-  R = []
-> = Length<F> extends 0
-  ? R extends false
-    ? false
-    : true
-  : IsParametersEqual<
-      Tail<F>,
-      R extends []
-        ? Parameters<First<F>>
-        : R extends Parameters<First<F>>
-        ? R
-        : false
-    >;
+  /** Get rid of last `Index` elements from a `From` array. */
+  export type Pop<
+    Index extends number = 0,
+    From extends ReadonlyArray<any> = [],
+    I extends ReadonlyArray<any> = []
+  > = Length<I> extends Index
+    ? From
+    : Pop<Index, Head<From>, [Last<From>, ...I]>;
 
-/**
- * Creates function with fixed number of parameters.
- * Where `A` is arity of a function.
- * `T` is desired types of parameters.
- * `R` is a return type of the final function.
- */
-export type CreateFunction<
-  A extends number,
-  T extends ReadonlyArray<any>,
-  R,
-  P extends ReadonlyArray<any> = []
-> = Length<P> extends A
-  ? (...args: P) => R
-  : CreateFunction<A, Tail<T> extends [] ? T : Tail<T>, R, [...P, First<T>]>;
+  /** Get types of `T` elements except of first one. */
+  export type Tail<T extends ReadonlyArray<any>> = T extends [any, ...infer U]
+    ? U
+    : [];
 
-/**
- * Creates iterable from count of desired
- * values count.
- */
-export type Counter<
-  A extends number,
-  V extends ReadonlyArray<any> = []
-> = Length<V> extends A ? V : Counter<A, [any, ...V]>;
+  /** Get types of `T` elements except of last one. */
+  export type Head<T extends ReadonlyArray<any>> = T extends [...infer U, any]
+    ? U
+    : [];
 
-/** Subtracts two numbers. Result cannot be lower than `0`. */
-export type MinusOrZero<F extends number, S extends number> = Length<
-  Shift<S, Counter<F>>
->;
+  /** Get type of _nth_ element of `T`. */
+  export type Nth<T extends ReadonlyArray<any>, P extends number> = T[P];
 
-/** Adds two numbers. */
-export type Plus<F extends number, S extends number> = Length<
-  [...Counter<F>, ...Counter<S>]
->;
+  /** Get type of last element of `T`. */
+  export type Last<T extends ReadonlyArray<any>> = Nth<T, Length<Tail<T>>>;
 
-/** Counts fixed parameters of a function. */
-export type FixedParametersCount<
-  P extends ReadonlyArray<any>,
-  A extends number = 0
-> = P extends [any, ...infer R]
-  ? FixedParametersCount<R, Cast<Plus<A, 1>, number>>
-  : A;
+  /** Get type of first element of `T`. */
+  export type First<T extends ReadonlyArray<any>> = Nth<T, 0>;
 
-/** Reverses array. */
-export type Reverse<
-  P extends ReadonlyArray<any>,
-  R extends ReadonlyArray<any> = []
-> = number extends Length<P>
-  ? P
-  : Length<P> extends 0
-  ? R
-  : Reverse<Tail<P>, [First<P>, ...R]>;
+  export type TrimLastEmpty<V extends ReadonlyArray<any>> = Length<
+    Last<V>
+  > extends 0
+    ? TrimLastEmpty<Head<V>>
+    : V;
+
+  export type SingleOrMany<
+    V extends ReadonlyArray<any>,
+    R extends ReadonlyArray<any> = []
+  > = Length<V> extends 0
+    ? R
+    : SingleOrMany<
+        Tail<V>,
+        First<V> extends [infer U] ? [...R, U] : [...R, First<V>]
+      >;
+}
+
+export namespace NFn {
+  /** Converts array of function into an array with their return types. */
+  export type ReturnTypesOf<
+    F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
+    R extends ReadonlyArray<any> = []
+  > = NArray.Length<F> extends 0
+    ? R
+    : ReturnTypesOf<
+        NArray.Tail<F>,
+        [
+          ...R,
+          ReturnType<NArray.First<F>> extends Promise<infer U>
+            ? U
+            : ReturnType<NArray.First<F>>
+        ]
+      >;
+
+  /** Converts array of function into an array with their parameters. */
+  export type ParametersOf<
+    V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
+    U extends ReadonlyArray<any> = []
+  > = NArray.Length<V> extends 0
+    ? U
+    : ParametersOf<NArray.Tail<V>, [...U, Parameters<NArray.First<V>>]>;
+
+  /**
+   * Creates function with fixed number of parameters.
+   * Where `A` is arity of a function.
+   * `T` is desired types of parameters.
+   * `R` is a return type of the final function.
+   */
+  export type Create<
+    A extends number,
+    T extends ReadonlyArray<any>,
+    R,
+    P extends ReadonlyArray<any> = []
+  > = NArray.Length<P> extends A
+    ? (...args: P) => R
+    : Create<
+        A,
+        NArray.Tail<T> extends [] ? T : NArray.Tail<T>,
+        R,
+        [...P, NArray.First<T>]
+      >;
+
+  /** Checks if all functions have the same parameters set. */
+  export type IsParametersEqual<
+    F extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
+    R = []
+  > = NArray.Length<F> extends 0
+    ? R extends false
+      ? false
+      : true
+    : IsParametersEqual<
+        NArray.Tail<F>,
+        R extends []
+          ? Parameters<NArray.First<F>>
+          : R extends Parameters<NArray.First<F>>
+          ? R
+          : false
+      >;
+
+  /** Detects if at least one among functions is asynchronous. */
+  export type IsAsync<
+    R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
+    A extends boolean = false
+  > = A extends true
+    ? A
+    : NArray.Length<R> extends 0
+    ? A
+    : IsAsync<
+        NArray.Tail<R>,
+        ReturnType<NArray.First<R>> extends Promise<any> ? true : false
+      >;
+
+  /** Counts fixed parameters of a function. */
+  export type FixedParametersCount<
+    P extends ReadonlyArray<any>,
+    A extends number = 0
+  > = P extends [any, ...infer R]
+    ? FixedParametersCount<R, Cast<NMath.Plus<A, 1>, number>>
+    : A;
+}
+
+export namespace NMath {
+  /**
+   * Creates iterable from count of desired
+   * values count.
+   */
+  export type Counter<
+    A extends number,
+    V extends ReadonlyArray<any> = []
+  > = NArray.Length<V> extends A ? V : Counter<A, [any, ...V]>;
+
+  /** Subtracts two numbers. Result cannot be lower than `0`. */
+  export type MinusOrZero<F extends number, S extends number> = NArray.Length<
+    NArray.Shift<S, Counter<F>>
+  >;
+
+  /** Adds two numbers. */
+  export type Plus<F extends number, S extends number> = NArray.Length<
+    [...Counter<F>, ...Counter<S>]
+  >;
+}

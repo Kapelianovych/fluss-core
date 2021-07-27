@@ -1,7 +1,7 @@
+import { NArray } from './utilities';
 import { isObject } from './is_object';
 import { isFunction } from './is_function';
-import type { Pop, Shift, Transform } from './utilities';
-import type { Typeable, Sizeable, Serializable } from './types';
+import { Typeable, Sizeable, Serializable } from './types';
 
 export const TUPLE_OBJECT_TYPE = '$Tuple';
 
@@ -11,9 +11,9 @@ export interface Tuple<T extends ReadonlyArray<any>>
     Typeable,
     Sizeable,
     Serializable<T> {
-  pop<C extends number = 1>(count?: C): Tuple<Pop<C, T>>;
+  pop<C extends number = 1>(count?: C): Tuple<NArray.Pop<C, T>>;
   item<P extends number>(position: P): T[P];
-  shift<C extends number = 1>(count?: C): Tuple<Shift<C, T>>;
+  shift<C extends number = 1>(count?: C): Tuple<NArray.Shift<C, T>>;
   append<V extends ReadonlyArray<unknown>>(...values: V): Tuple<[...T, ...V]>;
   concat<V extends ReadonlyArray<unknown>>(
     other: Tuple<V>
@@ -23,7 +23,7 @@ export interface Tuple<T extends ReadonlyArray<any>>
   transform<P extends number, R>(
     position: P,
     fn: (value: T[P]) => R
-  ): Tuple<Transform<P, R, T>>;
+  ): Tuple<NArray.Transform<P, R, T>>;
   asArray(): T;
 }
 
@@ -47,7 +47,7 @@ export const tuple = <T extends ReadonlyArray<any>>(
     tuple(
       ...(values.map((value, index) =>
         index === position ? fn(value) : value
-      ) as Transform<P, R, T>)
+      ) as NArray.Transform<P, R, T>)
     ),
   position: (value) => values.indexOf(value),
   append: <V extends ReadonlyArray<unknown>>(...items: V) =>
@@ -57,9 +57,11 @@ export const tuple = <T extends ReadonlyArray<any>>(
   prepend: <V extends ReadonlyArray<unknown>>(...items: V) =>
     tuple(...(items.concat(values) as [...V, ...T])),
   shift: <C extends number = 1>(count = 1) =>
-    tuple<Shift<C, T>>(...(values.slice(count) as Shift<C, T>)),
+    tuple<NArray.Shift<C, T>>(...(values.slice(count) as NArray.Shift<C, T>)),
   pop: <C extends number = 1>(count = 1) =>
-    tuple<Pop<C, T>>(...(values.slice(0, values.length - count) as Pop<C, T>)),
+    tuple<NArray.Pop<C, T>>(
+      ...(values.slice(0, values.length - count) as NArray.Pop<C, T>)
+    ),
   isEmpty: () => values.length === 0,
   asArray: () => values,
 });

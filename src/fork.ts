@@ -1,5 +1,5 @@
+import { NFn, NArray } from './utilities';
 import { concurrently } from './concurrently';
-import { First, ReturnTypesOf, IsParametersEqual } from './utilities';
 
 /**
  * Allow join output of functions that get
@@ -7,6 +7,12 @@ import { First, ReturnTypesOf, IsParametersEqual } from './utilities';
  */
 export const fork =
   <F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(...fns: F) =>
-  <R>(join: (...args: ReturnTypesOf<F>) => R | Promise<R>) =>
-  (...args: IsParametersEqual<F> extends true ? Parameters<First<F>> : never) =>
-    concurrently(...fns)(...args).then((values) => join(...values));
+  <R>(join: (...args: NFn.ReturnTypesOf<F>) => R | Promise<R>) =>
+  (
+    ...args: NFn.IsParametersEqual<F> extends true
+      ? Parameters<NArray.First<F>>
+      : never
+  ) =>
+    concurrently(...fns)(...(fns.map(() => args) as any)).then((values) =>
+      join(...values)
+    );

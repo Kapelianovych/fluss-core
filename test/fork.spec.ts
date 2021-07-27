@@ -5,7 +5,7 @@ describe('fork', () => {
     const forkedFn = fork(
       (b: string) => (parseInt(b) > 5 ? parseInt(b) : 0),
       (u: string) => (parseInt(u) < 5 ? parseInt(u) : 0)
-    )((n, h): number => n + h);
+    )((n, h) => n + h);
 
     expect(forkedFn('4')).resolves.toBe(4);
   });

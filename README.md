@@ -263,23 +263,23 @@ function concurrently<
 >(
   ...fns: F
 ): (
-  ...args: IsParametersEqual<F> extends true ? Parameters<First<F>> : never
-) => Promise<ReturnTypesOf<F>>;
+  ...args: NArray.SingleOrMany<NArray.TrimLastEmpty<NFn.ParametersOf<F>>>
+) => Promise<NFn.ReturnTypesOf<F>>;
 ```
 
-Executes functions that accepts same parameters in parallel.
+Executes functions simultaneously and can return arrays of execution results.
 
 ```ts
 const fn = concurrently(
   (n: number) => {
     /* Do some work */
   },
-  (n: number) => {
+  (n: number, b: boolean) => {
     /* Do some other work */
   }
 );
 
-fn(9).then(() => {
+fn(9, [1, true]).then(([firstResult, secondResult]) => {
   /* handle */
 });
 ```

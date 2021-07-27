@@ -1,23 +1,15 @@
-import type {
-  Cast,
-  Tail,
-  First,
-  Length,
-  MinusOrZero,
-  CreateFunction,
-  FixedParametersCount,
-} from './utilities';
+import type { Cast, NFn, NArray, NMath } from './utilities';
 
-declare namespace Gaps {
+declare namespace Curry {
   type Preserve<
     A extends ReadonlyArray<any>,
     P extends ReadonlyArray<any>,
     R extends ReadonlyArray<any> = []
-  > = Length<A> extends 0
+  > = NArray.Length<A> extends 0
     ? [...R, ...P]
-    : First<A> extends typeof _
-    ? Preserve<Tail<A>, Tail<P>, [First<P>, ...R]>
-    : Preserve<Tail<A>, Tail<P>, R>;
+    : NArray.First<A> extends typeof _
+    ? Preserve<NArray.Tail<A>, NArray.Tail<P>, [NArray.First<P>, ...R]>
+    : Preserve<NArray.Tail<A>, NArray.Tail<P>, R>;
 
   type With<P extends ReadonlyArray<any>> = {
     [K in keyof P]?: P[K] | typeof _;
@@ -35,11 +27,11 @@ declare namespace Gaps {
   type Exclude<
     A extends With<ReadonlyArray<any>>,
     R extends ReadonlyArray<any> = []
-  > = Length<A> extends 0
+  > = NArray.Length<A> extends 0
     ? R
-    : First<A> extends typeof _
-    ? Exclude<Tail<A>, R>
-    : Exclude<Tail<A>, [First<A>, ...R]>;
+    : NArray.First<A> extends typeof _
+    ? Exclude<NArray.Tail<A>, R>
+    : Exclude<NArray.Tail<A>, [NArray.First<A>, ...R]>;
 }
 
 /** Value that preserves place for an argument. */
@@ -47,21 +39,21 @@ export const _: unique symbol = Symbol('Placeholder');
 
 type Curry<
   F extends (...args: Array<any>) => any,
-  A extends number = FixedParametersCount<Parameters<F>>
-> = <U extends Gaps.AddTo<Parameters<F>>>(
+  A extends number = NFn.FixedParametersCount<Parameters<F>>
+> = <U extends Curry.AddTo<Parameters<F>>>(
   ...args: U
-) => Length<Gaps.Exclude<U>> extends A
+) => NArray.Length<Curry.Exclude<U>> extends A
   ? ReturnType<F>
-  : number extends Length<Parameters<F>>
+  : number extends NArray.Length<Parameters<F>>
   ? Curry<
-      CreateFunction<
-        Cast<MinusOrZero<A, Length<U>>, number>,
+      NFn.Create<
+        Cast<NMath.MinusOrZero<A, NArray.Length<U>>, number>,
         Parameters<F>,
         ReturnType<F>
       >,
-      Cast<MinusOrZero<A, Length<U>>, number>
+      Cast<NMath.MinusOrZero<A, NArray.Length<U>>, number>
     >
-  : Curry<(...args: Gaps.Preserve<U, Parameters<F>>) => ReturnType<F>>;
+  : Curry<(...args: Curry.Preserve<U, Parameters<F>>) => ReturnType<F>>;
 
 /**
  * Create curried version of function with
@@ -71,7 +63,7 @@ type Curry<
  */
 export const curry = <
   F extends (...args: ReadonlyArray<any>) => any,
-  A extends number = FixedParametersCount<Parameters<F>>
+  A extends number = NFn.FixedParametersCount<Parameters<F>>
 >(
   fn: F,
   arity: A = fn.length as any

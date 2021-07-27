@@ -1,9 +1,15 @@
-# Unreleased
+# [0.29.0] - 2021-07-28
+
+### Added
+
+- `NFn`, `NMath` and `NArray` type namespaces. Move relative types to them.
+- `ParametersOf` type to `NFn` namespace.
 
 ### Changed
 
 - `demethodize` function now accepts object and name of the function to be extracted and returned function just accepts arguments of the original method.
 - `sequentially` returns function that accepts array of according function parameters now.
+- `concurrently` returns function that accepts array of according function parameters now.
 
 ## [0.28.0] - 2021-07-22
 

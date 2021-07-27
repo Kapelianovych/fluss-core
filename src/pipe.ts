@@ -1,20 +1,20 @@
 import { isPromise } from './is_promise';
-import type { Tail, Last, First, Length, HasPromise } from './utilities';
+import { NFn, NArray } from './utilities';
 
 type IsComposable<
   T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
   R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any> = [],
   U extends boolean = false
-> = Length<T> extends 0
+> = NArray.Length<T> extends 0
   ? U
   : IsComposable<
-      Tail<T>,
-      [First<T>, ...R],
-      Length<R> extends 0
+      NArray.Tail<T>,
+      [NArray.First<T>, ...R],
+      NArray.Length<R> extends 0
         ? false
-        : ReturnType<First<R>> extends
-            | First<Parameters<First<T>>>
-            | Promise<First<Parameters<First<T>>>>
+        : ReturnType<NArray.First<R>> extends
+            | NArray.First<Parameters<NArray.First<T>>>
+            | Promise<NArray.First<Parameters<NArray.First<T>>>>
         ? true
         : false
     >;
@@ -34,12 +34,12 @@ export const pipe =
   ): IsComposable<T> extends false
     ? never
     : (
-        ...args: Parameters<First<T>>
-      ) => HasPromise<T> extends true
-        ? ReturnType<Last<T>> extends Promise<infer U>
+        ...args: Parameters<NArray.First<T>>
+      ) => NFn.IsAsync<T> extends true
+        ? ReturnType<NArray.Last<T>> extends Promise<infer U>
           ? Promise<U>
-          : Promise<ReturnType<Last<T>>>
-        : ReturnType<Last<T>> =>
+          : Promise<ReturnType<NArray.Last<T>>>
+        : ReturnType<NArray.Last<T>> =>
   //@ts-ignore
   (...args) =>
     fns.reduce(

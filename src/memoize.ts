@@ -1,10 +1,10 @@
-import { First } from './utilities';
+import { NArray } from './utilities';
 
 type WithCache<
   F extends (...args: ReadonlyArray<any>) => any,
   K extends (...args: Parameters<F>) => any = (
     ...args: Parameters<F>
-  ) => First<Parameters<F>>
+  ) => NArray.First<Parameters<F>>
 > = F & {
   readonly cache: Map<ReturnType<K>, ReturnType<F>>;
 };
@@ -18,7 +18,7 @@ export const memoize = <
   F extends (...args: ReadonlyArray<any>) => any,
   K extends (...args: Parameters<F>) => any = (
     ...args: Parameters<F>
-  ) => First<Parameters<F>>
+  ) => NArray.First<Parameters<F>>
 >(
   fn: F,
   keyFrom: K = ((...args: Parameters<F>) => args[0]) as K
