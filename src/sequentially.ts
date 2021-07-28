@@ -4,7 +4,7 @@ import { NFn, NArray } from './utilities';
 
 const concat = <V, A extends ReadonlyArray<V>>(
   aggregator: A,
-  result: V | Promise<V>
+  result: V | Promise<V>,
 ) =>
   isPromise<V>(result)
     ? result.then((value) => aggregator.concat(value))
@@ -25,9 +25,7 @@ export const sequentially =
     ? Promise<NFn.ReturnTypesOf<V>>
     : NFn.ReturnTypesOf<V> =>
     fns.reduce((waiter, fn, index) => {
-      const parameters = array((values as any[])[index]).filter(
-        (value) => value !== undefined
-      );
+      const parameters = array((values as any[])[index]);
 
       return isPromise<ReadonlyArray<V>>(waiter)
         ? waiter.then((results) => concat(results, fn(...parameters)))

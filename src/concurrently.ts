@@ -12,9 +12,7 @@ export const concurrently =
       fns.map(
         (fn, index) =>
           new Promise((resolve, reject) => {
-            const parameters = array((args as any[])[index]).filter(
-              (value) => value !== undefined
-            );
+            const parameters = array((args as any[])[index]);
 
             try {
               const result = fn(...parameters);

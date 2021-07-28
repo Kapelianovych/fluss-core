@@ -1,4 +1,10 @@
-# [0.29.0] - 2021-07-28
+# [0.29.1] - 2021-07-28
+
+### Fixed
+
+- Remove filtering `undefined` in parameters for `concurrently` and `sequentially` functions.
+
+## [0.29.0] - 2021-07-28
 
 ### Added
 
