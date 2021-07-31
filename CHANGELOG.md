@@ -1,4 +1,15 @@
-# [0.29.1] - 2021-07-28
+# [0.30.0] - 2021-07-31
+
+### Added
+
+- `NArray.Create` type.
+
+### Changed
+
+- `NFn.IsAsync` type has renamed into `NFn.IsAsyncIn`.
+- `NArray.SingleOrMany` type has renamed into `NArray.Flatten`. And it has got second generic parameter - `Width`.
+
+## [0.29.1] - 2021-07-28
 
 ### Fixed
 

@@ -6,7 +6,7 @@ import { NArray, NFn } from './utilities';
 export const concurrently =
   <F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(...fns: F) =>
   async (
-    ...args: NArray.SingleOrMany<NArray.TrimLastEmpty<NFn.ParametersOf<F>>>
+    ...args: NArray.Flatten<NArray.TrimLastEmpty<NFn.ParametersOf<F>>>
   ): Promise<NFn.ReturnTypesOf<F>> =>
     Promise.all(
       fns.map(
@@ -22,6 +22,6 @@ export const concurrently =
             } catch (error) {
               reject(error);
             }
-          })
-      )
+          }),
+      ),
     ) as NFn.ReturnTypesOf<F>;

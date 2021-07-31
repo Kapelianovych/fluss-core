@@ -74,12 +74,19 @@ export type DeepReadonly<T> = {
 };
 
 export namespace NArray {
+  /** Creates an `Array` with `Length` and given `Type`.*/
+  export type Create<
+    A extends number,
+    Type = any,
+    V extends ReadonlyArray<any> = [],
+  > = Length<V> extends A ? V : Create<A, Type, [Type, ...V]>;
+
   /** Transform type of item in `T` array with position `P` to `R`. */
   export type Transform<
     P extends number,
     R,
     T extends ReadonlyArray<any>,
-    A extends ReadonlyArray<any> = []
+    A extends ReadonlyArray<any> = [],
   > = Length<T> extends 0
     ? A
     : Length<A> extends P
@@ -90,7 +97,7 @@ export namespace NArray {
   export type Position<
     V,
     T extends ReadonlyArray<any>,
-    A extends ReadonlyArray<any> = []
+    A extends ReadonlyArray<any> = [],
   > = Length<T> extends Length<A>
     ? -1
     : V extends T[Length<A>]
@@ -105,10 +112,10 @@ export namespace NArray {
     A
   >;
 
-  /** Reverses array. */
+  /** Reverses an array. */
   export type Reverse<
     P extends ReadonlyArray<any>,
-    R extends ReadonlyArray<any> = []
+    R extends ReadonlyArray<any> = [],
   > = number extends Length<P>
     ? P
     : Length<P> extends 0
@@ -122,7 +129,7 @@ export namespace NArray {
   export type Shift<
     Index extends number = 0,
     From extends ReadonlyArray<any> = [],
-    I extends ReadonlyArray<any> = []
+    I extends ReadonlyArray<any> = [],
   > = Length<I> extends Index
     ? From
     : Shift<Index, Tail<From>, [First<From>, ...I]>;
@@ -131,7 +138,7 @@ export namespace NArray {
   export type Pop<
     Index extends number = 0,
     From extends ReadonlyArray<any> = [],
-    I extends ReadonlyArray<any> = []
+    I extends ReadonlyArray<any> = [],
   > = Length<I> extends Index
     ? From
     : Pop<Index, Head<From>, [Last<From>, ...I]>;
@@ -161,14 +168,22 @@ export namespace NArray {
     ? TrimLastEmpty<Head<V>>
     : V;
 
-  export type SingleOrMany<
+  /**
+   * Flattens arrays inside a `V` array that have
+   * `Width` length.
+   */
+  export type Flatten<
     V extends ReadonlyArray<any>,
-    R extends ReadonlyArray<any> = []
+    Width extends number = 1,
+    R extends ReadonlyArray<any> = [],
   > = Length<V> extends 0
     ? R
-    : SingleOrMany<
+    : Flatten<
         Tail<V>,
-        First<V> extends [infer U] ? [...R, U] : [...R, First<V>]
+        Width,
+        First<V> extends NMath.Counter<Width>
+          ? [...R, ...First<V>]
+          : [...R, First<V>]
       >;
 }
 
@@ -176,7 +191,7 @@ export namespace NFn {
   /** Converts array of function into an array with their return types. */
   export type ReturnTypesOf<
     F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
-    R extends ReadonlyArray<any> = []
+    R extends ReadonlyArray<any> = [],
   > = NArray.Length<F> extends 0
     ? R
     : ReturnTypesOf<
@@ -185,14 +200,14 @@ export namespace NFn {
           ...R,
           ReturnType<NArray.First<F>> extends Promise<infer U>
             ? U
-            : ReturnType<NArray.First<F>>
+            : ReturnType<NArray.First<F>>,
         ]
       >;
 
   /** Converts array of function into an array with their parameters. */
   export type ParametersOf<
     V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
-    U extends ReadonlyArray<any> = []
+    U extends ReadonlyArray<any> = [],
   > = NArray.Length<V> extends 0
     ? U
     : ParametersOf<NArray.Tail<V>, [...U, Parameters<NArray.First<V>>]>;
@@ -207,7 +222,7 @@ export namespace NFn {
     A extends number,
     T extends ReadonlyArray<any>,
     R,
-    P extends ReadonlyArray<any> = []
+    P extends ReadonlyArray<any> = [],
   > = NArray.Length<P> extends A
     ? (...args: P) => R
     : Create<
@@ -220,7 +235,7 @@ export namespace NFn {
   /** Checks if all functions have the same parameters set. */
   export type IsParametersEqual<
     F extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
-    R = []
+    R = [],
   > = NArray.Length<F> extends 0
     ? R extends false
       ? false
@@ -235,14 +250,14 @@ export namespace NFn {
       >;
 
   /** Detects if at least one among functions is asynchronous. */
-  export type IsAsync<
+  export type IsAsyncIn<
     R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
-    A extends boolean = false
+    A extends boolean = false,
   > = A extends true
     ? A
     : NArray.Length<R> extends 0
     ? A
-    : IsAsync<
+    : IsAsyncIn<
         NArray.Tail<R>,
         ReturnType<NArray.First<R>> extends Promise<any> ? true : false
       >;
@@ -250,7 +265,7 @@ export namespace NFn {
   /** Counts fixed parameters of a function. */
   export type FixedParametersCount<
     P extends ReadonlyArray<any>,
-    A extends number = 0
+    A extends number = 0,
   > = P extends [any, ...infer R]
     ? FixedParametersCount<R, Cast<NMath.Plus<A, 1>, number>>
     : A;
@@ -261,10 +276,7 @@ export namespace NMath {
    * Creates iterable from count of desired
    * values count.
    */
-  export type Counter<
-    A extends number,
-    V extends ReadonlyArray<any> = []
-  > = NArray.Length<V> extends A ? V : Counter<A, [any, ...V]>;
+  export type Counter<A extends number> = NArray.Create<A>;
 
   /** Subtracts two numbers. Result cannot be lower than `0`. */
   export type MinusOrZero<F extends number, S extends number> = NArray.Length<

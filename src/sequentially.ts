@@ -20,8 +20,8 @@ export const sequentially =
     ...fns: V
   ) =>
   (
-    ...values: NArray.SingleOrMany<NArray.TrimLastEmpty<NFn.ParametersOf<V>>>
-  ): NFn.IsAsync<V> extends true
+    ...values: NArray.Flatten<NArray.TrimLastEmpty<NFn.ParametersOf<V>>>
+  ): NFn.IsAsyncIn<V> extends true
     ? Promise<NFn.ReturnTypesOf<V>>
     : NFn.ReturnTypesOf<V> =>
     fns.reduce((waiter, fn, index) => {

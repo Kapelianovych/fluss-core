@@ -55,7 +55,7 @@ function pipe<
   T extends readonly [
     (...args: ReadonlyArray<any>) => any,
     ...ReadonlyArray<(arg: any) => any>
-  ]
+  ],
 >(
   ...fns: T
 ): IsComposable<T> extends false
@@ -74,13 +74,13 @@ Compose functions from left to right. Can handle asynchronous functions along wi
 ```typescript
 const fn /*: (str: string) => string */ = pipe(
   (str) => str + 2,
-  (str: string) => str + 3
+  (str: string) => str + 3,
 );
 const result /*: '123' */ = fn('1');
 
 const composed /* Promise<number> */ = pipe(
   async (str: string) => str + 2,
-  parseInt
+  parseInt,
 );
 const asyncResult /* Promise<number> */ = composed('1');
 ```
@@ -108,7 +108,7 @@ interface OnceFunction {
   ) => Option<R>;
   <T extends ReadonlyArray<unknown>, R>(
     fn: (...args: T) => R,
-    after: (...args: T) => R
+    after: (...args: T) => R,
   ): (...args: T) => R;
 }
 ```
@@ -125,7 +125,7 @@ const doOnlyOnce = once(() => {
 
 ```ts
 function flip<F extends (...args: ReadonlyArray<any>) => any>(
-  fn: F
+  fn: F,
 ): (...args: Reverse<Parameters<F>>) => ReturnType<F>;
 ```
 
@@ -146,7 +146,7 @@ flipped(1, '2'); // -> 3
 ```typescript
 function curry<
   F extends (...args: ReadonlyArray<any>) => any,
-  A extends number = FixedParametersCount<Parameters<F>>
+  A extends number = FixedParametersCount<Parameters<F>>,
 >(fn: F, arity?: A): Curry<F, A>;
 ```
 
@@ -154,7 +154,7 @@ Create curried version of function with optional partial application. If functio
 
 ```typescript
 const fn /*: Curry<(arg_0: string, arg_1: string) => string, 2> */ = curry(
-  (str1: string, str2: string) => str1 + str2 + 3
+  (str1: string, str2: string) => str1 + str2 + 3,
 );
 ```
 
@@ -171,7 +171,7 @@ const anotherFn /*: Curry<(arg_0: string) => string, 1> */ = fn(_, '2');
 function fork<F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
   ...fns: F
 ): <R>(
-  join: (...args: ReturnTypesOf<F>) => R | Promise<R>
+  join: (...args: ReturnTypesOf<F>) => R | Promise<R>,
 ) => (
   ...args: IsParametersEqual<F> extends true ? Parameters<First<F>> : never
 ) => Promise<R>;
@@ -183,7 +183,7 @@ Allow join output of two functions that get the same input and process it in a d
 // Compute average.
 const y /*: (a: Array<number>) => Promise<number> */ = fork(
   (a: Array<number>) => a.reduce((sum, num) => sum + num, 0),
-  (a: Array<number>) => a.length
+  (a: Array<number>) => a.length,
 )((sum, count) => sum / count);
 ```
 
@@ -192,7 +192,7 @@ const y /*: (a: Array<number>) => Promise<number> */ = fork(
 ```ts
 function demethodize<T extends object, K extends keyof FunctionKeys<T>>(
   target: T,
-  name: K
+  name: K,
 ): (
   ...args: Parameters<T[Cast<K, keyof T>]>
 ) => ReturnType<T[Cast<K, keyof T>]>;
@@ -235,12 +235,14 @@ const sum = [1, 2, 3, 4, 5, 6].reduce(binary('+'), 0);
 
 ```typescript
 function sequentially<
-  V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>
+  V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
 >(
   ...fns: V
 ): (
-  ...values: SingleOrMany<TrimLastEmpty<ParametersOf<V>>>
-) => HasPromise<V> extends true ? Promise<ReturnTypesOf<V>> : ReturnTypesOf<V>;
+  ...values: NArray.Flatten<NArray.TrimLastEmpty<NFn.ParametersOf<V>>>
+) => NFn.IsAsyncIn<V> extends true
+  ? Promise<NFn.ReturnTypesOf<V>>
+  : NFn.ReturnTypesOf<V>;
 ```
 
 Invokes independently functions with their parameters in order that they are declared. Can handle asynchronous functions.
@@ -249,7 +251,7 @@ Invokes independently functions with their parameters in order that they are dec
 const inSequence /*: (arg_0: number, arg_1: string) => [number, string] */ =
   sequentially(
     (n: number) => n ** 2,
-    (s: string) => s + '!'
+    (s: string) => s + '!',
   );
 
 inSequence(1, 'Hello');
@@ -259,11 +261,11 @@ inSequence(1, 'Hello');
 
 ```ts
 function concurrently<
-  F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>
+  F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
 >(
   ...fns: F
 ): (
-  ...args: NArray.SingleOrMany<NArray.TrimLastEmpty<NFn.ParametersOf<F>>>
+  ...args: NArray.Flatten<NArray.TrimLastEmpty<NFn.ParametersOf<F>>>
 ) => Promise<NFn.ReturnTypesOf<F>>;
 ```
 
@@ -276,7 +278,7 @@ const fn = concurrently(
   },
   (n: number, b: boolean) => {
     /* Do some other work */
-  }
+  },
 );
 
 fn(9, [1, true]).then(([firstResult, secondResult]) => {
@@ -317,7 +319,7 @@ const y2 /*: boolean */ = isJust(0);
 ```typescript
 function isError<E extends Error>(
   value: any,
-  childClass?: Constructor<E>
+  childClass?: Constructor<E>,
 ): value is E;
 ```
 
@@ -364,7 +366,7 @@ if (isFunction<() => number>(f)) {
 ```ts
 function throttle<F extends (...args: ReadonlyArray<any>) => void>(
   fn: F,
-  frames?: number
+  frames?: number,
 ): F;
 ```
 
@@ -388,7 +390,7 @@ interface ConsequentFunction<F extends (...args: ReadonlyArray<any>) => any> {
 }
 
 function consequent<F extends (...args: ReadonlyArray<any>) => any>(
-  fn: F
+  fn: F,
 ): ConsequentFunction<F>;
 ```
 
@@ -408,7 +410,7 @@ consequentFunction(); // If previous invocation is not completed then this is ig
 
 ```ts
 function debounce<
-  F extends (...args: ReadonlyArray<unknown>) => void | Promise<void>
+  F extends (...args: ReadonlyArray<unknown>) => void | Promise<void>,
 >(fn: F, frames = 0): F;
 ```
 
@@ -451,7 +453,7 @@ function memoize<
   F extends (...args: ReadonlyArray<any>) => any,
   K extends (...args: Parameters<F>) => any = (
     ...args: Parameters<F>
-  ) => First<Parameters<F>>
+  ) => First<Parameters<F>>,
 >(fn: F, keyFrom?: K): WithCache<F, K>;
 ```
 
@@ -491,13 +493,13 @@ const y /*: ReadonlyArray<number> */ = array(9, new Set([6]), {
 ```typescript
 interface TryCatchFunction {
   <T extends ReadonlyArray<any>, L extends Error, R>(
-    tryFn: (...inputs: T) => R
+    tryFn: (...inputs: T) => R,
   ): (
     ...args: T
   ) => R extends Promise<infer U> ? Promise<Either<L, U>> : Either<L, R>;
   <T extends ReadonlyArray<any>, L extends Error, R>(
     tryFn: (...inputs: T) => R,
-    catchFn: (error: L) => R
+    catchFn: (error: L) => R,
   ): (...args: T) => R;
 }
 ```
@@ -507,7 +509,7 @@ Catches error that may occur in _tryFn_ function. If _catchFn_ is defined, then 
 ```typescript
 const getUser /*: (id: string) => User */ = tryCatch(
   (id: string) => getUserFromDbById(id),
-  (error: NoUserError) => createUser()
+  (error: NoUserError) => createUser(),
 );
 ```
 
@@ -516,7 +518,7 @@ const getUser /*: (id: string) => User */ = tryCatch(
 ```typescript
 function freeze<T extends object, D extends boolean = false>(
   value: T,
-  deep?: D
+  deep?: D,
 ): D extends true ? DeepReadonly<T> : Readonly<T>;
 ```
 
@@ -534,7 +536,7 @@ const deepFrozenObject /*: DeepReadonly<{ hello: () => void }> */ = freeze(
       console.log('Hello world');
     },
   },
-  true
+  true,
 );
 ```
 
@@ -598,7 +600,7 @@ isOption(maybe(8)); // true
 
 ```typescript
 function maybe<T>(
-  value: T
+  value: T,
 ): unknown extends T ? Option<T> : T extends Just<T> ? Some<T> : None;
 ```
 
@@ -680,7 +682,7 @@ left<Error>(new Error('Error is occurred!')); // Left<Error>
 ```typescript
 function either<A, B>(
   isRight: (value: A | B) => value is B,
-  value: A | B
+  value: A | B,
 ): Either<A, B>;
 ```
 
@@ -689,7 +691,7 @@ Lift _value_ into `Either` monad. _isRight_ parameter helps find out if _value_ 
 ```typescript
 const result /*: Either<Error, string> */ = either(
   isString,
-  new Error('I am a value')
+  new Error('I am a value'),
 );
 ```
 
@@ -701,7 +703,7 @@ Monad that can contain success value or failure value. Allow handle errors in fu
 
 ```typescript
 function task<T, E extends Error>(
-  fork: ForkFunction<T, E> | Task<T, E> | Promise<T>
+  fork: ForkFunction<T, E> | Task<T, E> | Promise<T>,
 ): Task<T, E>;
 ```
 
@@ -744,7 +746,7 @@ dataTask.start(
   },
   (error) => {
     /* on fail job */
-  }
+  },
 );
 ```
 
@@ -766,7 +768,7 @@ dataTask.start(
   },
   (error) => {
     /* on fail job */
-  }
+  },
 );
 ```
 
@@ -846,7 +848,7 @@ Creates `Lazy` monad with some operation or from another `Lazy` instance.
 
 ```typescript
 const lazyPower /*: Lazy<number, number> */ = lazy((num: number) =>
-  Math.pow(num, 2)
+  Math.pow(num, 2),
 );
 ```
 
@@ -885,7 +887,7 @@ Creates live empty stream.
 const y /*: Stream<number> */ = stream<number>();
 
 y.map((value) => Math.pow(value, 2)).listen(
-  (value) => (document.body.innerHTML = value)
+  (value) => (document.body.innerHTML = value),
 );
 
 // Somewhere in the code
@@ -919,7 +921,7 @@ Monad that allow to defer data initialization.
 ```typescript
 function reviver(
   key: string,
-  value: JSONValueTypes | SerializabledObject<any>
+  value: JSONValueTypes | SerializabledObject<any>,
 ):
   | JSONValueTypes
   | List<any>

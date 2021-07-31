@@ -4,7 +4,7 @@ import { NFn, NArray } from './utilities';
 type IsComposable<
   T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
   R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any> = [],
-  U extends boolean = false
+  U extends boolean = false,
 > = NArray.Length<T> extends 0
   ? U
   : IsComposable<
@@ -28,14 +28,14 @@ export const pipe =
     T extends readonly [
       (...args: ReadonlyArray<any>) => any,
       ...ReadonlyArray<(arg: any) => any>
-    ]
+    ],
   >(
     ...fns: T
   ): IsComposable<T> extends false
     ? never
     : (
         ...args: Parameters<NArray.First<T>>
-      ) => NFn.IsAsync<T> extends true
+      ) => NFn.IsAsyncIn<T> extends true
         ? ReturnType<NArray.Last<T>> extends Promise<infer U>
           ? Promise<U>
           : Promise<ReturnType<NArray.Last<T>>>
@@ -49,5 +49,5 @@ export const pipe =
           : isPromise(result)
           ? result.then(fn)
           : fn(result),
-      args
+      args,
     );
