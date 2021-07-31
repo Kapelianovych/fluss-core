@@ -62,11 +62,11 @@ function pipe<
   ? never
   : (
       ...args: Parameters<First<T>>
-    ) => HasPromise<T> extends true
-      ? ReturnType<Last<T>> extends Promise<infer U>
+    ) => NFn.IsAsyncIn<T> extends true
+      ? ReturnType<NArray.Last<T>> extends Promise<infer U>
         ? Promise<U>
-        : Promise<ReturnType<Last<T>>>
-      : ReturnType<Last<T>>;
+        : Promise<ReturnType<NArray.Last<T>>>
+      : ReturnType<NArray.Last<T>>;
 ```
 
 Compose functions from left to right. Can handle asynchronous functions along with synchronous ones.
@@ -126,7 +126,7 @@ const doOnlyOnce = once(() => {
 ```ts
 function flip<F extends (...args: ReadonlyArray<any>) => any>(
   fn: F,
-): (...args: Reverse<Parameters<F>>) => ReturnType<F>;
+): (...args: NArray.Reverse<Parameters<F>>) => ReturnType<F>;
 ```
 
 Reverses function's parameters.
@@ -146,7 +146,7 @@ flipped(1, '2'); // -> 3
 ```typescript
 function curry<
   F extends (...args: ReadonlyArray<any>) => any,
-  A extends number = FixedParametersCount<Parameters<F>>,
+  A extends number = NFn.FixedParametersCount<Parameters<F>>,
 >(fn: F, arity?: A): Curry<F, A>;
 ```
 
@@ -171,9 +171,11 @@ const anotherFn /*: Curry<(arg_0: string) => string, 1> */ = fn(_, '2');
 function fork<F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
   ...fns: F
 ): <R>(
-  join: (...args: ReturnTypesOf<F>) => R | Promise<R>,
+  join: (...args: NFn.ReturnTypesOf<F>) => R | Promise<R>,
 ) => (
-  ...args: IsParametersEqual<F> extends true ? Parameters<First<F>> : never
+  ...args: NFn.IsParametersEqual<F> extends true
+    ? Parameters<NArray.First<F>>
+    : never
 ) => Promise<R>;
 ```
 
@@ -453,7 +455,7 @@ function memoize<
   F extends (...args: ReadonlyArray<any>) => any,
   K extends (...args: Parameters<F>) => any = (
     ...args: Parameters<F>
-  ) => First<Parameters<F>>,
+  ) => NArray.First<Parameters<F>>,
 >(fn: F, keyFrom?: K): WithCache<F, K>;
 ```
 
