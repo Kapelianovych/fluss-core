@@ -8,7 +8,7 @@ declare namespace Curry {
   > = NArray.Length<A> extends 0
     ? [...R, ...P]
     : NArray.First<A> extends typeof _
-    ? PreserveGaps<NArray.Tail<A>, NArray.Tail<P>, [NArray.First<P>, ...R]>
+    ? PreserveGaps<NArray.Tail<A>, NArray.Tail<P>, [...R, NArray.First<P>]>
     : PreserveGaps<NArray.Tail<A>, NArray.Tail<P>, R>;
 
   type With<P extends ReadonlyArray<any>> = {
@@ -31,7 +31,7 @@ declare namespace Curry {
     ? R
     : NArray.First<A> extends typeof _
     ? ExcludeGaps<NArray.Tail<A>, R>
-    : ExcludeGaps<NArray.Tail<A>, [NArray.First<A>, ...R]>;
+    : ExcludeGaps<NArray.Tail<A>, [...R, NArray.First<A>]>;
 }
 
 /** Value that preserves place for an argument. */
@@ -54,7 +54,7 @@ type Curried<
           >,
           number
         >,
-        Parameters<F>,
+        Curry.PreserveGaps<U, Parameters<F>>,
         ReturnType<F>
       >,
       Cast<

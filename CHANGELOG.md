@@ -1,4 +1,10 @@
-# [0.30.1] - 2021-08-01
+# [0.30.2] - 2021-08-01
+
+### Fixed
+
+- Reversing parameters in curried function after applying arguments.
+
+## [0.30.1] - 2021-08-01
 
 ### Fixed
 

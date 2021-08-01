@@ -57,6 +57,31 @@ describe('curry', () => {
     expect(curriedFn('h', 'p')).resolves.toMatch('hpdata');
   });
 
+  it('should preserve correct types for function parameters', () => {
+    const sendData = (
+      href: string,
+      method: number,
+      body: object,
+      ...headers: Record<string, string>[]
+    ): string =>
+      href +
+      String(method) +
+      JSON.stringify(body) +
+      headers.map((value) => JSON.stringify(value));
+
+    const curriedSendData = curry(sendData);
+
+    const sendDataWithHref = curriedSendData('https://api.halo-lab.com/data');
+    expect(typeof sendDataWithHref).toBe('function');
+
+    const sendDataWithHrefAndMethod = curriedSendData(
+      'https://api.halo-lab.com/data',
+      1,
+    );
+    expect(typeof sendDataWithHrefAndMethod).toBe('function');
+    expect(typeof sendDataWithHrefAndMethod({})).toBe('string');
+  });
+
   it('should return a function with the same parameters when all arguments were the placeholder', () => {
     const sendData = (
       href: string,
