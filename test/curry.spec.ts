@@ -45,6 +45,30 @@ describe('curry', () => {
     expect(fn(12)).toMatch('12');
   });
 
+  it('should correctly infer types for two or more gaps', () => {
+    const sendData = (
+      href: string,
+      method: string,
+      data: string,
+    ): Promise<string> => Promise.resolve(href + method + data);
+
+    const curriedFn = curry(sendData)(_, _, 'data');
+
+    expect(curriedFn('h', 'p')).resolves.toMatch('hpdata');
+  });
+
+  it('should return a function with the same parameters when all arguments were the placeholder', () => {
+    const sendData = (
+      href: string,
+      method: string,
+      data: string,
+    ): Promise<string> => Promise.resolve(href + method + data);
+
+    const curriedFn = curry(sendData)(_, _, _);
+
+    expect(curriedFn('h', 'p', 'data')).resolves.toMatch('hpdata');
+  });
+
   it('should define arity for function with only variadic parameter', () => {
     // For ReadonlyArray<number> [there is a bug](https://github.com/microsoft/TypeScript/issues/37193),
     // so we should review it again in TypeScript ~v4.4.1

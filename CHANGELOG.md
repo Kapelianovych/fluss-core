@@ -1,4 +1,10 @@
-# [0.30.0] - 2021-07-31
+# [0.30.1] - 2021-08-01
+
+### Fixed
+
+- Inferring function parameters of curried function when several placeholders were applied to it.
+
+## [0.30.0] - 2021-07-31
 
 ### Added
 
