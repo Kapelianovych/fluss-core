@@ -16,9 +16,9 @@ Library for functional coding in modern environment.
 ## Example use
 
 ```typescript
-const curriedFn /*: Curry<(args_0: string, args_1: string) => string, 2> */ =
+const curriedFn /*: Curried<(args_0: string, args_1: string) => string, 2> */ =
   curry((left: string, right: string) => left + right);
-const curriedFn2 /*: Curry<(args_0: string) => string, 1> */ = curriedFn('');
+const curriedFn2 /*: Curried<(args_0: string) => string, 1> */ = curriedFn('');
 const result /*: string */ = curriedFn2('');
 ```
 
@@ -147,13 +147,13 @@ flipped(1, '2'); // -> 3
 function curry<
   F extends (...args: ReadonlyArray<any>) => any,
   A extends number = NFn.FixedParametersCount<Parameters<F>>,
->(fn: F, arity?: A): Curry<F, A>;
+>(fn: F, arity?: A): Curried<F, A>;
 ```
 
 Create curried version of function with optional partial application. If function accepts variadic arguments (...rest), then you can apparently define function's _arity_.
 
 ```typescript
-const fn /*: Curry<(arg_0: string, arg_1: string) => string, 2> */ = curry(
+const fn /*: Curried<(arg_0: string, arg_1: string) => string, 2> */ = curry(
   (str1: string, str2: string) => str1 + str2 + 3,
 );
 ```
@@ -162,7 +162,7 @@ There is a special value `_` that you can use with curried function to preserve 
 
 ```ts
 // _anotherFn_ will accept first parameter from original _fn_ function.
-const anotherFn /*: Curry<(arg_0: string) => string, 1> */ = fn(_, '2');
+const anotherFn /*: Curried<(arg_0: string) => string, 1> */ = fn(_, '2');
 ```
 
 ### fork
