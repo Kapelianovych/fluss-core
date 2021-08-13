@@ -3,6 +3,7 @@ export * from './once';
 export * from './fork';
 export * from './pipe';
 export * from './list';
+export * from './when';
 export * from './lazy';
 export * from './idle';
 export * from './flip';

@@ -542,6 +542,30 @@ const deepFrozenObject /*: DeepReadonly<{ hello: () => void }> */ = freeze(
 );
 ```
 
+### when
+
+```ts
+interface ConditionalFunction<A extends ReadonlyArray<any>, R> {
+  (onTrue: (...values: A) => R): (...values: A) => Option<R>;
+  (onTrue: (...values: A) => R, onFalse: (...values: A) => R): (
+    ...values: A
+  ) => R;
+}
+
+function when<A extends ReadonlyArray<any>, R>(
+  condition: (...values: A) => boolean,
+): ConditionalFunction<A, R>;
+```
+
+Replaces conditional flow (ternary operator and `if`/`else`).
+
+```ts
+const multiplyIf = when((num: number) => num > 10)((num) => num * 3, identity);
+
+const result /*: number */ = multiplyIf(9); // Will be returned as is.
+const result2 /*: number */ = multiplyIf(11); // Will be multiplied.
+```
+
 ### wrap
 
 ```typescript
