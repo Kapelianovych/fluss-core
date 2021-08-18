@@ -1,4 +1,10 @@
-# [0.31.0] - 2021-08-13
+# [0.31.1] - 2021-08-18
+
+### Fixed
+
+- Inferring return type of `onTrue` and `onFalse` functions of `when` function.
+
+## [0.31.0] - 2021-08-13
 
 ### Added
 

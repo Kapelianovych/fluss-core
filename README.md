@@ -545,16 +545,16 @@ const deepFrozenObject /*: DeepReadonly<{ hello: () => void }> */ = freeze(
 ### when
 
 ```ts
-interface ConditionalFunction<A extends ReadonlyArray<any>, R> {
-  (onTrue: (...values: A) => R): (...values: A) => Option<R>;
-  (onTrue: (...values: A) => R, onFalse: (...values: A) => R): (
+interface ConditionalFunction<A extends ReadonlyArray<any>> {
+  <R>(onTrue: (...values: A) => R): (...values: A) => Option<R>;
+  <R>(onTrue: (...values: A) => R, onFalse: (...values: A) => R): (
     ...values: A
   ) => R;
 }
 
-function when<A extends ReadonlyArray<any>, R>(
+function when<A extends ReadonlyArray<any>>(
   condition: (...values: A) => boolean,
-): ConditionalFunction<A, R>;
+): ConditionalFunction<A>;
 ```
 
 Replaces conditional flow (ternary operator and `if`/`else`).
