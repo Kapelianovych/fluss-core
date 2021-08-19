@@ -1,4 +1,10 @@
-# [0.31.1] - 2021-08-18
+# [0.31.2] - 2021-08-19
+
+### Fixed
+
+- Replace bitwise `|` operator from numeric operations of `binary` function to explicit checking for `NaN` and `Infinity`.
+
+## [0.31.1] - 2021-08-18
 
 ### Fixed
 

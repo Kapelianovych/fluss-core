@@ -1,7 +1,7 @@
 export interface BinaryOperation {
   (operator: '+'): <O extends string | number>(
     f: O,
-    s: O
+    s: O,
   ) => O extends number ? number : string;
   (operator: '-' | '/' | '%' | '*' | '**'): (f: number, s: number) => number;
   (operator: '>' | '<' | '>=' | '<='): (f: number, s: number) => boolean;
@@ -11,28 +11,31 @@ export interface BinaryOperation {
   (operator: string): <O>(f: O, s: O) => [f: O, s: O];
 }
 
+const orZero = (number: number): number =>
+  Number.isNaN(number) || !Number.isFinite(number) ? 0 : number;
+
 /**
  * Creates function for binary operation.
  * For unknown operator it returns tuple
  * with left and right operands.
  */
 export const binary: BinaryOperation = (
-  operator
+  operator,
 ): ((f: any, s: any) => any) => {
   switch (operator) {
     case '+':
       return (f, s) =>
-        typeof f === 'string' || typeof s === 'string' ? f + s : (f + s) | 0;
+        typeof f === 'string' || typeof s === 'string' ? f + s : orZero(f + s);
     case '-':
-      return (f, s) => (f - s) | 0;
+      return (f, s) => orZero(f - s);
     case '/':
-      return (f, s) => (f / s) | 0;
+      return (f, s) => orZero(f / orZero(s));
     case '%':
-      return (f, s) => f % s | 0;
+      return (f, s) => orZero(f % orZero(s));
     case '*':
-      return (f, s) => (f * s) | 0;
+      return (f, s) => orZero(f * s);
     case '**':
-      return (f, s) => (f ** s) | 0;
+      return (f, s) => orZero(f ** s);
     case '>':
       return (f, s) => f > s;
     case '<':
