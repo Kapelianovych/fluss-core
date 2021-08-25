@@ -2,3 +2,6 @@
 .vscode
 build
 node_modules
+
+*.swp
+*.swo

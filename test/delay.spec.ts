@@ -43,10 +43,25 @@ describe('delay', () => {
     });
   });
 
-  it('should use requestAnimationFrame method when frames is set to 0', (done) => {
+  it('should use requestAnimationFrame function when frames is set to 0', (done) => {
     globalThis.requestAnimationFrame = jest.fn();
 
     delay(() => {}, 0);
+
+    setTimeout(() => {
+      try {
+        expect(globalThis.requestAnimationFrame).toBeCalled();
+        done();
+      } catch (error) {
+        done(error);
+      }
+    }, 100);
+  });
+
+  it('should use requestAnimationFrame function when frames is not defined', (done) => {
+    globalThis.requestAnimationFrame = jest.fn();
+
+    delay(() => {});
 
     setTimeout(() => {
       try {
