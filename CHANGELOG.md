@@ -1,4 +1,10 @@
-# [0.31.3] - 2021-08-25
+# [0.31.4] - 2021-08-28
+
+### Fixed
+
+- Refine code of `binary` and `reviver` functions to increase speed of execution.
+
+## [0.31.3] - 2021-08-25
 
 ### Fixed
 

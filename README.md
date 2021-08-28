@@ -82,7 +82,7 @@ const composed /* Promise<number> */ = pipe(
   async (str: string) => str + 2,
   parseInt,
 );
-const asyncResult /* Promise<number> */ = composed('1');
+const asyncResult /*: Promise<number> */ = composed('1');
 ```
 
 ### identity
@@ -96,7 +96,7 @@ Returns own argument back to the calling place.
 ```ts
 const value = 5;
 
-const result /* 5 */ = identity(value);
+const result /*: 5 */ = identity(value);
 ```
 
 ### once
@@ -134,7 +134,7 @@ Reverses function's parameters.
 ```ts
 const fn = (s: string, n: number) => Number(s) + n;
 
-const flipped /* (args_0: number, args_1: string) => number */ = flip(fn);
+const flipped /*: (args_0: number, args_1: string) => number */ = flip(fn);
 
 // ...
 

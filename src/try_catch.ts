@@ -4,13 +4,13 @@ import { Either, left, right } from './either';
 
 export interface TryCatchFunction {
   <T extends ReadonlyArray<any>, L extends Error, R>(
-    tryFn: (...inputs: T) => R
+    tryFn: (...inputs: T) => R,
   ): (
     ...args: T
   ) => R extends Promise<infer U> ? Promise<Either<L, U>> : Either<L, R>;
   <T extends ReadonlyArray<any>, L extends Error, R>(
     tryFn: (...inputs: T) => R,
-    catchFn: (error: L) => R
+    catchFn: (error: L) => R,
   ): (...args: T) => R;
 }
 
@@ -22,7 +22,7 @@ export interface TryCatchFunction {
 export const tryCatch: TryCatchFunction =
   <T extends ReadonlyArray<any>, L extends Error, R>(
     tryFn: (...inputs: T) => R,
-    catchFn?: (error: L) => R
+    catchFn?: (error: L) => R,
   ) =>
   (...inputs: T) => {
     try {
@@ -35,6 +35,6 @@ export const tryCatch: TryCatchFunction =
         ? right(result)
         : result;
     } catch (error) {
-      return isNothing(catchFn) ? left<L>(error) : catchFn(error);
+      return isNothing(catchFn) ? left(error as L) : catchFn(error as L);
     }
   };

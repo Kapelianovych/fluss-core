@@ -4,8 +4,7 @@ import { Idle, idle, IDLE_OBJECT_TYPE } from './idle';
 import { Tuple, tuple, TUPLE_OBJECT_TYPE } from './tuple';
 import { Container, CONTAINER_OBJECT_TYPE, wrap } from './container';
 import {
-  some,
-  none,
+  maybe,
   Option,
   OPTION_NONE_OBJECT_TYPE,
   OPTION_SOME_OBJECT_TYPE,
@@ -27,6 +26,17 @@ export type JSONValueTypes =
   | ReadonlyArray<unknown>
   | Record<string, unknown>;
 
+const TYPE_TO_MONAD: Record<string, Function> = {
+  [LIST_OBJECT_TYPE]: list,
+  [IDLE_OBJECT_TYPE]: (value: unknown) => idle(() => value),
+  [TUPLE_OBJECT_TYPE]: (values: ReadonlyArray<unknown>) => tuple(...values),
+  [CONTAINER_OBJECT_TYPE]: wrap,
+  [OPTION_SOME_OBJECT_TYPE]: maybe,
+  [OPTION_NONE_OBJECT_TYPE]: maybe,
+  [EITHER_LEFT_OBJECT_TYPE]: left,
+  [EITHER_RIGHT_OBJECT_TYPE]: right,
+};
+
 /**
  * Add recognition of `Container`, `Maybe`, `List`, `Tuple`,
  * `Idle` `Either` and `Error` data structures for `JSON.parse`.
@@ -35,8 +45,8 @@ export type JSONValueTypes =
  * `SerializabledObject<string>` structure.
  */
 export const reviver = (
-  key: string,
-  value: JSONValueTypes | SerializabledObject<unknown>
+  _key: string,
+  value: JSONValueTypes | SerializabledObject<unknown>,
 ):
   | JSONValueTypes
   | Idle<any>
@@ -44,34 +54,7 @@ export const reviver = (
   | Option<any>
   | Container<any>
   | Either<any, any>
-  | Tuple<ReadonlyArray<any>> => {
-  if (isObject(value)) {
-    // Check for both properties to match SerializabledObject interface.
-    if ('type' in value && 'value' in value) {
-      switch (value['type']) {
-        case LIST_OBJECT_TYPE:
-          return list(value['value']);
-        case TUPLE_OBJECT_TYPE:
-          return tuple(...(value['value'] as ReadonlyArray<unknown>));
-        case IDLE_OBJECT_TYPE:
-          return idle(() => value['value']);
-        case OPTION_SOME_OBJECT_TYPE:
-          return some(value['value']);
-        case OPTION_NONE_OBJECT_TYPE:
-          return none;
-        case CONTAINER_OBJECT_TYPE:
-          return wrap(value['value']);
-        case EITHER_LEFT_OBJECT_TYPE:
-          return left(value['value']);
-        case EITHER_RIGHT_OBJECT_TYPE:
-          return right(value['value']);
-        default:
-          return value as Record<string, unknown>;
-      }
-    } else {
-      return value;
-    }
-  } else {
-    return value;
-  }
-};
+  | Tuple<ReadonlyArray<any>> =>
+  isObject(value) && 'type' in value && 'value' in value
+    ? TYPE_TO_MONAD[value['type'] as string]?.(value['value']) ?? value
+    : value;

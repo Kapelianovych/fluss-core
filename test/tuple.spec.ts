@@ -19,7 +19,7 @@ describe('tuple', () => {
     expect(
       tuple(8)
         .transform(0, () => newValue)
-        .item(0)
+        .item(0),
     ).toBe(newValue);
   });
 

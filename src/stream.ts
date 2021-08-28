@@ -117,11 +117,9 @@ const createStream = <T>(
           case StreamEvent.RESUME:
             options._resumeListeners.set(listener, listener);
             return () => options._resumeListeners.delete(listener);
-
           case StreamEvent.DESTROY:
             options._destroyListeners.set(listener, listener);
             return () => options._destroyListeners.delete(listener);
-
           default:
             return () => {};
         }
