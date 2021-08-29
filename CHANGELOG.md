@@ -1,4 +1,10 @@
-# [0.31.4] - 2021-08-28
+# [0.32.0] - 2021-08-29
+
+### Changed
+
+- `fork` function will execute functions synchronously if all argument functions are synchronous.
+
+## [0.31.4] - 2021-08-28
 
 ### Fixed
 

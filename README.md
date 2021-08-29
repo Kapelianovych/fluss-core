@@ -168,22 +168,28 @@ const anotherFn /*: Curried<(arg_0: string) => string, 1> */ = fn(_, '2');
 ### fork
 
 ```typescript
-function fork<F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(
-  ...fns: F
-): <R>(
-  join: (...args: NFn.ReturnTypesOf<F>) => R | Promise<R>,
-) => (
-  ...args: NFn.IsParametersEqual<F> extends true
-    ? Parameters<NArray.First<F>>
-    : never
-) => Promise<R>;
+interface ForkJoinFunction {
+  <F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(...fns: F): <
+    R,
+  >(
+    join: (...args: NFn.ReturnTypesOf<F>) => R | Promise<R>,
+  ) => (
+    ...args: NFn.IsParametersEqual<F> extends true
+      ? Parameters<NArray.First<F>>
+      : never
+  ) => NFn.IsAsyncIn<F> extends true
+    ? R extends Promise<unknown>
+      ? R
+      : Promise<R>
+    : R;
+}
 ```
 
 Allow join output of two functions that get the same input and process it in a different way.
 
 ```typescript
 // Compute average.
-const y /*: (a: Array<number>) => Promise<number> */ = fork(
+const y /*: (a: Array<number>) => number */ = fork(
   (a: Array<number>) => a.reduce((sum, num) => sum + num, 0),
   (a: Array<number>) => a.length,
 )((sum, count) => sum / count);
