@@ -1,8 +1,6 @@
 import { isObject } from './is_object';
-import { isNothing } from './is_just_nothing';
 import { isFunction } from './is_function';
 import { some, Option, none } from './option';
-import type { Just } from './utilities';
 import type {
   Foldable,
   Typeable,
@@ -44,8 +42,6 @@ export interface List<T>
   prepend(...values: ReadonlyArray<T>): List<T>;
   asArray(): ReadonlyArray<T>;
   uniqueBy<U>(fn: (item: T) => U): List<T>;
-  /** Get rid of `Nothing` values. */
-  compress(): List<Just<T>>;
   forEach(fn: (value: T) => void): void;
 }
 
@@ -143,14 +139,6 @@ export const iterate = <T>(over: IterableIteratorFunction<T>): List<T> => ({
     iterate(function* () {
       for (const item of Array.from(over()).sort(fn)) {
         yield item;
-      }
-    }),
-  compress: () =>
-    iterate(function* () {
-      for (const item of over()) {
-        if (!isNothing(item)) {
-          yield item as Just<T>;
-        }
       }
     }),
   take: (count) =>

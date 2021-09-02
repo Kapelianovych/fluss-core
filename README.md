@@ -521,6 +521,18 @@ const getUser /*: (id: string) => User */ = tryCatch(
 );
 ```
 
+### tap
+
+```ts
+function tap<T>(effect: (value: T) => void): (value: T) => T;
+```
+
+Performs side effect on value while returning it as is.
+
+```ts
+const result /*: 5 */ = tap(console.log)(5);
+```
+
 ### freeze
 
 ```typescript

@@ -19,7 +19,7 @@ describe('List data structure', () => {
     expect(
       list(1, 2, 3)
         .map((num) => num * 2)
-        .asArray()
+        .asArray(),
     ).toEqual([2, 4, 6]);
   });
 
@@ -48,7 +48,7 @@ describe('List data structure', () => {
     expect(
       list(1, 2, 3, 4, 5, 6)
         .filter((num) => num > 3)
-        .asArray()
+        .asArray(),
     ).toEqual([4, 5, 6]);
   });
 
@@ -69,7 +69,7 @@ describe('List data structure', () => {
       expect(list(1, 2, 3).forEach(array.push.bind(array))).toBe(undefined);
 
       expect(array).toEqual([1, 2, 3]);
-    }
+    },
   );
 
   test('has method checks if value exists in List', () => {
@@ -110,12 +110,12 @@ describe('List data structure', () => {
     expect(
       list(1, 2, 3)
         .sort((f, s) => f - s)
-        .asArray()
+        .asArray(),
     ).toEqual([1, 2, 3]);
     expect(
       list(5, 2, 3)
         .sort((f, s) => f - s)
-        .asArray()
+        .asArray(),
     ).toEqual([2, 3, 5]);
   });
 
@@ -131,7 +131,7 @@ describe('List data structure', () => {
     expect(
       list({ id: 1 }, { id: 2 }, { id: 2 }, { id: 2 }, { id: 5 })
         .uniqueBy((item) => item.id)
-        .asArray()
+        .asArray(),
     ).toEqual([{ id: 1 }, { id: 2 }, { id: 5 }]);
   });
 
@@ -142,17 +142,11 @@ describe('List data structure', () => {
         { o: { id: 2 } },
         { o: { id: 2 } },
         { o: { id: 2 } },
-        { o: { id: 5 } }
+        { o: { id: 5 } },
       )
         .uniqueBy((item) => item.o.id)
-        .asArray()
+        .asArray(),
     ).toEqual([{ o: { id: 1 } }, { o: { id: 2 } }, { o: { id: 5 } }]);
-  });
-
-  test('compress method should get rid of null and undefined values', () => {
-    expect(list(1, null, 2, undefined, 3).compress().asArray()).toEqual([
-      1, 2, 3,
-    ]);
   });
 
   test('skip method should skip 3 values', () => {
@@ -164,7 +158,7 @@ describe('List data structure', () => {
     expect(
       list(1)
         .find((item) => item === 1)
-        .extract()
+        .extract(),
     ).toBe(1);
   });
 

@@ -1,7 +1,5 @@
-import { isJust } from './is_just_nothing';
 import { isObject } from './is_object';
 import { isFunction } from './is_function';
-import type { Just } from './utilities';
 import type { Typeable } from './types';
 
 export interface StreamListener<T> {
@@ -61,8 +59,6 @@ export interface Stream<T> extends Typeable {
    */
   destroy(): Stream<T>;
   uniqueBy<F>(fn: (value: T) => F): Stream<T>;
-  /** Get rid of `Nothing` values. */
-  compress(): Stream<Just<T>>;
 }
 
 interface StreamCreationOptions<T> {
@@ -152,12 +148,6 @@ const createStream = <T>(
         }
       });
     },
-    compress: () =>
-      derive((derived) => (value) => {
-        if (isJust(value)) {
-          derived.send(value);
-        }
-      }),
     concat: (other) => {
       const concatenated = createStream<T>();
       concatenated.on(StreamEvent.DESTROY, listen(concatenated.send));

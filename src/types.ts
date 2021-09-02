@@ -1,5 +1,3 @@
-import type { Just } from './utilities';
-
 export interface Functor<T> {
   /** Maps inner value and returns new monad instance with new value. */
   map<R>(fn: (value: T) => R): Functor<R>;
@@ -68,9 +66,4 @@ export interface Sizeable {
   /** Return amount of a aggregated values. */
   size(): number;
   isEmpty(): boolean;
-}
-
-export interface Compressable<T> {
-  /** Get rid of `Nothing` values. */
-  compress(): Compressable<Just<T>>;
 }

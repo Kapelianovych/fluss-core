@@ -1,4 +1,15 @@
-# [0.32.0] - 2021-08-29
+# [0.33.0] - 2021-09-02
+
+### Added
+
+- `tap` function.
+
+### Removed
+
+- `Compressable` type.
+- `compress` method from `Stream` and `List`;
+
+## [0.32.0] - 2021-08-29
 
 ### Changed
 

@@ -1,3 +1,4 @@
+export * from './tap';
 export * from './task';
 export * from './once';
 export * from './fork';

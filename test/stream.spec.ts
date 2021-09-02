@@ -1,4 +1,4 @@
-import { stream, isStream, StreamEvent } from '../src/stream';
+import { stream, isStream, StreamEvent } from '../src';
 
 describe('stream', () => {
   test('should creates stream object', () => {
@@ -11,9 +11,9 @@ describe('stream', () => {
   });
 
   test('should notify listener about new value', () => {
-    let value;
+    let value: number = 0;
 
-    const s = stream();
+    const s = stream<number>();
 
     s.listen((v) => (value = v));
 
@@ -116,8 +116,8 @@ describe('stream', () => {
   });
 
   test('resume should allow stream to pass new values', () => {
-    let value;
-    const s = stream();
+    let value: number = 0;
+    const s = stream<number>();
     s.listen((v) => (value = v));
 
     s.freeze().resume().send(1);
@@ -126,8 +126,8 @@ describe('stream', () => {
   });
 
   test('should invoke resumed listener before self resume', () => {
-    let value;
-    const s = stream();
+    let value: string = '';
+    const s = stream<string>();
 
     s.on(StreamEvent.RESUME, () => (value = 'resumed'));
 
@@ -137,12 +137,12 @@ describe('stream', () => {
   });
 
   test('concat method should merge this stream with another one', () => {
-    let value;
+    let value: number = 0;
 
-    const f = stream();
-    const b = stream();
-    const c = stream();
-    const d = stream();
+    const f = stream<number>();
+    const b = stream<number>();
+    const c = stream<number>();
+    const d = stream<number>();
 
     const n = f.concat(b).concat(c).concat(d);
 
@@ -162,8 +162,8 @@ describe('stream', () => {
   });
 
   test('uniqueBy method should filter values that sream already passed on', () => {
-    let value;
-    const s = stream();
+    let value: number = 0;
+    const s = stream<number>();
 
     s.uniqueBy((value) => value).listen((v) => (value = v));
 
@@ -171,20 +171,5 @@ describe('stream', () => {
     expect(value).toBe(1);
     s.send(2).send(1);
     expect(value).toBe(2);
-  });
-
-  test('compress method should filter null and undefined values', () => {
-    let value = 1;
-    const s = stream<number>();
-
-    s.compress().listen((v) => (value = v));
-
-    // @ts-ignore
-    s.send(null);
-    expect(value).toBe(1);
-
-    // @ts-ignore
-    s.send(undefined);
-    expect(value).toBe(1);
   });
 });
