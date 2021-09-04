@@ -1,4 +1,36 @@
-# [0.33.0] - 2021-09-02
+# [0.34.0] - 2021-09-04
+
+### Added
+
+- `Reducer` and `Transducer` types.
+- `reducer` function to build reducer function.
+- `transduce` function to transform foldable instance into some value.
+- `map` and `filter` functions that build transducer functions.
+- `toArray` and `toList` reducer builders.
+
+### Changed
+
+- `take` and `skip` methods of `List` accept a _while_ predicate function now.
+- `reduce` method of `List` to accept a `Reducer` only.
+- `prepend` method of `List` accepts another `List` only.
+- `send` method of `Stream` returns `void`.
+- `tap` can accept asynchronous effect.
+
+### Fixed
+
+- pass _deep_ parameter to recursive call of `freeze` function.
+
+### Removed
+
+- `Compressable` type.
+- `compress` method from `List`.
+- `uniqueBy` method from `List` because it hides cache implementation.
+- `append` method of `List`.
+- `StreamEvents` enum.
+- `on`, `freeze`, `resume`, `destroy`, `compress` and `uniqueBy` methods from `Stream`.
+- `Container`, `Lazy` and `Tuple` monads.
+
+## [0.33.0] - 2021-09-02
 
 ### Added
 

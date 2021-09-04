@@ -1,7 +1,7 @@
 import { isObject } from './is_object';
 import { isNothing } from './is_just_nothing';
 import { isFunction } from './is_function';
-import type { Serializable, Typeable } from './types';
+import type { Comonad, Monad, Serializable, Typeable } from './types';
 
 type IdleCallbackHandle = unknown;
 
@@ -20,7 +20,7 @@ declare global {
   /** Queues a function to be called during a interpreter's idle periods. */
   function requestIdleCallback(
     callback: (deadline: IdleDeadline) => void,
-    opts?: RequestIdleCallbackOptions
+    opts?: RequestIdleCallbackOptions,
   ): IdleCallbackHandle;
   /** Cancels a callback previously scheduled with `globalThis.requestIdleCallback()`. */
   function cancelIdleCallback(handle: IdleCallbackHandle): void;
@@ -35,11 +35,15 @@ const cancelCallback = globalThis.cancelIdleCallback ?? globalThis.clearTimeout;
 export const IDLE_OBJECT_TYPE = '$Idle';
 
 /** Monad that allow to defer data initialization. */
-export interface Idle<T> extends Typeable, Serializable<T> {
-  map<R>(fn: (value: T) => R): Idle<R>;
-  chain<R>(fn: (value: T) => Idle<R>): Idle<R>;
-  apply<R>(other: Idle<(value: T) => R>): Idle<R>;
-  extract(): T;
+export interface Idle<T>
+  extends Typeable,
+    Monad<T>,
+    Comonad<T>,
+    Serializable<T> {
+  readonly map: <R>(fn: (value: T) => R) => Idle<R>;
+  readonly chain: <R>(fn: (value: T) => Idle<R>) => Idle<R>;
+  readonly apply: <R>(other: Idle<(value: T) => R>) => Idle<R>;
+  readonly extract: () => T;
 }
 
 /**

@@ -479,6 +479,45 @@ const result3 = memoizedFn(4); // Function is executed
 memoizedFn.cache.clear();
 ```
 
+### transduce
+
+```ts
+function transduce<T extends Foldable<any>>(
+  instance: T,
+): <I, K>(
+  aggregator: Reducer<I, K>,
+) => <R extends ReadonlyArray<Transducer<I, any, any>>>(
+  ...transducers: ChainTransducers<R>
+) => I;
+```
+
+Creates transduce operation over a `Foldable` instance.
+
+```ts
+const result /*: readonly string[] */ = transduce([1, 2, 3])(toArray<string>())(
+  filter<ReadonlyArray<string>, number>((value) => value >= 2),
+  map<ReadonlyArray<string>, number, string>(String),
+);
+```
+
+There are two functions that builds transducers: `map` and `filter`.
+
+### reducer
+
+```ts
+function reducer<T>(
+  initial: T,
+): <K>(fn: (accumulator: T, current: K) => T) => Reducer<T, K>;
+```
+
+Helps building reducer.
+
+```ts
+const reduceFunction /*: Reducer<number, number> */ = reducer(0)(binary('+')); // create reducer that sum numbers.
+```
+
+There are two predefined reducers that collect value: `toArray` and `toList`.
+
 ### array
 
 ```typescript
@@ -524,7 +563,7 @@ const getUser /*: (id: string) => User */ = tryCatch(
 ### tap
 
 ```ts
-function tap<T>(effect: (value: T) => void): (value: T) => T;
+function tap<T>(effect: (value: T) => void | Promise<void>): (value: T) => T;
 ```
 
 Performs side effect on value while returning it as is.
@@ -583,49 +622,6 @@ const multiplyIf = when((num: number) => num > 10)((num) => num * 3, identity);
 const result /*: number */ = multiplyIf(9); // Will be returned as is.
 const result2 /*: number */ = multiplyIf(11); // Will be multiplied.
 ```
-
-### wrap
-
-```typescript
-function wrap<T>(value: T): Container<T>;
-```
-
-Wraps value in `Container` monad and allow perform on it operations in chainable way.
-
-```typescript
-wrap(1)
-  .map((num) => num + '0')
-  .chain((str) => wrap(parseInt(str)))
-  .apply(wrap((num) => Math.pow(num, 2)))
-  .extract(); // => 100
-```
-
-### isContainer
-
-```typescript
-function isContainer<T>(value: unknown): value is Container<T>;
-```
-
-Check if value is instance of Container.
-
-```typescript
-isContainer(wrap(1)); // true
-isContainer(1); // false
-```
-
-#### Container
-
-Monad that contains value and allow perform operation on it by set of methods.
-
-1. `map<R>(fn: (value: T) => R): Container<R>` - maps inner value and returns new `Container` instance with new value.
-
-2. `chain<R>(fn: (value: T) => Container<R>): Container<R>` - the same as `map`, but function must return already wrapped value.
-
-3. `apply<R>(other: Container<(value: T) => R>): Container<R>` - maps value by using value of `other` wrapper. Value of other wrapper must be a function type.
-
-4. `extract(): T` - expose inner value to outside.
-
-> These methods have also `Option` and `Either` monads.
 
 ### isOption
 
@@ -882,43 +878,6 @@ const result /*: boolean */ = isList(list());
 
 Monad that represents lazy `Array`. It can decrease computation step comparably to `Array`. Actual execution of `List`'s methods starts when one of _terminating method_ (method that do not return List instance) is called.
 
-### lazy
-
-```typescript
-function lazy<F, L>(value: Operation<F, L> | Lazy<F, L>): Lazy<F, L>;
-```
-
-Creates `Lazy` monad with some operation or from another `Lazy` instance.
-
-```typescript
-const lazyPower /*: Lazy<number, number> */ = lazy((num: number) =>
-  Math.pow(num, 2),
-);
-```
-
-#### Lazy
-
-Monad that constructs and compose operations over some value. Similar to `pipe` function, but allows more comprehensive transformation of intermediate values.
-
-### tuple
-
-```typescript
-function tuple<T extends ReadonlyArray<unknown>>(...args: T): Tuple<T>;
-```
-
-Creates `Tuple` from set of elements.
-
-```typescript
-const y /*: Tuple<[number, string]> */ = tuple(9, 'state');
-
-// Tuple can be destructured
-const [num, str] = y;
-```
-
-#### Tuple
-
-Immutable container for fixed sequence of values.
-
 ### stream
 
 ```typescript
@@ -935,7 +894,7 @@ y.map((value) => Math.pow(value, 2)).listen(
 );
 
 // Somewhere in the code
-y.send(2); // document.body.innerHTML will be equal to 4
+y.send(2); // document.body.innerHTML will set to equal to 4
 ```
 
 #### Stream
@@ -966,17 +925,10 @@ Monad that allow to defer data initialization.
 function reviver(
   key: string,
   value: JSONValueTypes | SerializabledObject<any>,
-):
-  | JSONValueTypes
-  | List<any>
-  | Idle<any>
-  | Option<any>
-  | Container<any>
-  | Either<Error, any>
-  | Tuple<ReadonlyArray<any>>;
+): JSONValueTypes | List<any> | Idle<any> | Option<any> | Either<Error, any>;
 ```
 
-Add recognition of `Container`, `Idle`, `Tuple`, `Option`, `List`, `Either` data structures for `JSON.parse`.
+Add recognition of `Idle`, `Option`, `List`, `Either` data structures for `JSON.parse`.
 
 ```typescript
 const obj = JSON.parse('{"type":"Some","value":1}', reviver);

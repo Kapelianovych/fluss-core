@@ -2,6 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "target": "ES2018",
+    "module": "ESNext",
     "rootDir": "src",
     "declaration": true,
     "declarationDir": "build",

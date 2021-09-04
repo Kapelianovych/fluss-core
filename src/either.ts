@@ -1,28 +1,36 @@
 import { isObject } from './is_object';
 import { isFunction } from './is_function';
-import type { Typeable, Serializable } from './types';
+import type { Typeable, Serializable, Monad, Comonad } from './types';
 
 export const EITHER_LEFT_OBJECT_TYPE = '$Left';
 export const EITHER_RIGHT_OBJECT_TYPE = '$Right';
 
-export interface Right<B> extends Typeable, Serializable<B> {
-  map<R>(fn: (value: B) => R): Right<R>;
-  chain<E extends Either<any, any>>(fn: (value: B) => E): E;
-  apply<R>(other: Right<(value: B) => R>): Right<R>;
-  handle(): Right<B>;
-  isLeft(): this is Right<never>;
-  isRight(): this is Right<B>;
-  extract(): B;
+export interface Right<B>
+  extends Typeable,
+    Monad<B>,
+    Comonad<B>,
+    Serializable<B> {
+  readonly map: <R>(fn: (value: B) => R) => Right<R>;
+  readonly chain: <E extends Either<any, any>>(fn: (value: B) => E) => E;
+  readonly apply: <R>(other: Right<(value: B) => R>) => Right<R>;
+  readonly handle: () => Right<B>;
+  readonly isLeft: () => this is Right<never>;
+  readonly isRight: () => this is Right<B>;
+  readonly extract: () => B;
 }
 
-export interface Left<A> extends Typeable, Serializable<A> {
-  map(): Left<A>;
-  chain(): Left<A>;
-  apply(): Left<A>;
-  isLeft(): this is Left<A>;
-  isRight(): this is Left<never>;
-  extract(): A;
-  handle<B>(fn: (value: A) => B): Right<B>;
+export interface Left<A>
+  extends Typeable,
+    Monad<A>,
+    Comonad<A>,
+    Serializable<A> {
+  readonly map: () => Left<A>;
+  readonly chain: () => Left<A>;
+  readonly apply: () => Left<A>;
+  readonly isLeft: () => this is Left<A>;
+  readonly handle: <B>(fn: (value: A) => B) => Right<B>;
+  readonly isRight: () => this is Left<never>;
+  readonly extract: () => A;
 }
 
 /**
@@ -68,7 +76,7 @@ export const left = <A>(value: A): Left<A> => ({
  */
 export const either = <A, B>(
   isRight: (value: A | B) => value is B,
-  value: A | B
+  value: A | B,
 ): Either<A, B> => (isRight(value) ? right(value) : left(value));
 
 /** Checks if value is instance of `Either` monad. */

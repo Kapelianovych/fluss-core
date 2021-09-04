@@ -2,35 +2,43 @@ import { isJust } from './is_just_nothing';
 import { isObject } from './is_object';
 import { isFunction } from './is_function';
 import type { Just, Nothing } from './utilities';
-import type { Typeable, Serializable } from './types';
+import type { Typeable, Serializable, Monad, Comonad } from './types';
 
 export const OPTION_NONE_OBJECT_TYPE = '$None';
 export const OPTION_SOME_OBJECT_TYPE = '$Some';
 
-export interface Some<T> extends Typeable, Serializable<T> {
-  map<R>(
-    fn: (value: T) => R
-  ): unknown extends R ? Option<R> : R extends Just<R> ? Some<R> : None;
-  fill(): Some<T>;
-  chain<R>(
-    fn: (value: T) => Option<R>
-  ): R extends Nothing ? None : unknown extends R ? None : Some<R>;
-  apply<R>(
-    other: Option<(value: T) => R>
-  ): R extends Nothing ? None : unknown extends R ? None : Some<R>;
-  isSome(): this is Some<T>;
-  isNone(): this is None;
-  extract(): T;
+export interface Some<T>
+  extends Typeable,
+    Monad<T>,
+    Comonad<T>,
+    Serializable<T> {
+  readonly map: <R>(
+    fn: (value: T) => R,
+  ) => unknown extends R ? Option<R> : R extends Just<R> ? Some<R> : None;
+  readonly fill: () => Some<T>;
+  readonly chain: <R>(
+    fn: (value: T) => Option<R>,
+  ) => R extends Nothing ? None : unknown extends R ? None : Some<R>;
+  readonly apply: <R>(
+    other: Option<(value: T) => R>,
+  ) => R extends Nothing ? None : unknown extends R ? None : Some<R>;
+  readonly isSome: () => this is Some<T>;
+  readonly isNone: () => this is None;
+  readonly extract: () => T;
 }
 
-export interface None extends Typeable, Serializable<null> {
-  map(): None;
-  fill<T>(fn: () => T): Some<T>;
-  chain(): None;
-  apply(): None;
-  isSome(): this is Some<never>;
-  isNone(): this is None;
-  extract(): null;
+export interface None
+  extends Typeable,
+    Monad<null>,
+    Comonad<null>,
+    Serializable<null> {
+  readonly map: () => None;
+  readonly fill: <T>(fn: () => T) => Some<T>;
+  readonly chain: () => None;
+  readonly apply: () => None;
+  readonly isSome: () => this is Some<never>;
+  readonly isNone: () => this is None;
+  readonly extract: () => null;
 }
 
 /** Monad that encapsulates value that can be undefined at some time. */
@@ -73,7 +81,7 @@ export const some = <T>(value: T): Some<T> => ({
  * monad.
  */
 export const maybe = <T>(
-  value: T
+  value: T,
 ): unknown extends T ? Option<T> : T extends Just<T> ? Some<T> : None =>
   // @ts-ignore
   isJust(value) ? some(value) : none;

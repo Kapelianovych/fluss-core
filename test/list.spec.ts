@@ -1,4 +1,12 @@
-import { list, iterate, isList, isOption, LIST_OBJECT_TYPE } from '../src';
+import {
+  list,
+  isList,
+  binary,
+  iterate,
+  reducer,
+  isOption,
+  LIST_OBJECT_TYPE,
+} from '../src';
 
 describe('List data structure', () => {
   test('list and iterate functions create List container', () => {
@@ -52,12 +60,8 @@ describe('List data structure', () => {
     ).toEqual([4, 5, 6]);
   });
 
-  test('append method add values to list', () => {
-    expect(list(4).append(1, 2, 3).asArray()).toEqual([4, 1, 2, 3]);
-  });
-
   test('prepend method add values to list', () => {
-    expect(list(4).prepend(1, 2, 3).asArray()).toEqual([1, 2, 3, 4]);
+    expect(list(4).prepend(list(1, 2, 3)).asArray()).toEqual([1, 2, 3, 4]);
   });
 
   test(
@@ -87,11 +91,11 @@ describe('List data structure', () => {
   });
 
   test('reduce method reduce values of List to one value', () => {
-    expect(list(1, 2, 3).reduce((a, v) => a + v, 0)).toBe(6);
+    expect(list(1, 2, 3).reduce(reducer(0)(binary('+')))).toBe(6);
   });
 
   test('reduce method must return accumulator value if list is empty', () => {
-    expect(list<number>().reduce((a, v) => a + v, 0)).toBe(0);
+    expect(list<number>().reduce(reducer(0)(binary('+')))).toBe(0);
   });
 
   test('any method check if at least one value pass predicate', () => {
@@ -127,28 +131,6 @@ describe('List data structure', () => {
     expect(list(1, 2, 3, 4, 5).take(3).asArray()).toEqual([1, 2, 3]);
   });
 
-  test('uniqueBy skips duplicate values by id property', () => {
-    expect(
-      list({ id: 1 }, { id: 2 }, { id: 2 }, { id: 2 }, { id: 5 })
-        .uniqueBy((item) => item.id)
-        .asArray(),
-    ).toEqual([{ id: 1 }, { id: 2 }, { id: 5 }]);
-  });
-
-  test('uniqueBy skips values by id property of inner object', () => {
-    expect(
-      list(
-        { o: { id: 1 } },
-        { o: { id: 2 } },
-        { o: { id: 2 } },
-        { o: { id: 2 } },
-        { o: { id: 5 } },
-      )
-        .uniqueBy((item) => item.o.id)
-        .asArray(),
-    ).toEqual([{ o: { id: 1 } }, { o: { id: 2 } }, { o: { id: 5 } }]);
-  });
-
   test('skip method should skip 3 values', () => {
     expect(list(1, 3, 4, 5, 6).skip(3).asArray()).toEqual([5, 6]);
   });
@@ -166,5 +148,19 @@ describe('List data structure', () => {
     const serializabledObject = JSON.stringify(list(1, 2, 3));
     expect(serializabledObject).toMatch(`"type":"${LIST_OBJECT_TYPE}"`);
     expect(serializabledObject).toMatch('"value":[1,2,3]');
+  });
+
+  it('should take values until predicate is truthy', () => {
+    const a = list(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+    const result = a.take((item) => item < 6);
+    expect(result.asArray()).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it('should skip values until it reaches `true` for a given predicate', () => {
+    const a = list(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+    const result = a.skip((item) => item > 6);
+    expect(result.asArray()).toEqual([1, 2, 3, 4, 5, 6]);
   });
 });

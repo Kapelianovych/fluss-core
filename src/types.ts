@@ -23,9 +23,19 @@ export interface Comonad<T> extends Functor<T> {
 
 export interface Monad<T> extends Chain<T> {}
 
+export interface Reducer<I, V> {
+  (accumulator: I, current: V): I;
+  // It is needed for proper TypeScript inference.
+  (accumulator?: I, current?: V): I;
+}
+
+export interface Transducer<I, V, K> {
+  (reducer: Reducer<I, V>): Reducer<I, K>;
+}
+
 export interface Foldable<T> {
   /** Reduce iterable to some value. */
-  reduce<R>(fn: (accumulator: R, value: T) => R, accumulator: R): R;
+  reduce<R>(fn: Reducer<R, T>): R;
 }
 
 export interface Filterable<T> {

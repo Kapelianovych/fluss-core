@@ -2,47 +2,56 @@ import { isObject } from './is_object';
 import { isFunction } from './is_function';
 import { some, Option, none } from './option';
 import type {
+  Monad,
   Foldable,
   Typeable,
   Sizeable,
+  Semigroup,
+  Filterable,
   Serializable,
   IterableIteratorFunction,
 } from './types';
 
 export const LIST_OBJECT_TYPE = '$List';
 
+interface Part<T> {
+  (count: number): List<T>;
+  (predicate: (value: T) => boolean): List<T>;
+}
+
 /** Monad that represents lazy Array. */
 export interface List<T>
   extends Typeable,
     Sizeable,
+    Monad<T>,
     Iterable<T>,
     Foldable<T>,
+    Semigroup<T>,
+    Filterable<T>,
     Serializable<ReadonlyArray<T>> {
   /**
    * Check if all values of `List` pass _predicate_ function.
    * If list is empty, then method returns `true`.
    */
-  all(predicate: (value: T) => boolean): boolean;
+  readonly all: (predicate: (value: T) => boolean) => boolean;
   /**
    * Check if at least one value of `List` passes _predicate_ function.
    * If list is empty, then method returns `false`.
    */
-  any(predicate: (value: T) => boolean): boolean;
-  has(value: T): boolean;
-  map<R>(fn: (value: T) => R): List<R>;
-  sort(fn: (first: T, second: T) => number): List<T>;
-  take(count: number): List<T>;
-  skip(count: number): List<T>;
-  find(predicate: (item: T) => boolean): Option<T>;
-  chain<R>(fn: (value: T) => List<R>): List<R>;
-  apply<R>(other: List<(value: T) => R>): List<R>;
-  filter(predicate: (value: T) => boolean): List<T>;
-  append(...values: ReadonlyArray<T>): List<T>;
-  concat(other: List<T>): List<T>;
-  prepend(...values: ReadonlyArray<T>): List<T>;
-  asArray(): ReadonlyArray<T>;
-  uniqueBy<U>(fn: (item: T) => U): List<T>;
-  forEach(fn: (value: T) => void): void;
+  readonly any: (predicate: (value: T) => boolean) => boolean;
+  readonly has: (value: T) => boolean;
+  readonly map: <R>(fn: (value: T) => R) => List<R>;
+  readonly sort: (fn: (first: T, second: T) => number) => List<T>;
+  readonly take: Part<T>;
+  readonly skip: Part<T>;
+  readonly find: (predicate: (item: T) => boolean) => Option<T>;
+  readonly chain: <R>(fn: (value: T) => List<R>) => List<R>;
+  readonly apply: <R>(other: List<(value: T) => R>) => List<R>;
+  readonly filter: (predicate: (value: T) => boolean) => List<T>;
+  readonly concat: (other: List<T>) => List<T>;
+  readonly prepend: (other: List<T>) => List<T>;
+  readonly asArray: () => ReadonlyArray<T>;
+  readonly forEach: (fn: (value: T) => void) => void;
 }
 
 /** Create `List` from function that returns iterable iterator. */
@@ -79,7 +88,9 @@ export const iterate = <T>(over: IterableIteratorFunction<T>): List<T> => ({
         }
       }
     }),
-  reduce: (fn, accumulator) => {
+  reduce: (fn) => {
+    let accumulator = fn();
+
     for (const item of over()) {
       accumulator = fn(accumulator, item);
     }
@@ -110,29 +121,10 @@ export const iterate = <T>(over: IterableIteratorFunction<T>): List<T> => ({
 
     return false;
   },
-  append: (...values) =>
+  prepend: (other) =>
     iterate(function* () {
-      for (const item of [over(), values]) {
+      for (const item of [other, over()]) {
         yield* item;
-      }
-    }),
-  prepend: (...values) =>
-    iterate(function* () {
-      for (const item of [values, over()]) {
-        yield* item;
-      }
-    }),
-  uniqueBy: (fn) =>
-    iterate(function* () {
-      const unique = new Set<ReturnType<typeof fn>>();
-
-      for (const item of over()) {
-        const key = fn(item);
-
-        if (!unique.has(key)) {
-          unique.add(key);
-          yield item;
-        }
       }
     }),
   sort: (fn) =>
@@ -141,10 +133,14 @@ export const iterate = <T>(over: IterableIteratorFunction<T>): List<T> => ({
         yield item;
       }
     }),
-  take: (count) =>
+  take: (countOrPredicate) =>
     iterate(function* () {
+      const predicate = isFunction(countOrPredicate)
+        ? countOrPredicate
+        : () => 0 <= --(countOrPredicate as number);
+
       for (const item of over()) {
-        if (0 <= --count) {
+        if (predicate(item)) {
           yield item;
         } else {
           // Ends iteration even if in parent list are many
@@ -154,10 +150,14 @@ export const iterate = <T>(over: IterableIteratorFunction<T>): List<T> => ({
         }
       }
     }),
-  skip: (count) =>
+  skip: (countOrPredicate) =>
     iterate(function* () {
+      const predicate = isFunction(countOrPredicate)
+        ? countOrPredicate
+        : () => 0 <= --(countOrPredicate as number);
+
       for (const item of over()) {
-        if (0 > --count) {
+        if (!predicate(item)) {
           yield item;
         }
       }

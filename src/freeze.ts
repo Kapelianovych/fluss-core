@@ -1,3 +1,5 @@
+import { isObject } from './is_object';
+import { isFunction } from './is_function';
 import type { DeepReadonly } from './utilities';
 
 /**
@@ -7,13 +9,13 @@ import type { DeepReadonly } from './utilities';
 export const freeze = <T extends object, D extends boolean = false>(
   value: T,
   // @ts-ignore - TS cannot assign false to boolean :(
-  deep: D = false
+  deep: D = false,
 ): D extends true ? DeepReadonly<T> : Readonly<T> => {
   if (deep) {
     Object.getOwnPropertyNames(value).forEach((name) => {
       const innerValue = (value as { [key: string]: any })[name];
-      if (typeof innerValue === 'object' || typeof innerValue === 'function') {
-        freeze(innerValue);
+      if (isObject(innerValue) || isFunction(innerValue)) {
+        freeze(innerValue, deep);
       }
     });
   }

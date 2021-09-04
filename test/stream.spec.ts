@@ -1,4 +1,4 @@
-import { stream, isStream, StreamEvent } from '../src';
+import { stream, isStream } from '../src';
 
 describe('stream', () => {
   test('should creates stream object', () => {
@@ -11,7 +11,7 @@ describe('stream', () => {
   });
 
   test('should notify listener about new value', () => {
-    let value: number = 0;
+    let value: number | undefined = undefined;
 
     const s = stream<number>();
 
@@ -73,69 +73,6 @@ describe('stream', () => {
     expect(s).not.toBe(a);
   });
 
-  test('should destroy listeners and stream must not respond to new values', () => {
-    let value;
-    const s = stream();
-    s.listen((v) => (value = v));
-
-    s.destroy().send(5);
-
-    expect(value).toBeUndefined();
-  });
-
-  test('should invoke destroyed listener before self destroying', () => {
-    let value;
-    const s = stream();
-
-    s.on(StreamEvent.DESTROY, () => (value = 'destroyed'));
-
-    s.destroy();
-
-    expect(value).toMatch('destroyed');
-  });
-
-  test('freeze method should stop accepting new value', () => {
-    let value;
-    const s = stream();
-    s.listen((v) => (value = v));
-
-    s.freeze().send(1);
-
-    expect(value).toBeUndefined();
-  });
-
-  test('should invoke frozen listener before self freezing', () => {
-    let value;
-    const s = stream();
-
-    s.on(StreamEvent.FREEZE, () => (value = 'frozen'));
-
-    s.freeze();
-
-    expect(value).toMatch('frozen');
-  });
-
-  test('resume should allow stream to pass new values', () => {
-    let value: number = 0;
-    const s = stream<number>();
-    s.listen((v) => (value = v));
-
-    s.freeze().resume().send(1);
-
-    expect(value).toBe(1);
-  });
-
-  test('should invoke resumed listener before self resume', () => {
-    let value: string = '';
-    const s = stream<string>();
-
-    s.on(StreamEvent.RESUME, () => (value = 'resumed'));
-
-    s.freeze().resume();
-
-    expect(value).toMatch('resumed');
-  });
-
   test('concat method should merge this stream with another one', () => {
     let value: number = 0;
 
@@ -159,17 +96,5 @@ describe('stream', () => {
 
     d.send(4);
     expect(value).toBe(4);
-  });
-
-  test('uniqueBy method should filter values that sream already passed on', () => {
-    let value: number = 0;
-    const s = stream<number>();
-
-    s.uniqueBy((value) => value).listen((v) => (value = v));
-
-    s.send(1);
-    expect(value).toBe(1);
-    s.send(2).send(1);
-    expect(value).toBe(2);
   });
 });

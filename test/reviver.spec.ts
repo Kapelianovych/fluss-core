@@ -1,15 +1,11 @@
 import {
   isList,
   isIdle,
-  isTuple,
   reviver,
   isEither,
   isOption,
-  isContainer,
   LIST_OBJECT_TYPE,
   IDLE_OBJECT_TYPE,
-  TUPLE_OBJECT_TYPE,
-  CONTAINER_OBJECT_TYPE,
   OPTION_SOME_OBJECT_TYPE,
   EITHER_LEFT_OBJECT_TYPE,
   EITHER_RIGHT_OBJECT_TYPE,
@@ -41,16 +37,6 @@ describe('reviver', () => {
     const json = `{"type":"${EITHER_LEFT_OBJECT_TYPE}","value":"Message!"}`;
     expect(isEither(JSON.parse(json, reviver))).toBe(true);
     expect(JSON.parse(json, reviver).isLeft()).toBe(true);
-  });
-
-  test('should create Container instance', () => {
-    const json = `{"type":"${CONTAINER_OBJECT_TYPE}","value":5}`;
-    expect(isContainer(JSON.parse(json, reviver))).toBe(true);
-  });
-
-  test('should create Tuple instance', () => {
-    const json = `{"type":"${TUPLE_OBJECT_TYPE}","value":[5]}`;
-    expect(isTuple(JSON.parse(json, reviver))).toBe(true);
   });
 
   test('should create an Idle instance', () => {

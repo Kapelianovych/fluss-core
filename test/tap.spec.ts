@@ -11,7 +11,10 @@ describe('tap', () => {
     let testVariable = '';
     const value = 5;
 
-    const effect = async (_number: number) => void (testVariable = 'filled');
+    const effect = (_number: number) =>
+      new Promise<void>((resolve) =>
+        setTimeout(() => ((testVariable = 'filled'), resolve())),
+      );
 
     tap(effect)(value);
 
