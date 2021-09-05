@@ -28,8 +28,8 @@ type ChainTransducers<
 export const reducer =
   <T>(initial: T) =>
   <K>(fn: (accumulator: T, current: K) => T): Reducer<T, K> =>
-  (accumulator: T = initial, current?: K): T =>
-    isNothing(current) ? accumulator : fn(accumulator, current);
+  (accumulator?: T, current?: K): T =>
+    isNothing(accumulator) ? initial : fn(accumulator, current!);
 
 /** Creates transduce operation over a `Foldable` instance. */
 export const transduce =
