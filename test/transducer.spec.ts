@@ -1,6 +1,7 @@
 import {
   map,
   List,
+  list,
   filter,
   toList,
   isList,
@@ -55,5 +56,27 @@ describe('transducer', () => {
 
     expect(isList(result)).toBe(true);
     expect(result.asArray()).toEqual([2, 3]);
+  });
+
+  it('should invoke transducers from left to right order', () => {
+    interface O {
+      readonly position: number;
+    }
+
+    const result = transduce([1, 2, 3, 4])(toArray<O>())(
+      filter<ReadonlyArray<O>, number>((value) => value > 2),
+      map<ReadonlyArray<O>, number, O>((value) => ({ position: value })),
+      map<ReadonlyArray<O>, O, O>(({ position }) => ({
+        position: position ** 2,
+      })),
+    );
+
+    expect(result).toEqual([{ position: 9 }, { position: 16 }]);
+  });
+
+  it('should return foldable instance with same values if no transducers were provided', () => {
+    const result = transduce([1, 2, 3])(toList<string>())();
+
+    expect(result.toJSON()).toEqual(list(1, 2, 3).toJSON());
   });
 });

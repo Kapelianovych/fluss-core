@@ -1,6 +1,7 @@
 import { pipe } from './pipe';
 import { list } from './list';
 import { NArray } from './utilities';
+import { identity } from './identity';
 import { isNothing } from './is_just_nothing';
 import { Foldable, Reducer, Transducer } from './types';
 
@@ -37,8 +38,15 @@ export const transduce =
   <R extends ReadonlyArray<Transducer<I, any, any>>>(
     ...transducers: ChainTransducers<R>
   ): I =>
-    // @ts-ignore
-    instance.reduce(pipe(...transducers)(aggregator), aggregator());
+    instance.reduce(
+      // @ts-ignore
+      pipe(...transducers.reverse(), identity)(aggregator),
+      // @ts-ignore
+      // Need for interoperability with the Array.
+      // For custom Foldable instances invocation of empty reducer
+      // should provide an initial accumulator value.
+      aggregator(),
+    );
 
 /** Creates a _transformer_ transducer. */
 export const map =

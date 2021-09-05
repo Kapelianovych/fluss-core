@@ -1,4 +1,11 @@
-# [0.34.0] - 2021-09-04
+# [0.34.1] - 2021-09-05
+
+### Fixed
+
+- order of transducers composition from _right to left_ to _left to right_.
+- invocation of `transduce` function without any transducer returns accumulator with the same values from transduced instance.
+
+## [0.34.0] - 2021-09-04
 
 ### Added
 
