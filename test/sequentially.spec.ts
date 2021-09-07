@@ -142,4 +142,15 @@ describe('sequentially', () => {
 
     expect(result).toEqual(['Hello world!', 'Hello IT!']);
   });
+
+  it('should accept one array parameter if all functions have the same parameter types', () => {
+    const fn = sequentially(
+      (word: string, another: string) => word + another,
+      (word: string, another: string) => another + word,
+    );
+
+    const result = fn(['Hello', 'world']);
+
+    expect(result).toEqual(['Helloworld', 'worldHello']);
+  });
 });

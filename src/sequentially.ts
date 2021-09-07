@@ -36,7 +36,7 @@ export const sequentially =
       (values as any[]).length === 0
         ? fns.map(() => [])
         : (values as any[]).length === 1
-        ? fns.map(() => values)
+        ? fns.map(() => array((values as any[])[0]))
         : (values as any[]).map((value) => array(value));
 
     return fns.reduce(

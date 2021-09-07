@@ -277,7 +277,11 @@ function concurrently<
 >(
   ...fns: F
 ): (
-  ...args: NArray.Flatten<NArray.TrimLastEmpty<NFn.ParametersOf<F>>>
+  ...args: If<
+    NArray.IsSameInnerType<ConcurrentlyParameters<F>>,
+    ConcurrentlyParameters<F> | [NArray.First<ConcurrentlyParameters<F>>],
+    ConcurrentlyParameters<F>
+  >
 ) => Promise<NFn.ReturnTypesOf<F>>;
 ```
 

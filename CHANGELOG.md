@@ -7,7 +7,7 @@
 
 ### Changed
 
-- if functions that are passed to `sequentially` have the same parameters type then them can be passed only as single argument.
+- if functions that are passed to `sequentially` or `concurrently` have the same parameters type then them can be passed only as single argument.
 
 ## [0.34.1] - 2021-09-05
 
