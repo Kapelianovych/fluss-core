@@ -1,4 +1,15 @@
-# [0.34.1] - 2021-09-05
+# [0.35.0] - 2021-09-07
+
+### Added
+
+- `If` type.
+- `IsSameInnerType` type to `NArray` namespace.
+
+### Changed
+
+- if functions that are passed to `sequentially` have the same parameters type then them can be passed only as single argument.
+
+## [0.34.1] - 2021-09-05
 
 ### Fixed
 

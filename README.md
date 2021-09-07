@@ -247,7 +247,11 @@ function sequentially<
 >(
   ...fns: V
 ): (
-  ...values: NArray.Flatten<NArray.TrimLastEmpty<NFn.ParametersOf<V>>>
+  ...values: If<
+    NArray.IsSameInnerType<SequentiallyParameters<V>>,
+    SequentiallyParameters<V> | [NArray.First<SequentiallyParameters<V>>],
+    SequentiallyParameters<V>
+  >
 ) => NFn.IsAsyncIn<V> extends true
   ? Promise<NFn.ReturnTypesOf<V>>
   : NFn.ReturnTypesOf<V>;

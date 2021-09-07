@@ -6,7 +6,7 @@ describe('sequentially', () => {
     const concatNumberAsString = sequentially(
       (n: number) => (stringValue += n),
       (b: string) => (stringValue += b),
-      (u: string) => (stringValue += u)
+      (u: string) => (stringValue += u),
     );
     concatNumberAsString(0, '1', '2');
 
@@ -19,7 +19,7 @@ describe('sequentially', () => {
       (num: number) =>
         new Promise((resolve) => setTimeout(() => resolve((text += num)), 100)),
       (num: number) => (text += num + 1),
-      async (num: number) => (text += num + 2)
+      async (num: number) => (text += num + 2),
     );
 
     const result = s(1, 1, 2);
@@ -35,16 +35,16 @@ describe('sequentially', () => {
     const s = sequentially(
       () =>
         new Promise<void>((resolve) =>
-          setTimeout(() => ((text += 1), resolve()), 200)
+          setTimeout(() => ((text += 1), resolve()), 200),
         ),
       () =>
         new Promise<void>((resolve) =>
-          setTimeout(() => ((text += 2), resolve()), 150)
+          setTimeout(() => ((text += 2), resolve()), 150),
         ),
       () =>
         new Promise<void>((resolve) =>
-          setTimeout(() => ((text += 3), resolve()), 100)
-        )
+          setTimeout(() => ((text += 3), resolve()), 100),
+        ),
     );
 
     await s();
@@ -57,7 +57,7 @@ describe('sequentially', () => {
     const s = sequentially(
       () => (text += 1),
       () => (text += 2),
-      () => (text += 3)
+      () => (text += 3),
     );
 
     s();
@@ -68,7 +68,7 @@ describe('sequentially', () => {
   it('should return result of synchronous functions as array', () => {
     const fn = sequentially(
       (n: number) => n,
-      (n: number) => n ** 2
+      (n: number) => n ** 2,
     );
 
     const result = fn(2, 3);
@@ -79,7 +79,7 @@ describe('sequentially', () => {
   it('should return result of mixed functions as Promise of array', async () => {
     const fn = sequentially(
       (n: number) => n,
-      async (n: number) => n ** 2
+      async (n: number) => n ** 2,
     );
 
     const result = fn(2, 4);
@@ -91,7 +91,7 @@ describe('sequentially', () => {
   it('should accept array of arrays if functions accept two or more arguments', () => {
     const fn = sequentially(
       (n: number, y: number) => n + y,
-      (s: string, h: string) => s + h
+      (s: string, h: string) => s + h,
     );
 
     const result = fn([1, 2], ['3', '4']);
@@ -101,7 +101,7 @@ describe('sequentially', () => {
   it('should accept array of arrays or values if functions accept one, two or more arguments', () => {
     const fn = sequentially(
       (n: number) => n ** 2,
-      (s: string, h: string) => s + h
+      (s: string, h: string) => s + h,
     );
 
     const result = fn(2, ['3', '4']);
@@ -111,7 +111,7 @@ describe('sequentially', () => {
   it('should omit arguments for last function', () => {
     const fn = sequentially(
       (n: number) => n ** 2,
-      () => 'foo'
+      () => 'foo',
     );
 
     const result = fn(2);
@@ -124,11 +124,22 @@ describe('sequentially', () => {
     () => {
       const fn = sequentially(
         () => 'foo',
-        (n: number) => n ** 2
+        (n: number) => n ** 2,
       );
 
       const result = fn([], 2);
       expect(result).toEqual(['foo', 4]);
-    }
+    },
   );
+
+  it('should accept one parameter if it is the same for all functions', () => {
+    const fn = sequentially(
+      (word: string) => word + ' world!',
+      (word: string) => word + ' IT!',
+    );
+
+    const result = fn('Hello');
+
+    expect(result).toEqual(['Hello world!', 'Hello IT!']);
+  });
 });

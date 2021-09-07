@@ -185,7 +185,16 @@ export namespace NArray {
           ? [...R, ...First<V>]
           : [...R, First<V>]
       >;
+
+  /** Detects if all values inside an array have the same type. */
+  export type IsSameInnerType<V extends ReadonlyArray<any>> =
+    V extends ReadonlyArray<First<V>> ? true : false;
 }
+
+/** Conditional operator. */
+export type If<Predicate extends boolean, A, B> = Predicate extends true
+  ? A
+  : B;
 
 export namespace NFn {
   /** Converts array of function into an array with their return types. */
