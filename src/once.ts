@@ -3,9 +3,9 @@
  * If _after_ function is provided, then
  * it will be called after _fn_ has been executed.
  */
-export const once = <F extends (...args: ReadonlyArray<any>) => any>(
+export const once = <F extends (...args: readonly any[]) => any>(
   fn: F,
-  after?: F
+  after?: F,
 ): F => {
   let result: ReturnType<F>;
   let _fn = fn;

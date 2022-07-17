@@ -1,20 +1,21 @@
-import { isPromise } from './is_promise';
-import { maybe, none, Option, some } from './option';
+import { isPromise } from './is_promise.js';
 
 export interface ConsequentFunction<
-  F extends (...args: ReadonlyArray<any>) => any
+  F extends (...args: readonly any[]) => void | Promise<void>,
 > {
   /** Signals if this function is executing now. */
   readonly busy: boolean;
-  (...args: Parameters<F>): Option<ReturnType<F>>;
+  (...args: Parameters<F>): void | Promise<void>;
 }
 
 /**
- * Executes function while it is not in process.
+ * Executes a function if it is idle.
  * Also handles asynchronous functions.
  */
-export const consequent = <F extends (...args: ReadonlyArray<any>) => any>(
-  fn: F
+export const consequent = <
+  F extends (...args: readonly any[]) => void | Promise<void>,
+>(
+  fn: F,
 ): ConsequentFunction<F> => {
   let busy = false;
 
@@ -24,17 +25,13 @@ export const consequent = <F extends (...args: ReadonlyArray<any>) => any>(
 
       const result = fn(...args);
 
-      return isPromise(result)
-        ? some(result.then((value) => ((busy = false), value)))
-        : ((busy = false), maybe(result));
-    } else {
-      return none;
+      isPromise(result) ? result.then(() => (busy = false)) : (busy = false);
     }
   }) as ConsequentFunction<F>;
 
   Reflect.defineProperty(wrapperFunction, 'busy', {
     get: () => busy,
-    enumerable: false,
+    enumerable: true,
     configurable: false,
   });
 

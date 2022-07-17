@@ -1,94 +1,39 @@
-import { isJust } from './is_just_nothing';
-import { isObject } from './is_object';
-import { isFunction } from './is_function';
-import type { Just, Nothing } from './utilities';
-import type { Typeable, Serializable, Monad, Comonad } from './types';
+import { isJust } from './is_just.js';
+import { isObject } from './is_object.js';
 
-export const OPTION_NONE_OBJECT_TYPE = '$None';
-export const OPTION_SOME_OBJECT_TYPE = '$Some';
+export const OPTION_TYPE = '__$Option';
 
-export interface Some<T>
-  extends Typeable,
-    Monad<T>,
-    Comonad<T>,
-    Serializable<T> {
-  readonly map: <R>(
-    fn: (value: T) => R,
-  ) => unknown extends R ? Option<R> : R extends Just<R> ? Some<R> : None;
-  readonly fill: () => Some<T>;
-  readonly chain: <R>(
-    fn: (value: T) => Option<R>,
-  ) => R extends Nothing ? None : unknown extends R ? None : Some<R>;
-  readonly apply: <R>(
-    other: Option<(value: T) => R>,
-  ) => R extends Nothing ? None : unknown extends R ? None : Some<R>;
-  readonly isSome: () => this is Some<T>;
-  readonly isNone: () => this is None;
-  readonly extract: () => T;
-}
+/** Represents an optional value. */
+export type Option<T> = {
+  readonly [OPTION_TYPE]: null;
 
-export interface None
-  extends Typeable,
-    Monad<null>,
-    Comonad<null>,
-    Serializable<null> {
-  readonly map: () => None;
-  readonly fill: <T>(fn: () => T) => Some<T>;
-  readonly chain: () => None;
-  readonly apply: () => None;
-  readonly isSome: () => this is Some<never>;
-  readonly isNone: () => this is None;
-  readonly extract: () => null;
-}
-
-/** Monad that encapsulates value that can be undefined at some time. */
-export type Option<T> = None | Some<T>;
-
-export const none: None = {
-  type: () => OPTION_NONE_OBJECT_TYPE,
-  map: () => none,
-  fill: (fn) => some(fn()),
-  chain: () => none,
-  apply: () => none,
-  isNone: () => true,
-  isSome: () => false,
-  extract: () => null,
-  toJSON: () => ({
-    type: OPTION_NONE_OBJECT_TYPE,
-    value: null,
-  }),
+  readonly map: <U>(callback: (value: T) => U) => Option<U>;
+  readonly chain: <U>(callback: (value: T) => Option<U>) => Option<U>;
+  readonly apply: <U>(other: Option<(value: T) => U>) => Option<U>;
+  readonly isNone: () => boolean;
+  readonly isSome: () => boolean;
+  readonly toJSON: () => { readonly type: string; readonly value: T | null };
+  readonly extract: (defaultValue: () => T) => T;
 };
 
-export const some = <T>(value: T): Some<T> => ({
-  map: (fn) => maybe(fn(value)),
-  // @ts-ignore
-  chain: (fn) => fn(value),
-  // @ts-ignore
-  apply: (other) => other.map((fn) => fn(value)),
-  fill: () => some(value),
-  isNone: () => false,
-  isSome: () => true,
-  extract: () => value,
-  type: () => OPTION_SOME_OBJECT_TYPE,
-  toJSON: () => ({
-    type: OPTION_SOME_OBJECT_TYPE,
-    value,
-  }),
+const _Option = <T>(value: T): Option<T> => ({
+  [OPTION_TYPE]: null,
+
+  map: (callback) => (isJust(value) ? Some(callback(value)) : None),
+  chain: (callback) => (isJust(value) ? callback(value) : None),
+  apply: (other) => (isJust(value) ? other.map((fn) => fn(value)) : None),
+  isNone: () => !isJust(value),
+  isSome: () => isJust(value),
+  extract: (defaultValue) => value ?? defaultValue(),
+  toJSON: () => ({ type: OPTION_TYPE, value: value ?? null }),
 });
 
-/**
- * Depending of the type of _value_ returns `None` or `Some`
- * monad.
- */
-export const maybe = <T>(
-  value: T,
-): unknown extends T ? Option<T> : T extends Just<T> ? Some<T> : None =>
-  // @ts-ignore
-  isJust(value) ? some(value) : none;
+/** An empty *Option* value. */
+export const None: Option<any> = _Option(null);
 
-/** Check if value is instance of `Option` monad. */
+/** Crates an *Option* value with some type *T*. */
+export const Some = _Option;
+
+/** Check if a value is an instance of the `Option` monad. */
 export const isOption = <T>(value: unknown): value is Option<T> =>
-  isObject(value) &&
-  isFunction((value as Typeable).type) &&
-  ((value as Typeable).type() === OPTION_NONE_OBJECT_TYPE ||
-    (value as Typeable).type() === OPTION_SOME_OBJECT_TYPE);
+  isObject(value) && OPTION_TYPE in value;

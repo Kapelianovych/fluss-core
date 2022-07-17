@@ -2,25 +2,16 @@
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-Library for functional coding in modern environment.
+Library for functional coding in the modern environment.
 
 ## Design goals
 
 - Get the most from TypeScript's inference power.
 - The implementation of each function should be as minimal as possible.
-- All functions are immutable, and there are no side-effects.
+- Respect the immutability.
 - All functions must be safe as much as possible.
 - Do not override native methods, if function will make same work and produce result same as native method.
 - Each function is maximally independent module (I try my best, though there can be some dependencies).
-
-## Example use
-
-```typescript
-const curriedFn /*: Curried<(args_0: string, args_1: string) => string, 2> */ =
-  curry((left: string, right: string) => left + right);
-const curriedFn2 /*: Curried<(args_0: string) => string, 1> */ = curriedFn('');
-const result /*: string */ = curriedFn2('');
-```
 
 ## @fluss/core's advantages
 
@@ -44,30 +35,9 @@ import { curry } from '@fluss/core/curry';
 
 ## API
 
-Library is bundled as bunch of _ES modules_. It doesn't support _CommonJS_. If you need old module system, transform code with any tool (`Babel` etc.).
-
-> In TypeScript's examples is used [Flow](https://flow.org)'s comment notation if TypeScript infer type by yourself.
+Library embraces a lot of _ES modules_. It doesn't support _CommonJS_. If you need old module system, transform code with any tool (`Babel` etc.).
 
 ### pipe
-
-```typescript
-function pipe<
-  T extends readonly [
-    (...args: ReadonlyArray<any>) => any,
-    ...ReadonlyArray<(arg: any) => any>
-  ],
->(
-  ...fns: T
-): IsComposable<T> extends false
-  ? never
-  : (
-      ...args: Parameters<First<T>>
-    ) => NFn.IsAsyncIn<T> extends true
-      ? ReturnType<NArray.Last<T>> extends Promise<infer U>
-        ? Promise<U>
-        : Promise<ReturnType<NArray.Last<T>>>
-      : ReturnType<NArray.Last<T>>;
-```
 
 Compose functions from left to right. Can handle asynchronous functions along with synchronous ones.
 
@@ -87,10 +57,6 @@ const asyncResult /*: Promise<number> */ = composed('1');
 
 ### identity
 
-```ts
-function identity<T>(value: T): T;
-```
-
 Returns own argument back to the calling place.
 
 ```ts
@@ -101,18 +67,6 @@ const result /*: 5 */ = identity(value);
 
 ### once
 
-```typescript
-interface OnceFunction {
-  <T extends ReadonlyArray<unknown>, R>(fn: (...args: T) => R): (
-    ...args: T
-  ) => Option<R>;
-  <T extends ReadonlyArray<unknown>, R>(
-    fn: (...args: T) => R,
-    after: (...args: T) => R,
-  ): (...args: T) => R;
-}
-```
-
 Execute _fn_ only once. And then _after_ function if it is provided.
 
 ```typescript
@@ -122,12 +76,6 @@ const doOnlyOnce = once(() => {
 ```
 
 ### flip
-
-```ts
-function flip<F extends (...args: ReadonlyArray<any>) => any>(
-  fn: F,
-): (...args: NArray.Reverse<Parameters<F>>) => ReturnType<F>;
-```
 
 Reverses function's parameters.
 
@@ -142,13 +90,6 @@ flipped(1, '2'); // -> 3
 ```
 
 ### curry
-
-```typescript
-function curry<
-  F extends (...args: ReadonlyArray<any>) => any,
-  A extends number = NFn.FixedParametersCount<Parameters<F>>,
->(fn: F, arity?: A): Curried<F, A>;
-```
 
 Create curried version of function with optional partial application. If function accepts variadic arguments (...rest), then you can apparently define function's _arity_.
 
@@ -165,73 +106,7 @@ There is a special value `_` that you can use with curried function to preserve 
 const anotherFn /*: Curried<(arg_0: string) => string, 1> */ = fn(_, '2');
 ```
 
-### fork
-
-```typescript
-interface ForkJoinFunction {
-  <F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>>(...fns: F): <
-    R,
-  >(
-    join: (...args: NFn.ReturnTypesOf<F>) => R | Promise<R>,
-  ) => (
-    ...args: NFn.IsParametersEqual<F> extends true
-      ? Parameters<NArray.First<F>>
-      : never
-  ) => NFn.IsAsyncIn<F> extends true
-    ? R extends Promise<unknown>
-      ? R
-      : Promise<R>
-    : R;
-}
-```
-
-Allow join output of two functions that get the same input and process it in a different way.
-
-```typescript
-// Compute average.
-const y /*: (a: Array<number>) => number */ = fork(
-  (a: Array<number>) => a.reduce((sum, num) => sum + num, 0),
-  (a: Array<number>) => a.length,
-)((sum, count) => sum / count);
-```
-
-### demethodize
-
-```ts
-function demethodize<T extends object, K extends keyof FunctionKeys<T>>(
-  target: T,
-  name: K,
-): (
-  ...args: Parameters<T[Cast<K, keyof T>]>
-) => ReturnType<T[Cast<K, keyof T>]>;
-```
-
-Extracts method from object.
-
-```ts
-const createElement = demethodize(document, 'createElement');
-
-// ...
-
-const div /*: HTMLElement */ = createElement('div');
-```
-
 ### binary
-
-```ts
-interface BinaryOperation {
-  (operator: '+'): <O extends string | number>(
-    f: O,
-    s: O
-  ) => O extends number ? number : string;
-  (operator: '-' | '/' | '%' | '*' | '**): (f: number, s: number) => number;
-  (operator: '>' | '<' | '>=' | '<='): (f: number, s: number) => boolean;
-  (operator: '==='): <O>(f: O, s: O) => boolean;
-  (operator: '=='): <F, S>(f: F, s: S) => boolean;
-  (operator: '||' | '&&'): (f: boolean, s: boolean) => boolean;
-  (operator: string): <O>(f: O, s: O) => [f: O, s: O];
-}
-```
 
 Creates function for binary operation. For unknown operator it returns tuple with left and right operands.
 
@@ -239,88 +114,7 @@ Creates function for binary operation. For unknown operator it returns tuple wit
 const sum = [1, 2, 3, 4, 5, 6].reduce(binary('+'), 0);
 ```
 
-### sequentially
-
-```typescript
-function sequentially<
-  V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
->(
-  ...fns: V
-): (
-  ...values: If<
-    NArray.IsSameInnerType<SequentiallyParameters<V>>,
-    SequentiallyParameters<V> | [NArray.First<SequentiallyParameters<V>>],
-    SequentiallyParameters<V>
-  >
-) => NFn.IsAsyncIn<V> extends true
-  ? Promise<NFn.ReturnTypesOf<V>>
-  : NFn.ReturnTypesOf<V>;
-```
-
-Invokes independently functions with their parameters in order that they are declared. Can handle asynchronous functions.
-
-```typescript
-const inSequence /*: (arg_0: number, arg_1: string) => [number, string] */ =
-  sequentially(
-    (n: number) => n ** 2,
-    (s: string) => s + '!',
-  );
-
-inSequence(1, 'Hello');
-```
-
-### concurrently
-
-```ts
-function concurrently<
-  F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
->(
-  ...fns: F
-): (
-  ...args: If<
-    NArray.IsSameInnerType<ConcurrentlyParameters<F>>,
-    ConcurrentlyParameters<F> | [NArray.First<ConcurrentlyParameters<F>>],
-    ConcurrentlyParameters<F>
-  >
-) => Promise<NFn.ReturnTypesOf<F>>;
-```
-
-Executes functions simultaneously and can return arrays of execution results.
-
-```ts
-const fn = concurrently(
-  (n: number) => {
-    /* Do some work */
-  },
-  (n: number, b: boolean) => {
-    /* Do some other work */
-  },
-);
-
-fn(9, [1, true]).then(([firstResult, secondResult]) => {
-  /* handle */
-});
-```
-
-### isNothing
-
-```typescript
-function isNothing<T>(value: T | Nothing): value is Nothing;
-```
-
-Checks if value is `null` or `undefined`.
-
-```typescript
-const y /*: boolean */ = isNothing(null);
-const y1 /*: boolean */ = isNothing(false);
-const y2 /*: boolean */ = isNothing(0);
-```
-
 ### isJust
-
-```typescript
-function isJust<T>(value: T): value is Just<T>;
-```
 
 Checks if value is not `null` and `undefined`.
 
@@ -332,27 +126,16 @@ const y2 /*: boolean */ = isJust(0);
 
 ### isError
 
-```typescript
-function isError<E extends Error>(
-  value: any,
-  childClass?: Constructor<E>,
-): value is E;
-```
-
 Checks if value is `Error` or its extended classes.
 
 ```typescript
 const y /*: false */ = isError(null);
 const y1 /*: true */ = isError(new Error('message'));
 const y2 /*: true */ = isError(new TypeError('message'), TypeError);
-const y2 /*: false */ = isError(new Error('message'), TypeError);
+const y3 /*: false */ = isError(new Error('message'), TypeError);
 ```
 
 ### isPromise
-
-```typescript
-function isPromise<T>(value: any): value is Promise<T>;
-```
 
 Checks if value is `Promise`.
 
@@ -362,10 +145,6 @@ const y1 /*: true */ = isPromise(Promise.resolve(9));
 ```
 
 ### isFunction
-
-```ts
-function isFunction<F extends Function>(value: unknown): value is F;
-```
 
 Check if _value_ is a function.
 
@@ -379,13 +158,6 @@ if (isFunction<() => number>(f)) {
 
 ### throttle
 
-```ts
-function throttle<F extends (...args: ReadonlyArray<any>) => void>(
-  fn: F,
-  frames?: number,
-): F;
-```
-
 Makes function be executed once per _frames_ count. If _frames_ argument is equal to `0` or less, then, if present, `requestAnimationFrame` is used. Otherwise, `setTimeout` function is in use.
 
 ```ts
@@ -398,18 +170,6 @@ document.addEventListener('scroll', cpuHeavyFunction);
 
 ### consequent
 
-```ts
-interface ConsequentFunction<F extends (...args: ReadonlyArray<any>) => any> {
-  /** Signals if this function is executing now. */
-  readonly busy: boolean;
-  (...args: Parameters<F>): Option<ReturnType<F>>;
-}
-
-function consequent<F extends (...args: ReadonlyArray<any>) => any>(
-  fn: F,
-): ConsequentFunction<F>;
-```
-
 Executes function while it is not in process. It can handle asynchronous functions.
 
 ```ts
@@ -417,18 +177,11 @@ const consequentFunction = consequent((...args) => {
   /* Some work here */
 });
 
-// It returns an `Option` monad as result.
-const result = consequentFunction(); // Start doing the job.
+consequentFunction(); // Start doing the job.
 consequentFunction(); // If previous invocation is not completed then this is ignored.
 ```
 
 ### debounce
-
-```ts
-function debounce<
-  F extends (...args: ReadonlyArray<unknown>) => void | Promise<void>,
->(fn: F, frames = 0): F;
-```
 
 Delays function invocation for _frames_ from last invocation of debounced function. If interval between invocations will be less than _frames_ time, then original function won't be executed.
 
@@ -443,11 +196,7 @@ window.addEventListener('scroll', debouncedFunction);
 
 ### delay
 
-```ts
-function delay<T>(fn: () => T | Promise<T>, frames?: number): Delay<T>;
-```
-
-Lengthens function invocation at some frames. If _frames_ equals to zero or less, then `requestAnimationFrame` function is used.
+Delays function invocation by some frames. If _frames_ equals to zero or less, then `requestAnimationFrame` function is used.
 
 ```ts
 delay(() => {
@@ -464,15 +213,6 @@ stamp.cancel(); // -> cancels delay.
 
 ### memoize
 
-```ts
-function memoize<
-  F extends (...args: ReadonlyArray<any>) => any,
-  K extends (...args: Parameters<F>) => any = (
-    ...args: Parameters<F>
-  ) => NArray.First<Parameters<F>>,
->(fn: F, keyFrom?: K): WithCache<F, K>;
-```
-
 Wraps function and cache all execution results. Allows to customize key for cache. By default, it is first function's argument. Cache readable object is visible to outside.
 
 ```ts
@@ -487,140 +227,23 @@ const result3 = memoizedFn(4); // Function is executed
 memoizedFn.cache.clear();
 ```
 
-### transduce
-
-```ts
-function transduce<T extends Foldable<any>>(
-  instance: T,
-): <I, K>(
-  aggregator: Reducer<I, K>,
-) => <R extends ReadonlyArray<Transducer<I, any, any>>>(
-  ...transducers: ChainTransducers<R>
-) => I;
-```
-
-Creates transduce operation over a `Foldable` instance.
-
-```ts
-const result /*: readonly string[] */ = transduce([1, 2, 3])(toArray<string>())(
-  filter<ReadonlyArray<string>, number>((value) => value >= 2),
-  map<ReadonlyArray<string>, number, string>(String),
-);
-```
-
-There are two functions that builds transducers: `map` and `filter`.
-
-### reducer
-
-```ts
-function reducer<T>(
-  initial: T,
-): <K>(fn: (accumulator: T, current: K) => T) => Reducer<T, K>;
-```
-
-Helps building reducer.
-
-```ts
-const reduceFunction /*: Reducer<number, number> */ = reducer(0)(binary('+')); // create reducer that sum numbers.
-```
-
-There are two predefined reducers that collect value: `toArray` and `toList`.
-
-### array
-
-```typescript
-function array<T>(
-  ...iterables: ReadonlyArray<T | ArrayLike<T> | Iterable<T>>
-): ReadonlyArray<T>;
-```
-
-Creates readonly array from set of ArrayLike, iterable objects or values.
-
-```typescript
-const y /*: ReadonlyArray<number> */ = array(9, new Set([6]), {
-  0: 6,
-  length: 1,
-});
-```
-
-### tryCatch
-
-```typescript
-interface TryCatchFunction {
-  <T extends ReadonlyArray<any>, L extends Error, R>(
-    tryFn: (...inputs: T) => R,
-  ): (
-    ...args: T
-  ) => R extends Promise<infer U> ? Promise<Either<L, U>> : Either<L, R>;
-  <T extends ReadonlyArray<any>, L extends Error, R>(
-    tryFn: (...inputs: T) => R,
-    catchFn: (error: L) => R,
-  ): (...args: T) => R;
-}
-```
-
-Catches error that may occur in _tryFn_ function. If _catchFn_ is defined, then result will be returned. Otherwise, `Either` with an error or result.
-
-```typescript
-const getUser /*: (id: string) => User */ = tryCatch(
-  (id: string) => getUserFromDbById(id),
-  (error: NoUserError) => createUser(),
-);
-```
-
 ### tap
 
-```ts
-function tap<T>(effect: (value: T) => void | Promise<void>): (value: T) => T;
-```
-
-Performs side effect on value while returning it as is.
+Performs side effect on value while returning it as is. It does not wait for side effect callback to be finished.
 
 ```ts
 const result /*: 5 */ = tap(console.log)(5);
 ```
 
-### freeze
+### awaitedTap
 
-```typescript
-function freeze<T extends object, D extends boolean = false>(
-  value: T,
-  deep?: D,
-): D extends true ? DeepReadonly<T> : Readonly<T>;
-```
+Performs side effect on value while returning it as is. It waits for side effect callback to be finished.
 
-Perform shallow(_deep_ is `false`) or deep(_deep_ is `true`) freeze of object. By default function does shallow freezing.
-
-```typescript
-const frozenObject /*: Readonly<{ hello: () => void }> */ = freeze({
-  hello() {
-    console.log('Hello world');
-  },
-});
-const deepFrozenObject /*: DeepReadonly<{ hello: () => void }> */ = freeze(
-  {
-    hello() {
-      console.log('Hello world');
-    },
-  },
-  true,
-);
+```ts
+const result /*: 5 */ = awaitedTap(prepareListenerForTheValue)(5);
 ```
 
 ### when
-
-```ts
-interface ConditionalFunction<A extends ReadonlyArray<any>> {
-  <R>(onTrue: (...values: A) => R): (...values: A) => Option<R>;
-  <R>(onTrue: (...values: A) => R, onFalse: (...values: A) => R): (
-    ...values: A
-  ) => R;
-}
-
-function when<A extends ReadonlyArray<any>>(
-  condition: (...values: A) => boolean,
-): ConditionalFunction<A>;
-```
 
 Replaces conditional flow (ternary operator and `if`/`else`).
 
@@ -633,150 +256,94 @@ const result2 /*: number */ = multiplyIf(11); // Will be multiplied.
 
 ### isOption
 
-```typescript
-function isOption<T>(value: any): value is Option<T>;
-```
-
 Checks if value is instance of `Option` monad.
 
 ```typescript
 isOption(8); // false
-isOption(maybe(8)); // true
+isOption(Some(8)); // true
 ```
 
-### maybe
+### Some
+
+Creates the `Option` monad instance with the **Just** state.
 
 ```typescript
-function maybe<T>(
-  value: T,
-): unknown extends T ? Option<T> : T extends Just<T> ? Some<T> : None;
+Some(2); // Option<number>
 ```
 
-Wraps value with `Option` monad. Function detects state (**Just** or **Nothing**) of `Option` by yourself.
+### None
+
+`Option` with the **Nothing** state.
 
 ```typescript
-maybe(8); // Some<number>
-maybe(null); // None
-```
-
-### some
-
-```typescript
-function some<T>(value: T): Some<T>;
-```
-
-Creates `Option` monad instance with **Just** state.
-
-```typescript
-some(2); // Some<number>
-```
-
-### none
-
-```typescript
-const none: None;
-```
-
-`Option`' monads instance with **Nothing** state.
-
-```typescript
-const a /*: None */ = none;
+const a /*: None */ = None;
 ```
 
 #### Option
 
-Monad that gets rid of `null` and `undefined`. Its methods works only if inner value is not _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract` and `fill`). Wraps _nullable_ value and allow works with it without checking on `null` and `undefined`.
+Monad that gets rid of `null` and `undefined`. Its methods work only if inner value is not _nothing_(`null` and `undefined`) and its state is `Just`, otherwise they aren't invoked (except `extract` and `fill`). Wraps _nullable_ value and allows to work with it without checking on `null` and `undefined`.
 
-### isEither
+### isResult
 
-```typescript
-function isEither<L extends Error, R>(value: any): value is isEither<L, R>;
-```
-
-Checks if value is instance of `Either` monad.
+Checks if value is instance of `Result` monad.
 
 ```typescript
-isEither(8); // false
-isEither(either(8)); // true
+isResult(8); // false
+isResult(Ok(8)); // true
 ```
 
-### right
+### Ok
 
-```typescript
-function right<R>(value: R): Right<R>;
-```
-
-Wraps value with `Either` monad with **Right** state.
+Wraps a value with the `Result` monad with the **Right** state.
 
 ```typescript
 // We are sure that 8 is not "left" value.
-right(8); // Right<number>
+Ok(8); // Result<number, never>
 ```
 
-### left
+### Err
+
+Creates the `Result` monad instance with the **Left** state.
 
 ```typescript
-function left<L>(value: L): Left<L>;
+Err(new Error('Error is occurred!')); // Result<never, Error>
 ```
 
-Creates `Either` monad instance with **Left** state.
+### tryExecute
+
+Runs function and return a result wrapped in the `Result` monad.
 
 ```typescript
-left<Error>(new Error('Error is occurred!')); // Left<Error>
+const result /*: Either<Error, string> */ = tryExecute(() => {
+  if (someVariable > 3) {
+    return someVariable; // the Ok will be returned.
+  } else {
+    throw new Error('The variable is less than 3.'); // the Err will be returned.
+  }
+});
 ```
 
-### either
-
-```typescript
-function either<A, B>(
-  isRight: (value: A | B) => value is B,
-  value: A | B,
-): Either<A, B>;
-```
-
-Lift _value_ into `Either` monad. _isRight_ parameter helps find out if _value_ must belong to `Right` or `Left` type.
-
-```typescript
-const result /*: Either<Error, string> */ = either(
-  isString,
-  new Error('I am a value'),
-);
-```
-
-#### Either
+#### Result
 
 Monad that can contain success value or failure value. Allow handle errors in functional way.
 
-### task
+### Task
 
-```typescript
-function task<T, E extends Error>(
-  fork: ForkFunction<T, E> | Task<T, E> | Promise<T>,
-): Task<T, E>;
-```
-
-Defines `Task` or copies fork function from another `Task` or `Promise`.
+Defines the `Task` monad or copies fork function from another `Task` or `Promise`.
 
 ```typescript
 function getSomeDataFromInternet(): Promise<string> {
   /* useful code */
 }
 
-const dataTask = task(getSomeDataFromInternet()).map(JSON.parse);
+const dataTask = Task(getSomeDataFromInternet()).map(JSON.parse);
 
-// somewhere in code
-dataTask.start((data) => {
-  /* do job with data */
-});
-// or you can convert Task to Promise and expose data
-const data = await dataTask.asPromise(); // This method also starts task as `start`.
+// Runs the task and returns the Promise with the Result.
+// The returned Promise never throws, so you don't have wrap it with try/catch.
+const data = await dataTask.run();
 ```
 
-### done
-
-```typescript
-function done<T, E extends Error>(value: T): Task<T, E>;
-```
+### Succeed
 
 Wraps value to process as `Task`.
 
@@ -785,51 +352,31 @@ const data = {
   /* some data */
 };
 
-const dataTask = done(data).map(JSON.stringify).chain(task(sendOverInternet));
+const dataTask = Succeed(data)
+  .map(JSON.stringify)
+  .chain(Task(sendOverInternet));
 
-// somewhere in code
-dataTask.start(
-  () => {
-    /* on done job */
-  },
-  (error) => {
-    /* on fail job */
-  },
-);
+// somewhere in the code
+dataTask.run();
 ```
 
-### fail
+### Fail
+
+Create a failed `Task`.
 
 ```typescript
-function fail<T, E extends Error>(value: E): Task<T, E>;
-```
-
-Create failed `Task`.
-
-```typescript
-const dataTask = fail(someError);
+const dataTask = Fail(someError);
 
 // somewhere in code
-dataTask.start(
-  () => {
-    /* on done job */
-  },
-  (error) => {
-    /* on fail job */
-  },
-);
+dataTask.run();
 ```
 
 ### isTask
 
-```typescript
-function isTask<T, E extends Error>(value: any): value is Task<T, E>;
-```
-
-Check if value is instance of `Task`.
+Check if a value is instance of the `Task`.
 
 ```typescript
-const dataTask = done(8);
+const dataTask = Succeed(8);
 
 isTask(dataTask); // true
 ```
@@ -840,27 +387,17 @@ Monad that allow to perform some actions asynchronously and deferred in time (in
 
 [Difference between Task and Promise.](https://glebbahmutov.com/blog/difference-between-promise-and-task/)
 
-### list
+### List
+
+Create the `List` from values, array-like objects or iterables.
 
 ```typescript
-function list<T>(
-  ...values: ReadonlyArray<T | ArrayLike<T> | Iterable<T>>
-): List<T>;
-```
-
-Create `List` from values, array-like objects or iterables.
-
-```typescript
-const numbers /*: List<number> */ = list(1, new Set([2]), [3]);
+const numbers /*: List<number> */ = List(1, new Set([2]), [3]);
 ```
 
 ### iterate
 
-```typescript
-function iterate<T>(fn: IteratorFunction<T>): List<T>;
-```
-
-Create `List` from function that returns iterator.
+Create the `List` from function that returns iterator.
 
 ```typescript
 const numbers /*: List<number> */ = iterate(function* () {
@@ -872,34 +409,24 @@ const numbers /*: List<number> */ = iterate(function* () {
 
 ### isList
 
-```typescript
-function isList<T>(value: any): value is List<T>;
-```
-
-Checks if value is instance of `List`.
+Checks if value is instance of the `List`.
 
 ```typescript
-const result /*: boolean */ = isList(list());
+const result /*: boolean */ = isList(List());
 ```
 
 #### List
 
-Monad that represents lazy `Array`. It can decrease computation step comparably to `Array`. Actual execution of `List`'s methods starts when one of _terminating method_ (method that do not return List instance) is called.
+Monad that represents lazy `Array`. It can decrease computation step comparably to `Array`. Actual execution of `List`'s methods starts when one of _terminating method_ (method that do not return a new `List` instance) is called.
 
-### stream
+### Stream
 
-```typescript
-function stream<T>(): Stream<T>;
-```
-
-Creates live empty stream.
+Creates a live empty stream.
 
 ```typescript
-const y /*: Stream<number> */ = stream<number>();
+const y /*: Stream<number, number> */ = Stream((value: number) => Math.pow(value, 2));
 
-y.map((value) => Math.pow(value, 2)).listen(
-  (value) => (document.body.innerHTML = value),
-);
+y.forEach((value) => (document.body.innerHTML = value));
 
 // Somewhere in the code
 y.send(2); // document.body.innerHTML will set to equal to 4
@@ -909,16 +436,12 @@ y.send(2); // document.body.innerHTML will set to equal to 4
 
 Structure that makes operations with values over time in live mode.
 
-### idle
-
-```typescript
-function idle<T>(fn: () => T): Idle<T>;
-```
+### Idle
 
 Queues a data returned by `fn` to be evaluated at interpreter's idle period.
 
 ```typescript
-const value /*: Idle<boolean> */ = idle(() => 1).map((num) => num > 7);
+const value /*: Idle<boolean> */ = Idle(() => 1).map((num) => num > 7);
 // somewhere in the code
 const evaluated /*: boolean */ = value.extract();
 ```
@@ -929,17 +452,10 @@ Monad that allow to defer data initialization.
 
 ### reviver
 
-```typescript
-function reviver(
-  key: string,
-  value: JSONValueTypes | SerializabledObject<any>,
-): JSONValueTypes | List<any> | Idle<any> | Option<any> | Either<Error, any>;
-```
-
-Add recognition of `Idle`, `Option`, `List`, `Either` data structures for `JSON.parse`.
+Add recognition of `Idle`, `Option`, `List` and `Result` data structures for `JSON.parse`.
 
 ```typescript
-const obj = JSON.parse('{"type":"Some","value":1}', reviver);
+const obj = JSON.parse('{"type":"__$Option","value":1}', reviver);
 // obj will be instance of Option type.
 ```
 

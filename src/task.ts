@@ -1,67 +1,109 @@
-import { isObject } from './is_object';
-import { isPromise } from './is_promise';
-import { isFunction } from './is_function';
-import type { Monad, Typeable } from './types';
+import { isObject } from './is_object.js';
+import { isPromise } from './is_promise.js';
+import { Ok, Err, Result } from './result.js';
 
-export type DoneFunction<T> = (value: T) => void;
-export type FailFunction<E extends Error = Error> = (value: E) => void;
+export type SucceedFunction<T> = (value: T) => void;
+export type FailFunction<E> = (value: E) => void;
 
-export type ForkFunction<T, E extends Error = Error> = (
-  done: DoneFunction<T>,
+export type ForkFunction<T, E> = (
+  succeed: SucceedFunction<T>,
   fail: FailFunction<E>,
 ) => void;
 
-export const TASK_OBJECT_TYPE = '$Task';
+export const TASK_TYPE = '__$Task';
 
 /**
  * Monad that allow to perform some actions asynchronously and deferred
  * in time (in opposite `Promise` that start doing job immediately
  * after definition).
  */
-export interface Task<T, E extends Error = Error> extends Typeable, Monad<T> {
-  readonly start: ForkFunction<T, E>;
+export type Task<T, E> = {
+  readonly [TASK_TYPE]: null;
+
   readonly map: <R>(fn: (value: T) => R) => Task<R, E>;
+  readonly run: () => Promise<Result<T, E>>;
   readonly chain: <R>(fn: (value: T) => Task<R, E>) => Task<R, E>;
   readonly apply: <R>(other: Task<(value: T) => R, E>) => Task<R, E>;
-  readonly asPromise: () => Promise<T>;
-}
+};
 
-export const task = <T, E extends Error = Error>(
+export const Task = <T, E>(
   fork: ForkFunction<T, E> | Task<T, E> | Promise<T>,
 ): Task<T, E> => {
-  const start = isTask(fork)
-    ? fork.start
+  const start = isTask<T, E>(fork)
+    ? (succeed: SucceedFunction<T>, fail: FailFunction<E>) =>
+        fork.run().then((result) => result.map(succeed).mapError(fail))
     : isPromise(fork)
-    ? (done: DoneFunction<T>, fail: FailFunction<E>) => fork.then(done, fail)
+    ? (succeed: SucceedFunction<T>, fail: FailFunction<E>) =>
+        fork.then(succeed, fail)
     : fork;
 
   return {
-    start,
-    type: () => TASK_OBJECT_TYPE,
+    [TASK_TYPE]: null,
+
     map: (fn) =>
-      task((done, fail) => start((value: T) => done(fn(value)), fail)),
+      Task((succeed, fail) => start((value: T) => succeed(fn(value)), fail)),
     chain: (fn) =>
-      task((done, fail) =>
-        start((value: T) => fn(value).start(done, fail), fail),
+      Task((succeed, fail) =>
+        start(
+          (value: T) =>
+            fn(value)
+              .run()
+              .then((result) => result.map(succeed).mapError(fail)),
+          fail,
+        ),
       ),
     apply: (other) =>
-      task((done, fail) => {
-        start((value) => other.start((fn) => done(fn(value)), fail), fail);
-      }),
-    asPromise: () => new Promise(start),
+      Task((succeed, fail) =>
+        other
+          .run()
+          .then((result) =>
+            result
+              .map((fn) => start((value) => succeed(fn(value)), fail))
+              .mapError(fail),
+          ),
+      ),
+    run: () =>
+      new Promise((resolve) =>
+        start(
+          (value) => resolve(Ok(value)),
+          (error) => resolve(Err(error)),
+        ),
+      ),
   };
 };
 
-export const done = <T, E extends Error = Error>(value: T): Task<T, E> =>
-  task((done, _) => done(value));
+export const Succeed = <T, E>(value: T): Task<T, E> =>
+  Task((succeed, _) => succeed(value));
 
-export const fail = <T, E extends Error = Error>(value: E): Task<T, E> =>
-  task((_, fail) => fail(value));
+export const Fail = <T, E>(value: E): Task<T, E> =>
+  Task((_, fail) => fail(value));
 
-/** Check if _value_ is instance of `Task` monad. */
-export const isTask = <T, E extends Error = Error>(
-  value: unknown,
-): value is Task<T, E> =>
-  isObject(value) &&
-  isFunction((value as Typeable).type) &&
-  (value as Typeable).type() === TASK_OBJECT_TYPE;
+type MergedTaskResults<
+  T extends readonly unknown[],
+  R extends readonly unknown[] = [],
+> = T extends readonly [Task<infer A, infer B>, ...infer Rest]
+  ? MergedTaskResults<Rest, [...R, Result<A, B>]>
+  : T extends readonly [Task<infer I, infer L>]
+  ? [...R, Result<I, L>]
+  : T extends readonly []
+  ? R
+  : never;
+
+export const mergeTasks = <T extends readonly Task<unknown, unknown>[]>(
+  ...tasks: T
+): Task<MergedTaskResults<T>, never> =>
+  Task((succeed, fail) =>
+    tasks
+      .reduce(
+        (results, task) =>
+          results.then((list) =>
+            task.run().then((result) => (list.push(result), list)),
+          ),
+        Promise.resolve([] as Result<unknown, unknown>[]),
+      )
+      .then(succeed as any, fail as any),
+  );
+
+/** Checks if a _value_ is instance of the `Task` monad. */
+export const isTask = <T, E>(value: unknown): value is Task<T, E> =>
+  isObject(value) && TASK_TYPE in value;

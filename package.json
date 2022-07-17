@@ -1,6 +1,6 @@
 {
   "name": "@fluss/core",
-  "version": "0.35.0",
+  "version": "0.36.0",
   "description": "Core functions and structures for functional programming.",
   "keywords": [
     "functional-programming",
@@ -14,11 +14,11 @@
   },
   "type": "module",
   "scripts": {
-    "test": "jest --config jest.config.cjs",
-    "clean": "rimraf build",
+    "test": "tsm node_modules/uvu/bin.js tests",
+    "clean": "rm -rf build",
     "prebuild": "npm run clean",
     "build": "rollup -c",
-    "postbuild": "npm run copy; npm run test",
+    "postbuild": "npm run copy; npm test",
     "copy": "npm run copy:settings; npm run copy:docs; npm run copy:license",
     "copy:settings": "cp package.json build/",
     "copy:license": "cp LICENSE build/",
@@ -33,15 +33,15 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.2.5",
-    "@types/jest": "^27.0.1",
-    "jest": "^27.1.0",
-    "prettier": "^2.3.2",
-    "rimraf": "^3.0.2",
-    "rollup": "^2.56.3",
+    "@rollup/plugin-typescript": "^8.3.3",
+    "@types/sinon": "^10.0.12",
+    "prettier": "^2.7.1",
+    "rollup": "^2.76.0",
     "rollup-plugin-terser": "^7.0.2",
-    "ts-jest": "^27.0.5",
-    "tslib": "^2.3.1",
-    "typescript": "^4.3.5"
+    "sinon": "^14.0.0",
+    "tslib": "^2.4.0",
+    "tsm": "^2.2.1",
+    "typescript": "^4.7.4",
+    "uvu": "^0.5.6"
   }
 }

@@ -1,30 +1,5 @@
-import { isObject } from './is_object';
-import { isNothing } from './is_just_nothing';
-import { isFunction } from './is_function';
-import type { Comonad, Monad, Serializable, Typeable } from './types';
-
-type IdleCallbackHandle = unknown;
-
-type RequestIdleCallbackOptions = {
-  timeout: number;
-};
-
-type IdleDeadline = {
-  /** Determine if callback is executing because its timeout duration expired. */
-  readonly didTimeout: boolean;
-  /** Determine how much longer the user agent estimates it will remain idle. */
-  timeRemaining: () => number;
-};
-
-declare global {
-  /** Queues a function to be called during a interpreter's idle periods. */
-  function requestIdleCallback(
-    callback: (deadline: IdleDeadline) => void,
-    opts?: RequestIdleCallbackOptions,
-  ): IdleCallbackHandle;
-  /** Cancels a callback previously scheduled with `globalThis.requestIdleCallback()`. */
-  function cancelIdleCallback(handle: IdleCallbackHandle): void;
-}
+import { isJust } from './is_just.js';
+import { isObject } from './is_object.js';
 
 // These functions are needed in order to provide fallbacks
 // for environments that do not support `requestIdleCallback` and
@@ -32,52 +7,51 @@ declare global {
 const deferCallback = globalThis.requestIdleCallback ?? globalThis.setTimeout;
 const cancelCallback = globalThis.cancelIdleCallback ?? globalThis.clearTimeout;
 
-export const IDLE_OBJECT_TYPE = '$Idle';
+export const IDLE_TYPE = '__$Idle';
 
 /** Monad that allow to defer data initialization. */
-export interface Idle<T>
-  extends Typeable,
-    Monad<T>,
-    Comonad<T>,
-    Serializable<T> {
+export type Idle<T> = {
+  readonly [IDLE_TYPE]: null;
+
   readonly map: <R>(fn: (value: T) => R) => Idle<R>;
   readonly chain: <R>(fn: (value: T) => Idle<R>) => Idle<R>;
   readonly apply: <R>(other: Idle<(value: T) => R>) => Idle<R>;
+  readonly toJSON: () => { readonly type: string; readonly value: T };
   readonly extract: () => T;
-}
+};
 
 /**
  * Queues a data returned by `fn` to be evaluated
  * at interpreter's idle period.
  */
-export const idle = <T>(fn: () => T): Idle<T> => {
+export const Idle = <T>(fn: () => T): Idle<T> => {
   let value: T | undefined;
   const handle = deferCallback(() => (value = fn()));
 
   const extract = (): T => {
-    if (isNothing(value)) {
-      cancelCallback(handle);
-      value = fn();
+    if (isJust(value)) {
+      return value;
     }
 
-    return value;
+    cancelCallback(handle);
+
+    return (value = fn());
   };
 
   return {
-    extract,
-    type: () => IDLE_OBJECT_TYPE,
-    map: (fn) => idle(() => fn(extract())),
+    [IDLE_TYPE]: null,
+
+    map: (fn) => Idle(() => fn(extract())),
     chain: (fn) => fn(extract()),
     apply: (other) => other.map((fn) => fn(extract())),
+    extract,
     toJSON: () => ({
-      type: IDLE_OBJECT_TYPE,
+      type: IDLE_TYPE,
       value: extract(),
     }),
   };
 };
 
-/** Check if _value_ is idle. */
+/** Checks if the _value_ is an *Idle* object. */
 export const isIdle = <T>(value: unknown): value is Idle<T> =>
-  isObject(value) &&
-  isFunction((value as Typeable).type) &&
-  (value as Typeable).type() === IDLE_OBJECT_TYPE;
+  isObject(value) && IDLE_TYPE in value;

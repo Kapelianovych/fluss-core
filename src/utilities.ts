@@ -1,6 +1,6 @@
 /** Gets constructor type from object type. */
 export type Constructor<T> = {
-  new (...args: ReadonlyArray<any>): T;
+  new (...args: readonly any[]): T;
   prototype: T;
 };
 
@@ -73,227 +73,132 @@ export type DeepReadonly<T> = {
   readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P];
 };
 
-export namespace NArray {
-  /** Creates an `Array` with `Length` and given `Type`.*/
-  export type Create<
-    A extends number,
-    Type = any,
-    V extends ReadonlyArray<any> = [],
-  > = Length<V> extends A ? V : Create<A, Type, [Type, ...V]>;
+/** Checks whether *A* and *B* evaluate to *true*. */
+export type And<A, B> = A extends true
+  ? B extends true
+    ? true
+    : false
+  : false;
 
-  /** Transform type of item in `T` array with position `P` to `R`. */
-  export type Transform<
-    P extends number,
-    R,
-    T extends ReadonlyArray<any>,
-    A extends ReadonlyArray<any> = [],
-  > = Length<T> extends 0
-    ? A
-    : Length<A> extends P
-    ? Transform<P, R, Tail<T>, [...A, R]>
-    : Transform<P, R, Tail<T>, [...A, First<T>]>;
-
-  /** Get position of `V` element from `T` array. */
-  export type Position<
-    V,
-    T extends ReadonlyArray<any>,
-    A extends ReadonlyArray<any> = [],
-  > = Length<T> extends Length<A>
-    ? -1
-    : V extends T[Length<A>]
-    ? Length<A>
-    : Position<V, T, [...A, any]>;
-
-  // Some types are inspired by
-  // [this article](https://www.freecodecamp.org/news/typescript-curry-ramda-types-f747e99744ab/)
-  /** Return tail elements of A except of X. */
-  export type Rest<A extends ReadonlyArray<any>, X extends Partial<A>> = Shift<
-    Cast<Length<X>, number>,
-    A
-  >;
-
-  /** Reverses an array. */
-  export type Reverse<
-    P extends ReadonlyArray<any>,
-    R extends ReadonlyArray<any> = [],
-  > = number extends Length<P>
-    ? P
-    : Length<P> extends 0
-    ? R
-    : Reverse<Tail<P>, [First<P>, ...R]>;
-
-  /** Get length of array. */
-  export type Length<T extends ReadonlyArray<any>> = T['length'];
-
-  /** Get rid of first `Index` elements from a `From` array. */
-  export type Shift<
-    Index extends number = 0,
-    From extends ReadonlyArray<any> = [],
-    I extends ReadonlyArray<any> = [],
-  > = Length<I> extends Index
-    ? From
-    : Shift<Index, Tail<From>, [First<From>, ...I]>;
-
-  /** Get rid of last `Index` elements from a `From` array. */
-  export type Pop<
-    Index extends number = 0,
-    From extends ReadonlyArray<any> = [],
-    I extends ReadonlyArray<any> = [],
-  > = Length<I> extends Index
-    ? From
-    : Pop<Index, Head<From>, [Last<From>, ...I]>;
-
-  /** Get types of `T` elements except of first one. */
-  export type Tail<T extends ReadonlyArray<any>> = T extends [any, ...infer U]
-    ? U
-    : [];
-
-  /** Get types of `T` elements except of last one. */
-  export type Head<T extends ReadonlyArray<any>> = T extends [...infer U, any]
-    ? U
-    : [];
-
-  /** Get type of _nth_ element of `T`. */
-  export type Nth<T extends ReadonlyArray<any>, P extends number> = T[P];
-
-  /** Get type of last element of `T`. */
-  export type Last<T extends ReadonlyArray<any>> = Nth<T, Length<Tail<T>>>;
-
-  /** Get type of first element of `T`. */
-  export type First<T extends ReadonlyArray<any>> = Nth<T, 0>;
-
-  export type TrimLastEmpty<V extends ReadonlyArray<any>> = Length<
-    Last<V>
-  > extends 0
-    ? TrimLastEmpty<Head<V>>
-    : V;
-
-  /**
-   * Flattens arrays inside a `V` array that have
-   * `Width` length.
-   */
-  export type Flatten<
-    V extends ReadonlyArray<any>,
-    Width extends number = 1,
-    R extends ReadonlyArray<any> = [],
-  > = Length<V> extends 0
-    ? R
-    : Flatten<
-        Tail<V>,
-        Width,
-        First<V> extends NMath.Counter<Width>
-          ? [...R, ...First<V>]
-          : [...R, First<V>]
-      >;
-
-  /** Detects if all values inside an array have the same type. */
-  export type IsSameInnerType<V extends ReadonlyArray<any>> =
-    V extends ReadonlyArray<First<V>> ? true : false;
-}
+/** Checks whether *A* equals to *B*. */
+export type Is<A, B> = A extends B ? true : false;
 
 /** Conditional operator. */
 export type If<Predicate extends boolean, A, B> = Predicate extends true
   ? A
   : B;
 
-export namespace NFn {
-  /** Converts array of function into an array with their return types. */
-  export type ReturnTypesOf<
-    F extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
-    R extends ReadonlyArray<any> = [],
-  > = NArray.Length<F> extends 0
-    ? R
-    : ReturnTypesOf<
-        NArray.Tail<F>,
-        [
-          ...R,
-          ReturnType<NArray.First<F>> extends Promise<infer U>
-            ? U
-            : ReturnType<NArray.First<F>>,
-        ]
-      >;
-
-  /** Converts array of function into an array with their parameters. */
-  export type ParametersOf<
-    V extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
-    U extends ReadonlyArray<any> = [],
-  > = NArray.Length<V> extends 0
-    ? U
-    : ParametersOf<NArray.Tail<V>, [...U, Parameters<NArray.First<V>>]>;
-
-  /**
-   * Creates function with fixed number of parameters.
-   * Where `A` is arity of a function.
-   * `T` is desired types of parameters.
-   * `R` is a return type of the final function.
-   */
-  export type Create<
-    A extends number,
-    T extends ReadonlyArray<any>,
-    R,
-    P extends ReadonlyArray<any> = [],
-  > = NArray.Length<P> extends A
-    ? (...args: P) => R
-    : Create<
-        A,
-        NArray.Tail<T> extends [] ? T : NArray.Tail<T>,
-        R,
-        [...P, NArray.First<T>]
-      >;
-
-  /** Checks if all functions have the same parameters set. */
-  export type IsParametersEqual<
-    F extends ReadonlyArray<(...values: ReadonlyArray<any>) => any>,
-    R = [],
-  > = NArray.Length<F> extends 0
-    ? R extends false
-      ? false
-      : true
-    : IsParametersEqual<
-        NArray.Tail<F>,
-        R extends []
-          ? Parameters<NArray.First<F>>
-          : R extends Parameters<NArray.First<F>>
-          ? R
-          : false
-      >;
-
-  /** Detects if at least one among functions is asynchronous. */
-  export type IsAsyncIn<
-    R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
-    A extends boolean = false,
-  > = A extends true
-    ? A
-    : NArray.Length<R> extends 0
-    ? A
-    : IsAsyncIn<
-        NArray.Tail<R>,
-        ReturnType<NArray.First<R>> extends Promise<any> ? true : false
-      >;
-
-  /** Counts fixed parameters of a function. */
-  export type FixedParametersCount<
-    P extends ReadonlyArray<any>,
-    A extends number = 0,
-  > = P extends [any, ...infer R]
-    ? FixedParametersCount<R, Cast<NMath.Plus<A, 1>, number>>
-    : A;
+export interface Reducer<I, V> {
+  (): I;
+  (accumulator: I, current: V): I;
 }
 
-export namespace NMath {
+export namespace Tuple {
+  /** Creates a `Tuple` type of given `Length` and `Type` type .*/
+  export type New<
+    A extends number,
+    Type = any,
+    V extends readonly any[] = [],
+  > = Length<V> extends A ? V : New<A, Type, [Type, ...V]>;
+
+  /** Transform type of item in `T` tuple with position `P` to `R`. */
+  export type Map<
+    T extends readonly any[],
+    P extends number,
+    R,
+    A extends readonly any[] = [],
+  > = Length<T> extends 0
+    ? A
+    : Length<A> extends P
+    ? Map<Shift<T>, P, R, [...A, R]>
+    : Map<Shift<T>, P, R, [...A, First<T>]>;
+
+  /** Get position of `V` element from `T` array. */
+  export type IndexOf<
+    V,
+    T extends readonly any[],
+    A extends readonly any[] = [],
+  > = Length<T> extends Length<A>
+    ? -1
+    : V extends T[Length<A>]
+    ? Length<A>
+    : IndexOf<V, T, [...A, any]>;
+
+  /** Reverses a tuple. */
+  export type Reverse<
+    P extends readonly any[],
+    R extends readonly any[] = [],
+  > = number extends Length<P>
+    ? P
+    : Length<P> extends 0
+    ? R
+    : Reverse<Shift<P>, [First<P>, ...R]>;
+
+  /** Get length of a tuple. */
+  export type Length<T extends readonly any[]> = T['length'];
+
   /**
-   * Creates iterable from count of desired
-   * values count.
+   * Removes the *Start* elements from the start and
+   * the *End* elements from the end of a tuple.
    */
-  export type Counter<A extends number> = NArray.Create<A>;
+  export type Slice<
+    T extends readonly any[],
+    Start extends number,
+    End extends number = 0,
+    S extends readonly any[] = [],
+    E extends readonly any[] = [],
+  > = And<Is<Length<S>, Start>, Is<Length<E>, End>> extends true
+    ? T
+    : Is<Length<S>, Start> extends true
+    ? Slice<Pop<T>, Start, End, S, [Last<T>, ...E]>
+    : Slice<Shift<T>, Start, End, [First<T>, ...S], E>;
+
+  /** Get rid of a first element from a `From` tuple. */
+  export type Shift<From extends readonly any[]> = From extends [
+    any,
+    ...infer Rest,
+  ]
+    ? Rest
+    : never;
+
+  /** Get rid of a last element from a `From` tuple. */
+  export type Pop<From extends readonly any[]> = From extends [
+    ...infer Rest,
+    any,
+  ]
+    ? Rest
+    : never;
+
+  /** Get type of _nth_ element of `T`. */
+  export type Nth<T extends readonly any[], P extends number> = T[P];
+
+  /** Get type of last element of `T`. */
+  export type Last<T extends readonly any[]> = Nth<T, Length<Shift<T>>>;
+
+  /** Get type of first element of `T`. */
+  export type First<T extends readonly any[]> = Nth<T, 0>;
+
+  /** Flattens tuples inside a `V` tuple. */
+  export type Flat<
+    V extends readonly any[],
+    R extends readonly any[] = [],
+  > = Length<V> extends 0 ? R : Flat<Pop<V>, [...Last<V>, ...R]>;
+}
+
+export namespace Math {
+  /**
+   * Creates an iterable from the count of desired
+   * values.
+   */
+  export type Counter<A extends number> = Tuple.New<A>;
 
   /** Subtracts two numbers. Result cannot be lower than `0`. */
-  export type MinusOrZero<F extends number, S extends number> = NArray.Length<
-    NArray.Shift<S, Counter<F>>
+  export type Minus<F extends number, S extends number> = Tuple.Length<
+    Tuple.Slice<Counter<F>, S>
   >;
 
   /** Adds two numbers. */
-  export type Plus<F extends number, S extends number> = NArray.Length<
+  export type Plus<F extends number, S extends number> = Tuple.Length<
     [...Counter<F>, ...Counter<S>]
   >;
 }

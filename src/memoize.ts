@@ -1,10 +1,10 @@
-import { NArray } from './utilities';
+import type { Tuple } from './utilities.js';
 
 type WithCache<
-  F extends (...args: ReadonlyArray<any>) => any,
+  F extends (...args: readonly any[]) => any,
   K extends (...args: Parameters<F>) => any = (
     ...args: Parameters<F>
-  ) => NArray.First<Parameters<F>>
+  ) => Tuple.First<Parameters<F>>,
 > = F & {
   readonly cache: Map<ReturnType<K>, ReturnType<F>>;
 };
@@ -15,13 +15,13 @@ type WithCache<
  * is first function's argument.
  */
 export const memoize = <
-  F extends (...args: ReadonlyArray<any>) => any,
+  F extends (...args: readonly any[]) => any,
   K extends (...args: Parameters<F>) => any = (
     ...args: Parameters<F>
-  ) => NArray.First<Parameters<F>>
+  ) => Tuple.First<Parameters<F>>,
 >(
   fn: F,
-  keyFrom: K = ((...args: Parameters<F>) => args[0]) as K
+  keyFrom: K = ((...args: Parameters<F>) => args[0]) as K,
 ): WithCache<F, K> => {
   const cache = new Map<ReturnType<K>, ReturnType<F>>();
 
@@ -41,7 +41,7 @@ export const memoize = <
 
   Reflect.defineProperty(_memoWrapper, 'cache', {
     get: () => cache,
-    enumerable: false,
+    enumerable: true,
     configurable: false,
   });
 

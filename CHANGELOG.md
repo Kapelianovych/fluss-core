@@ -1,4 +1,36 @@
-# [0.35.0] - 2021-09-07
+# [0.36.0] - 2022-07-17
+
+The library was significantly simplified with a lot of breaking changes compared to the previous version.
+
+### Added
+
+- `mergeResults` and `tryExecute` functions from the `Result` monad.
+- `mergeTasks` from the `Task` monad.
+- `++` operator for string concatenation in `binary` function. The old `+` operator operates only on numbers now.
+- `awaitedTap` which waits for the side effect callback to finish before returning the value.
+
+### Changed
+
+- All monad constructors were capitalized.
+- `Option` monad exports only the `Some` function and `None` constant.
+- `Either` monad was renamed to the `Result` and exports only `Ok` and `Err` functions.
+- `Done` function was renamed to `Succeed`. 
+- `Stream` monad was completely redesigned with only two methods: `send` and `forEach`. Transformation methods should be passed as arguments to the `Stream` function now.
+- Namespaces have lost the `N` prefix.
+
+### Removed
+
+- `sequentially`, `concurrently`, `isNothing`, `tryCatch`, `freeze`, `fork`, `demethodize` and `array` functions.
+- All transducer functions and types.
+- All monad types.
+- The `NFn` namespace.
+- Type signature of function in the *README.md*.
+
+### Fixed
+
+- Including extra parameters into curried function call.
+
+## [0.35.0] - 2021-09-07
 
 ### Added
 

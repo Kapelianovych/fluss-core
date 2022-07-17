@@ -1,5 +1,5 @@
-import { isError } from './is_error';
-import { isPromise } from './is_promise';
+import { isError } from './is_error.js';
+import { isPromise } from './is_promise.js';
 
 interface InternalDelayId {
   readonly type: symbol;

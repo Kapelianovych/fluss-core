@@ -1,53 +1,50 @@
-import { isPromise } from './is_promise';
-import { NFn, NArray } from './utilities';
+import { isPromise } from './is_promise.js';
+import type { Tuple, Cast, Math } from './utilities.js';
 
-type IsComposable<
-  T extends ReadonlyArray<(...args: ReadonlyArray<any>) => any>,
-  R extends ReadonlyArray<(...args: ReadonlyArray<any>) => any> = [],
-  U extends boolean = false,
-> = NArray.Length<T> extends 0
-  ? U
-  : IsComposable<
-      NArray.Tail<T>,
-      [NArray.First<T>, ...R],
-      NArray.Length<R> extends 0
-        ? false
-        : ReturnType<NArray.First<R>> extends
-            | NArray.First<Parameters<NArray.First<T>>>
-            | Promise<NArray.First<Parameters<NArray.First<T>>>>
-        ? true
-        : false
-    >;
+type Composable<
+  Fns extends readonly ((...args: readonly any[]) => unknown)[],
+  Copy extends readonly ((...args: readonly any[]) => unknown)[] = Cast<
+    Tuple.Shift<Fns>,
+    readonly ((...args: readonly any[]) => unknown)[]
+  >,
+  Index extends number = 0,
+> = Tuple.Length<Copy> extends 0
+  ? Fns
+  : Parameters<Copy[0]> extends [Awaited<ReturnType<Fns[Index]>>]
+  ? Composable<
+      Fns,
+      Cast<
+        Tuple.Shift<Copy>,
+        readonly ((...args: readonly any[]) => unknown)[]
+      >,
+      Cast<Math.Plus<Index, 1>, number>
+    >
+  : Tuple.Slice<Fns, Cast<Math.Plus<Index, 1>, number>>;
+
+type HasAsync<F extends readonly ((...args: readonly any[]) => unknown)[]> =
+  F extends []
+    ? false
+    : ReturnType<Tuple.First<F>> extends Promise<unknown>
+    ? true
+    : HasAsync<
+        Cast<Tuple.Shift<F>, readonly ((...args: readonly any[]) => unknown)[]>
+      >;
 
 /**
  * Performs left-to-right function composition.
  * Can handle asynchronous functions.
  */
-export const pipe =
-  <
-    T extends readonly [
-      (...args: ReadonlyArray<any>) => any,
-      ...ReadonlyArray<(arg: any) => any>
-    ],
-  >(
-    ...fns: T
-  ): IsComposable<T> extends false
-    ? never
-    : (
-        ...args: Parameters<NArray.First<T>>
-      ) => NFn.IsAsyncIn<T> extends true
-        ? ReturnType<NArray.Last<T>> extends Promise<infer U>
-          ? Promise<U>
-          : Promise<ReturnType<NArray.Last<T>>>
-        : ReturnType<NArray.Last<T>> =>
-  //@ts-ignore
-  (...args) =>
-    fns.reduce(
-      (result, fn, index) =>
-        index === 0
-          ? (fn as T[0])(...result)
-          : isPromise(result)
-          ? result.then(fn)
-          : fn(result),
-      args,
-    );
+export const pipe = <
+  T extends readonly ((...args: readonly any[]) => unknown)[],
+>(
+  ...fns: Composable<T>
+): ((
+  ...args: Parameters<Tuple.First<T>>
+) => HasAsync<T> extends true
+  ? Promise<Awaited<ReturnType<Tuple.Last<T>>>>
+  : ReturnType<Tuple.Last<T>>) =>
+  // @ts-ignore
+  fns.reduce((piped, fn) => (...params) => {
+    const result = piped(...params);
+    return isPromise(result) ? result.then(fn) : fn(result);
+  });
